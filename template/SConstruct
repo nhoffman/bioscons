@@ -1,0 +1,35 @@
+import os
+import sys
+from os.path import join,split,splitext
+import ConfigParser
+import re
+import itertools
+import glob
+import collections
+
+import sconstools.builders as builders
+import sconstools.utils as utils
+
+#### define variables
+config = ConfigParser.SafeConfigParser()
+config.optionxform = str # preserve case of options
+
+setupfile = 'setup.ini'
+print 'reading configuration from %s' % setupfile
+config.read(setupfile)
+
+basedir = os.path.abspath(config.get('DEFAULT','basedir'))
+indir = config.get('DEFAULT','datadir')
+outdir= config.get('DEFAULT','outdir')
+
+vars = Variables()
+varlist = utils.getvars(config, ['example'], indir=indir, outdir=outdir)
+vars.AddVariables(*varlist)
+
+env = Environment(ENV=os.environ, variables=vars)
+
+### builders
+env['BUILDERS']['copyfile'] = builders.copyfile
+
+## the example below copies a file from one directory to another
+nothing_out = env.copyfile(target='$nothing_out', source='$nothing_in')
