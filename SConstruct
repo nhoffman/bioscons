@@ -10,4 +10,5 @@ env['BUILDERS']['rst2html'] = Builder(
     action = 'rst2html.py $RSTFLAGS $SOURCE $TARGET'
     )
 
-env.rst2html('README.html','README.txt')
+env.rst2html('README.html','README.rst')
+

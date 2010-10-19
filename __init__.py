@@ -16,7 +16,8 @@ def _check_python_version():
     sys_version = sys.version.split()[0]
     version = vsplit(sys_version)
     if version < vsplit(_min_python_version):
-        raise SystemError('this package requires Python version %s or greater (current version is %s)' % (_min_python_version, sys_version))
+        raise SystemError('this package requires Python version %s or greater (current version is %s)' \
+                              % (_min_python_version, sys_version))
 
 _check_python_version()
 

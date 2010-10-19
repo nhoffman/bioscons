@@ -17,7 +17,7 @@ params = {'author': 'Noah Hoffman',
           'package_dir': {'sconstools': '.'},
           'packages': ['sconstools'],
           'scripts': scripts,
-          'url': 'https://code.google.com/p/sconstools/',
+          'url': 'http://github.com/nhoffman/sconstools',
           'version': __version__,
           'requires':['python (>= %s)' % _min_python_version,'scons (>= 1.3)', 'Seq']}
 
