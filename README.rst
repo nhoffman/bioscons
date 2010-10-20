@@ -11,12 +11,20 @@ Installation
 dependencies
 ------------
 
+scons
+~~~~~
+
 Development of this project begin using the 1.x version of scons, and
 seems to work so far using version 2.x. Future development will focus
 on version 2.x.
 
-source code
------------
+Seq
+~~~
+
+TODO: make Seq package available.
+
+source
+------
 
 Obtain the source code from github. For read-only access::
 

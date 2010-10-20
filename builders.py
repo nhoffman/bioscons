@@ -103,7 +103,7 @@ def cmalign_mpi_action(target, source, env):
     Run cmalign using mpi (mpirun)
 
     Number of processors (default 1) is set using 'cmalign_nproc'.
-    
+
     target - [file in stockholm format, file containing align scores]
     source - [alignment profile, fasta file]
     """
@@ -120,27 +120,27 @@ def cmalign_mpi_action(target, source, env):
         cmalign = env['cmalign']
     except KeyError:
         cmalign = 'cmalign'
-        
+
     cmd = ['mpirun',
            '-np %s' % nproc,
            cmalign,
            '--mpi','--hbanded','--sub','--dna',
            '-o', sto, cmfile, fasta,
            '|', 'tee', scores]
-        
+
     cmd = ' '.join(cmd)
     os.system(cmd)
 
     # TODO: there is some problem with the executaion environment that
     # results in an error in mpirun when executed usimg subprocess
-    
+
     # cmd = ['mpirun',
     #        '-np %s' % nproc,
     #        '/home/bvdiversity/local/bin/cmalign',
     #        '--mpi','--hbanded','--sub','--dna',
     #        '-o', sto, cmfile, fasta]
-    
-    
+
+
     # p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
     # scorestr = p.communicate()[0]
 
@@ -295,7 +295,7 @@ def fa_to_seqmat_action(target, source, env):
     """
 
     infile, outfile = source[0],target[0]
-    
+
     rcmd = """library(ape)
     seqmat <- read.dna("%(infile)s", format="fasta", as.matrix=TRUE)
     save(seqmat, file="%(outfile)s")
@@ -304,7 +304,7 @@ def fa_to_seqmat_action(target, source, env):
 
     p = subprocess.Popen(["R", "--vanilla"], stdin=subprocess.PIPE, stdout=sys.stdout)
     p.communicate(rcmd)
-    
+
 fa_to_seqmat = Builder(action=fa_to_seqmat_action)
 
 def fa_to_seqlist_action(target, source, env):
@@ -313,7 +313,7 @@ def fa_to_seqlist_action(target, source, env):
     """
 
     infile, outfile = source[0],target[0]
-    
+
     rcmd = """library(ape)
     seqlist <- read.dna("%(infile)s", format="fasta", as.matrix=FALSE)
     save(seqlist, file="%(outfile)s")
@@ -323,7 +323,7 @@ def fa_to_seqlist_action(target, source, env):
     p = subprocess.Popen(["R", "--vanilla"], stdin=subprocess.PIPE, stdout=sys.stdout)
     p.communicate(rcmd)
 
-    
+
 def sto_to_dnamultalign_action(target, source, env):
 
     """
@@ -387,12 +387,7 @@ def raxml_emitter(target, source, env):
     source - infile.phy
     targets - RAxML_info.infile, RAxML_result.infile
 
-    raxmlHPC -m GTRGAMMA -n bv_ref -s bv_cmalign_090910.phymlAln
-    -m is the model
-    -n is the name of the run (will become output filenames)
-    -s is the alignment in phylip format
-
-    Note that RAxML produces other files not emitted as targets.    
+    Note that RAxML produces other files not emitted as targets.
     """
 
     outdir, fname = split(str(source[0]))
@@ -405,20 +400,36 @@ def raxml_emitter(target, source, env):
 def raxml_generator(source, target, env, for_signature):
     """
     Implements env.raxml
-    Depends on env['RAxML']
+    Depends on env['RAxML'] or env['RAxML_threaded']
     Number of threads (-T) may be set using env['raxml_threads'], default is 1
-    """
 
-    try:
-        env['RAxML']
-    except KeyError:
-        raise KeyError("KeyError: 'RAxML' - a value for RAxML must be defined in the current environment.")
+    raxmlHPC -m GTRGAMMA -n label -s align.phy
+
+    -m is the model
+    -n is the name of the run (will become output filenames)
+    -s is the alignment in phylip format
+
+    TODO: will want to have an additional environment variable for
+    arbitrary parameters.
+    """
 
     try:
         nthreads = int(env['raxml_threads'])
     except (KeyError, ValueError):
         nthreads = 1
+        
+    if nthreads < 2:
+        raxml_key = 'RAxML'
+        threadflag = '-T %s' % nthreads        
+    else:
+        raxml_key = 'RAxML_threaded'
+        threadflag = ''
 
+    try:
+        raxml = env[raxml_key]
+    except KeyError:
+        raise KeyError("KeyError: '%s' must be defined in the current environment." % raxml)
+    
     outdir, fname = split(str(source[0]))
     label = splitext(fname)[0]
 
@@ -427,7 +438,7 @@ def raxml_generator(source, target, env, for_signature):
     action = (
         'cd %(outdir)s && '
         'rm -f %(removeme)s && '
-        '$RAxML -m GTRGAMMA -T %(nthreads)s -n %(label)s -s %(fname)s' % locals()
+        '%(raxml)s %(threadflag)s -m GTRGAMMA -n %(label)s -s %(fname)s' % locals()
         )
 
     return action
