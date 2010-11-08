@@ -17,7 +17,7 @@ Why does SCons make sense for reproducible bioinformatics pipelines?
 * Rather than dealing with a mess of filenames, subsequent steps in an SCons build are expressed in terms of *file objects* 
 * Steps in the pipeline are implemented using objects called "builders," which implement a system call or a python command in a in a way that consistently channels inputs into outputs
 * Provides multiple mechanisms for cleanly executing isolated steps of the workflow 
-* SCons provides validation and steps without dependencies may fail
+* SCons validates files and can fail incrementally
 
 
 Alternative tools
