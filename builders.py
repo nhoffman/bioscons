@@ -13,8 +13,11 @@ except ImportError:
     # we expect this to fail unless imported from within SConstruct
     pass
 
-import Seq
-
+try:
+    import Seq
+except ImportError:
+    Seq = None
+    
 # copyfile
 def copyfile_emitter(target, source, env):
     """
