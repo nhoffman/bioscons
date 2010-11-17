@@ -417,13 +417,13 @@ def raxml_generator(source, target, env, for_signature):
         nthreads = int(env['raxml_threads'])
     except (KeyError, ValueError):
         nthreads = 1
-       
+
     # here we pull from the environment variables to figure out which RAxML to run
     # TODO: decide if we want to provide default values
 
     if nthreads < 2:
         raxml_key = 'RAxML'
-        threadflag = '-T %s' % nthreads        
+        threadflag = '-T %s' % nthreads
     else:
         raxml_key = 'RAxML_threaded'
         threadflag = ''
@@ -432,7 +432,7 @@ def raxml_generator(source, target, env, for_signature):
         raxml = env[raxml_key]
     except KeyError:
         raise KeyError("KeyError: '%s' must be defined in the current environment." % raxml)
-    
+
     outdir, fname = split(str(source[0]))
     label = splitext(fname)[0]
 
