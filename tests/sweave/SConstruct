@@ -1,0 +1,17 @@
+import os
+import sys
+from os.path import join,split,splitext
+import re
+import pprint
+import glob
+
+import sconstools
+
+vars = Variables()
+env = Environment(ENV=os.environ, variables=vars)
+
+env['BUILDERS']['sweave'] = sconstools.sweave.build
+texfile = env.sweave(source='document.Rnw')
+
+# note: fails if pdflatex not in $PATH
+env.PDF(source=texfile)

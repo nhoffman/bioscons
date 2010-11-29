@@ -24,9 +24,10 @@ _check_python_version()
 try:
     import utils
     import builders
+    import sweave
 except (NameError, ImportError), msg:
     # we expect this to fail unless imported from within SConstruct
-    traceback.print_exc(file=sys.stdout)
+    pass
 
 
 

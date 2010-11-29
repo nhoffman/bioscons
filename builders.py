@@ -13,8 +13,11 @@ except ImportError:
     # we expect this to fail unless imported from within SConstruct
     pass
 
-import Seq
-
+try:
+    import Seq
+except ImportError:
+    Seq = None
+    
 # copyfile
 def copyfile_emitter(target, source, env):
     """
@@ -410,13 +413,16 @@ def raxml_generator(source, target, env, for_signature):
     -s is the alignment in phylip format
 
     TODO: will want to have an additional environment variable for
-    arbitrary parameters.
+    arbitrary command line flags for raxml.
     """
 
     try:
         nthreads = int(env['raxml_threads'])
     except (KeyError, ValueError):
         nthreads = 1
+
+    # here we pull from the environment variables to figure out which RAxML to run
+    # TODO: decide if we want to provide default values
 
     if nthreads < 2:
         raxml_key = 'RAxML'
