@@ -59,21 +59,39 @@ def getvars(config, secnames, indir=None, outdir=None,
             vars.append((varname, val, val))
 
     for sec in secnames:
-    # input files and directories
+        # input files and directories
         for varname,pth in config.items(fmt_in % locals()):
             if varname in defaults:
                 continue
-            elif indir and not os.access(pth, os.F_OK):
+            elif os.access(pth, os.F_OK):
+                pth = os.path.abspath(pth)
+            elif indir: 
                 pth = join(indir, pth)
+            else:
+                raise OSError(
+                    'Error in [%(sec)s] %(varname)s=%(pth)s: specify either an existing path or provide a default input directory using `indir`')
+
             vars.append(PathVariable(varname, '', pth))
 
         # output files and directories
         for varname,pth in config.items(fmt_out % locals()):
             if varname in defaults:
                 continue
+            elif os.access(pth, os.F_OK) or pth.startswith('.'):
+                pth = os.path.abspath(pth)
             elif outdir and not pth.startswith(outdir):
                 pth = join(outdir, pth)
-            vars.append(PathVariable(varname, '', pth, PathVariable.PathAccept))
+            else:
+                raise OSError(
+                    'Error in [%(sec)s] %(varname)s=%(pth)s: specify either an existing path or provide a default input directory using `outdir`')
+
+            # TODO: document this behavior!
+            if varname.endswith('dir') or os.path.isdir(pth):
+                pvar = PathVariable.PathIsDirCreate
+            else:
+                pvar = PathVariable.PathAccept
+            
+            vars.append(PathVariable(varname, '', pth, pvar))
 
         # ordinary variables; no path checking or directory creation
         params = fmt_params % locals()
