@@ -422,15 +422,15 @@ def raxml_generator(source, target, env, for_signature):
         nthreads = 1
 
     # here we pull from the environment variables to figure out which RAxML to run
-    # TODO: decide if we want to provide default values
+    # TODO: decide if we want to provide default values for names of executables
 
     if nthreads < 2:
         raxml_key = 'RAxML'
-        threadflag = '-T %s' % nthreads
+        threadflag = ''
     else:
         raxml_key = 'RAxML_threaded'
-        threadflag = ''
-
+        threadflag = '-T %s' % nthreads
+        
     try:
         raxml = env[raxml_key]
     except KeyError:
