@@ -63,13 +63,14 @@ def getvars(config, secnames, indir=None, outdir=None,
         for varname,pth in config.items(fmt_in % locals()):
             if varname in defaults:
                 continue
-            elif os.access(pth, os.F_OK):
+            elif os.path.exists(pth):
                 pth = os.path.abspath(pth)
             elif indir: 
                 pth = join(indir, pth)
             else:
                 raise OSError(
-                    'Error in [%(sec)s] %(varname)s=%(pth)s: specify either an existing path or provide a default input directory using `indir`')
+                    'Error in [%(sec)s] %(varname)s = %(pth)s: specify either an existing path or provide a default input directory using `indir`' % \
+                        locals())
 
             vars.append(PathVariable(varname, '', pth))
 
@@ -77,15 +78,12 @@ def getvars(config, secnames, indir=None, outdir=None,
         for varname,pth in config.items(fmt_out % locals()):
             if varname in defaults:
                 continue
-            elif os.access(pth, os.F_OK) or pth.startswith('.'):
-                pth = os.path.abspath(pth)
-            elif outdir and not pth.startswith(outdir):
+            elif outdir and not (pth.startswith(outdir) or pth.startswith('.')):
                 pth = join(outdir, pth)
             else:
-                raise OSError(
-                    'Error in [%(sec)s] %(varname)s=%(pth)s: specify either an existing path or provide a default input directory using `outdir`')
+                pth = os.path.abspath(pth)
 
-            # TODO: document this behavior!
+            # TODO: document this behavior (assume var is a directory if ends with 'dir')
             if varname.endswith('dir') or os.path.isdir(pth):
                 pvar = PathVariable.PathIsDirCreate
             else:
