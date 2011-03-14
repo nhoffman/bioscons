@@ -251,6 +251,10 @@ def mergedToFasta_action(target, source, env):
     """
     Generate separate fasta files from a merged Stockholm alignment
 
+    Can limit number of sequences from the command line using scons
+    qcount=number
+
+    
     target = [refalign.fasta, qalign.fasta]
     source = [refalign.sto, merged.sto]
     """
@@ -265,8 +269,6 @@ def mergedToFasta_action(target, source, env):
         refnames = set(line.split()[0] for line in infile if keep(line))
         ref_seq_count = len(refnames)
 
-    # can limit number of sequences from the command line using
-    # scons qcount=number
     try:
         qcount = int(env['qcount'])
     except (ValueError, KeyError):
