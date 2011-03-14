@@ -49,7 +49,13 @@ on version 2.x.
 Seq
 ~~~
 
-TODO: make Seq package available.
+At the moment, this package depends on my Seq package. Down the road I will likely transition to using biopython instead. For now, Seq is also on github: https://github.com/nhoffman/Seq
+
+Installation is as you would expect (see the Seq repo above for dependencies)::
+
+ git clone git://github.com/nhoffman/Seq.git
+ cd Seq
+ python setup.py install
 
 source
 ------
@@ -66,8 +72,6 @@ Then install::
 
  cd sconstools
  python setup.py install
-
-
 
 .. Targets ..
 .. _ruffus : http://wwwfgu.anat.ox.ac.uk/~lg/oss/ruffus/index.html

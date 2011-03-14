@@ -87,7 +87,7 @@ def cmalign_action(target, source, env):
     cmfile, fasta = map(str, source)
     sto, scores = map(str, target)
 
-    cmd = ['cmalign','--hbanded','--sub','--dna',
+    cmd = ['cmalign','--hbanded','--sub','--dna','-1',
            '-o', sto, cmfile, fasta]
 
     print ' '.join(cmd)
@@ -127,7 +127,7 @@ def cmalign_mpi_action(target, source, env):
     cmd = ['mpirun',
            '-np %s' % nproc,
            cmalign,
-           '--mpi','--hbanded','--sub','--dna',
+           '--mpi','--hbanded','--sub','--dna','-1',
            '-o', sto, cmfile, fasta,
            '|', 'tee', scores]
 
@@ -153,8 +153,6 @@ def cmalign_mpi_action(target, source, env):
 cmalign_mpi = Builder(
     action=cmalign_mpi_action)
 
-
-
 # cmalign = Builder(
 #     action='cmalign --hbanded --sub --dna -o ${TARGETS[0]} $cmfile $SOURCES | tee ${TARGETS[1]}'
 #     )
@@ -168,7 +166,7 @@ def cmmerge_action(target, source, env):
     cmfile, sto1, sto2 = map(str, source)
     sto_out = str(target[0])
 
-    cmd = ['cmalign','--hbanded','--sub','--merge','--dna','-o',
+    cmd = ['cmalign','--hbanded','--sub','--merge','--dna','-1','-o',
            sto_out, cmfile, sto1, sto2]
 
     print ' '.join(cmd)
@@ -185,51 +183,51 @@ def sample_wr(population, k):
     #return [_int(_random() * n) for i in itertools.repeat(None, k)]
     return [population[_int(_random() * n)] for i in itertools.repeat(None, k)]
 
-def cmmerge_all_action(target, source, env):
-    """
-    Successively merges a list of Stockholm-format aligments
+# def cmmerge_all_action(target, source, env):
+#     """
+#     Successively merges a list of Stockholm-format aligments
 
-    target - file in stockholm format
-    source - two or more files in stockholm format to be merged successively
-    """
+#     target - file in stockholm format
+#     source - two or more files in stockholm format to be merged successively
+#     """
 
-    tempdir = tempfile.mkdtemp(dir='.')
-    mktempname = lambda prefix, fileno: join(tempdir, 'round%i_file%02i.sto' \
-                                         % (prefix,fileno))
+#     tempdir = tempfile.mkdtemp(dir='.')
+#     mktempname = lambda prefix, fileno: join(tempdir, 'round%i_file%02i.sto' \
+#                                          % (prefix,fileno))
 
-    merged = map(str, source)
-    for i in itertools.count():
-        pairs = list(Seq.sequtil.grouper(2, merged))
-        print 'round %s, %s pairs' % (i, len(pairs))
+#     merged = map(str, source)
+#     for i in itertools.count():
+#         pairs = list(Seq.sequtil.grouper(2, merged))
+#         print 'round %s, %s pairs' % (i, len(pairs))
 
-        merged = []
-        for fileno,pair in enumerate(pairs):
-            first, second = pair
+#         merged = []
+#         for fileno,pair in enumerate(pairs):
+#             first, second = pair
 
-            if not second:
-                print '%(first)s + None --> %(first)s' % locals()
-                merged.insert(0,first)
-                continue
+#             if not second:
+#                 print '%(first)s + None --> %(first)s' % locals()
+#                 merged.insert(0,first)
+#                 continue
 
-            fout = mktempname(i, fileno)
-            print '%(first)s + %(second)s --> %(fout)s' % locals()
+#             fout = mktempname(i, fileno)
+#             print '%(first)s + %(second)s --> %(fout)s' % locals()
 
-            merged.append(fout)
-            cmd = ['cmalign','--hbanded','--sub','--merge','--dna','-o',
-                   fout, env['cmfile'], str(first), str(second)]
+#             merged.append(fout)
+#             cmd = ['cmalign','--hbanded','--sub','--merge','--dna','-o',
+#                    fout, env['cmfile'], str(first), str(second)]
 
-            print ' '.join(cmd)
-            # p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
-            # print p.communicate()[0]
-            # p = subprocess.Popen(cmd).communicate()
+#             print ' '.join(cmd)
+#             # p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+#             # print p.communicate()[0]
+#             # p = subprocess.Popen(cmd).communicate()
 
-        if len(merged) == 1:
-            break
+#         if len(merged) == 1:
+#             break
 
-    shutil.copyfile(merged[0], str(target[0]))
-    #shutil.rmtree(tempdir)
+#     shutil.copyfile(merged[0], str(target[0]))
+#     #shutil.rmtree(tempdir)
 
-cmmerge_all = Builder(action=cmmerge_all_action)
+# cmmerge_all = Builder(action=cmmerge_all_action)
 
 # tofasta
 def sto2fasta_action(target, source, env):
