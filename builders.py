@@ -457,136 +457,34 @@ rename = Builder(
 
 # pplacer and utilities
 def pplacer_emitter(target, source, env):
-    tree, info, refalign, qalign = source
-
-    target = os.path.splitext(str(qalign))[0] + '.place'
+    refpkg, merged = source
+    target = os.path.splitext(str(merged))[0] + '.json'
     return target, source
-
-# def pplacer_generator(source, target, env, for_signature):
-#     """
-#     target = [.place file (derived from query align)]
-#     source = [raxml tree renamed, raxml info, ref align, query align]
-#     """
-
-#     tree, info, refalign, qalign = source
-#     outdir, _ = split(str(qalign))
-
-#     action='nice pplacer --outDir %s -t ${SOURCES[0]} -s ${SOURCES[1]} -r ${SOURCES[2]} ${SOURCES[3]}' % outdir
-#     return action
 
 def pplacer_generator(source, target, env, for_signature):
     """
     target = [.place file (derived from query align)]
-    source = [raxml tree renamed, raxml info, ref align, query align]
+    source = [refpkg, ref align, query align]
 
+    Will add flags defined by env['pplacer_flags']
+    
+    Default flags are as follows:
+     * -p - calculate posterior probability and Bayes marginal likelihood
+    
     See http://matsen.fhcrc.org/pplacer/manual.html
-    -p adds posterior probability and Bayes marginal likelihood to output
-    --unfriendly reduces memory consumption
     """
 
-    tree, info, refalign, qalign = source
-    outdir, _ = split(str(qalign))
+    try:
+        flags = env['pplacer_flags']
+    except KeyError:
+        flags = '-p' # calculate posterior probabilities by default
 
-    check_count = False
+    refpkg, merged = source
+    outdir, _ = split(str(merged))
 
-    if check_count:
-        with open(str(qalign)) as qfile:
-            qcount = qfile.read().count('>')
-        unfriendly = '' if qcount < 2600 else '--unfriendly'
-    else:
-        unfriendly = ''
-
-    action='nice pplacer -p %(unfriendly)s --outDir %(outdir)s -t ${SOURCES[0]} -s ${SOURCES[1]} -r ${SOURCES[2]} ${SOURCES[3]}' % locals()
-
+    # -c Specify the path to the reference package.
+        
+    action='pplacer %(flags)s --out-dir "%(outdir)s" -c "%(refpkg)s" "%(merged)s"' % locals()
     return action
 
 pplacer = Builder(generator=pplacer_generator, emitter=pplacer_emitter)
-
-# placeviz
-def placeviz_generator(source, target, env, for_signature):
-    fname = str(source[0])
-    pth, fn = split(fname)
-    action='placeviz --outDir "%(pth)s" "%(fname)s"' % locals()
-    return action
-
-def placeviz_emitter(target, source, env):
-    fname = str(source[0])
-    target = fname.replace('.place','.ML.num.tre')
-    return target, source
-
-placeviz = Builder(
-    generator=placeviz_generator,
-    emitter=placeviz_emitter
-    )
-
-# placeutil --distmat
-def distmat_generator(source, target, env, for_signature):
-    src = str(source[0])
-    spath, sfile = split(src)
-
-    distfile = sfile.replace('.place','.distmat')
-
-    targ = str(target[0])
-    tpath, tfile = split(targ)
-
-    action = 'cp "%(src)s" "%(tpath)s"'
-    action += ' && cd %(tpath)s'
-    action += ' && placeutil --distmat "%(sfile)s"'
-    action += ' && mv "%(distfile)s" "%(tfile)s"'
-    action += ' && rm "%(tpath)s/%(sfile)s"'
-
-    return action % locals()
-
-distmat = Builder(
-    generator = distmat_generator
-    )
-
-# filenames.R from setup.ini
-
-def filenames_action(target, source, env):
-
-    """
-    Writes an R list defining variables and corresponding paths
-    specified in setup.ini to TARGET.
-
-    SOURCE is an .ini file (see ConfigParser)
-
-    A subset of sections are scanned for files and directories,
-    including [DEFAULT] and any section ending with 'files'. Files
-    and directories represented as absolute paths.
-    """
-
-    config = ConfigParser.SafeConfigParser()
-    config.optionxform = str # preserve case of options
-    config.read(str(source[0]))
-
-    lstr = """
-files <- list(
-    %s
-)"""
-
-    basedir = env['basedir']
-    defaultvars = set([x[0] for x in config.items('DEFAULT')])
-
-    sections = ['DEFAULT'] + [s for s in config.sections() if s.endswith('files')]
-    files = {}
-    for var,pth in itertools.chain(*[config.items(s) for s in sections]):
-        if var in files and var in defaultvars:
-            continue
-        elif var in files and not files[var].endswith(pth):
-            raise ValueError('"%s" is defined differently in multipe sections' % var)
-
-        files[var] = pth if pth.startswith(basedir) else join(basedir,pth)
-
-    # sys.stdout.write(lstr % ',\n    '.join(
-    #         '%s = "%s"' % tup for tup in sorted(files.items())
-    #         ) + '\n')
-
-
-    with open(str(target[0]),'w+') as fout:
-        fout.write(lstr % ',\n    '.join(
-                '`%s` = "%s"' % tup for tup in sorted(files.items())
-                ) + '\n')
-
-
-filenames = Builder(action=filenames_action)
