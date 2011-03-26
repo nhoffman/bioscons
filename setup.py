@@ -5,20 +5,21 @@ create unix package:    python setup.py sdist
 
 from distutils.core import setup
 import glob
-from __init__ import __version__, _check_python_version, _min_python_version
-_check_python_version()
 
-scripts = glob.glob('scripts/*.py')
+from bioscons.__init__ import __version__
+
+# all files with .py extension in top level are assumed to be scripts
+scripts = list(set(glob.glob('*.py')) - set(['setup.py']))
 
 params = {'author': 'Noah Hoffman',
           'author_email': 'noah.hoffman@gmail.com',
-          'description': 'Functions extending the scons build tool to support "reproducible research" in bioinformatics.',
-          'name': 'sconstools',
-          'package_dir': {'sconstools': '.'},
-          'packages': ['sconstools'],
+          'description': 'Functions extending the scons build tool for reproducible research in bioinformatics.',
+          'name': 'bioscons',
+          'package_dir': {'bioscons': 'bioscons'},
+          'packages': ['bioscons'],
           'scripts': scripts,
-          'url': 'http://github.com/nhoffman/sconstools',
+          'url': 'http://github.com/nhoffman/bioscons',
           'version': __version__,
-          'requires':['python (>= %s)' % _min_python_version,'scons (>= 1.3)', 'Seq']}
+          'requires':['python (>= 2.6)','scons (>= 2.0)']}
 
 setup(**params)
