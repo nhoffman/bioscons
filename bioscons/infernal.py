@@ -2,12 +2,7 @@ from os.path import join,split,splitext
 import os
 import subprocess
 
-try:
-    from SCons.Script import *
-except ImportError:
-    # we expect this to fail unless imported from within SConstruct
-    pass
-
+from SCons.Script import *
 
 # cmalign
 def cmalign_action(target, source, env):
@@ -18,17 +13,19 @@ def cmalign_action(target, source, env):
 
     cmfile, fasta = map(str, source)
     sto, scores = map(str, target)
-
+    
     cmd = ['cmalign','--hbanded','--sub','--dna','-1',
            '-o', sto, cmfile, fasta]
 
     print ' '.join(cmd)
 
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
-    scorestr = p.communicate()[0]
 
-    with open(scores, 'w') as scorefile:
-        scorefile.write(scorestr)
+    print p.communicate()
+    # scorestr = p.communicate()[0]
+    
+    # with open(scores, 'w') as scorefile:
+    #     scorefile.write(scorestr)
 
 cmalign = Builder(
     action=cmalign_action)
