@@ -1,0 +1,32 @@
+import os
+from os.path import join,split,splitext
+
+from bioscons.fileutils import bunzip2
+from bioscons.infernal import cmalign
+
+vars = Variables()
+vars.Add('cmfile_archive', 'example alignment profile (compressed)',
+         '../testfiles/bacteria16S_508_mod5.cm.bz2')
+vars.Add('fasta', 'DNA sequences in fasta format',
+         '../testfiles/short16s.fasta')
+
+
+env = Environment(ENV=os.environ, variables=vars)
+
+env['BUILDERS']['bunzip2'] = bunzip2
+env['BUILDERS']['cmalign'] = cmalign
+
+cmfile = env.bunzip2(source='$cmfile_archive')
+
+faname = env['fasta'].replace('.fasta','')
+print faname
+
+alignment, scores = env.cmalign(
+    target = Flatten([faname+'.sto', faname+'_scores.txt']), 
+    source = Flatten([cmfile, '$fasta'])
+    )
+
+
+# fails if pdflatex not in $PATH
+# env.PDF(source=texfile)
+
