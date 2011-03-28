@@ -5,13 +5,15 @@ import re
 import pprint
 import glob
 
-import sconstools
+import bioscons
 
-vars = Variables()
-env = Environment(ENV=os.environ, variables=vars)
+print bioscons.__file__
 
-env['BUILDERS']['sweave'] = sconstools.sweave.build
-texfile = env.sweave(source='document.Rnw')
+# vars = Variables()
+# env = Environment(ENV=os.environ, variables=vars)
 
-# note: fails if pdflatex not in $PATH
-env.PDF(source=texfile)
+# env['BUILDERS']['sweave'] = sconstools.sweave.build
+# texfile = env.sweave(source='document.Rnw')
+
+# # note: fails if pdflatex not in $PATH
+# env.PDF(source=texfile)

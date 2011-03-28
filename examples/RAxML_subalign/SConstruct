@@ -1,0 +1,93 @@
+"""
+Create an exhaustive set of leave-one-out trees using RAxML
+"""
+
+import os
+import sys
+from os.path import join,split,splitext
+import re
+import pprint
+import glob
+
+import Seq
+import sconstools
+
+# check timestamps before calculating md5 checksums
+# see http://www.scons.org/doc/production/HTML/scons-user.html#AEN929
+Decider('MD5-timestamp')
+
+# variables is a container for objects that are accessible within the "env" namespace.
+# first we create a new oject of class Variables
+# http://www.scons.org/doc/production/HTML/scons-user.html#AEN2488
+vars = Variables()
+
+# these are default variables that can get overriden by shell variables
+# syntax is variable name, docstring, and the target
+vars.Add('RAxML','raxml executable','raxmlHPC-SSE3')
+vars.Add('RAxML_threaded','raxml executable (threaded)','raxmlHPC-PTHREADS-SSE3')
+vars.Add('raxml_threads', '', 1)
+# the argument to vars.Add could be PathVarable, ListVariable, etc
+# that method adds a layer of validataion.
+
+# set up our env
+# os.environ returns a dictonary mapping all their environment variables to their value
+# (we could put in an aribtrary dictionary for ENV)
+env = Environment(ENV=os.environ, variables=vars)
+
+### builders
+# there are various ways of registering a builder in the env object.
+# env object here has a special method that allows us to use this square bracket operator to access and set things like it is a dictionary
+# these print statements show how raxml becomes an attribute of env
+print "raxml" in dir(env)
+env['BUILDERS']['raxml'] = sconstools.builders.raxml
+print "raxml" in dir(env)
+# could add other builders here with same syntax (one per line)
+
+indir = 'input'
+outdir = 'output'
+
+# join intelligently puts together file name components (part of os.path)
+aln_in = join(indir,'test_aln.fasta')
+
+seqs = Seq.io_fasta.read(open(aln_in).read())
+nseqs = len(seqs)
+
+treefiles = []
+for i in range(nseqs):
+    # zfill pads with zeroes for fixed width
+    pth = join(outdir, str(i).zfill(3))
+    print pth
+
+    # Command is for when we want to run something in the shell
+    # ??: How does it work with the plural of TARGET and SOURCE? Is that for when those things are lists?
+    # these are of type <class 'SCons.Node.FS.Entry'>
+    # we can print them with e.g. print fasta
+    # the execution of any build event (e.g. env.Command) returns a list.
+    # the contens
+    fasta, phylip = env.Command(
+    # "flatten" Flattens a sequence to a non-nested list.
+    # we set our target to be a list
+    # sources or targets can be either strings (corresponding to filenames) or <class 'SCons.Node.FS.Entry'>ies or a list thereof
+    # but no heirarchy
+    # Flatten is not necessary here, but would be if we had target = Flatten([mylist, join(pth,'aln.phy')]),
+    # used here by convention
+    # note that environment variable substutution can be used for any of these arguments
+    # $TARGET gets substituted with the first of the target list
+    # $TARGETS is the whole list; similar thing for $SOURCES
+    # can also use ${TARGETS[1:]} to get the targets starting at the second one (in general, bash variable substution)
+        target = Flatten([join(pth,'aln.fasta'), join(pth,'aln.phy')]),
+        source = aln_in,
+        action = 'python remove_one.py %s $SOURCE $TARGETS' % i
+        )
+    # setting up a dependency on the script
+    Depends(fasta, 'remove_one.py')
+
+# here we don't specify a target, as the targets are specified in the builder
+    raxinfo, raxtree = env.raxml(source=phylip)
+    treefiles.append(raxtree)
+
+treelist = env.Command(
+    source = treefiles,
+    target = join(outdir,'treelist.txt'),
+    action = 'ls $SOURCES > $TARGET'
+    )
