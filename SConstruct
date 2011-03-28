@@ -1,14 +1,13 @@
 import os
 import sys
+import glob
 
 vars = Variables()
-vars.Add(('RSTFLAGS','flags for rst2html.py','--generator --date --toc-top-backlinks'))
-
 env = Environment(ENV=os.environ, variables=vars)
 
-env['BUILDERS']['rst2html'] = Builder(
-    action = 'rst2html.py $RSTFLAGS $SOURCE $TARGET'
-    )
+# run all subsidiary SConstruct scripts in the tests directory
+SConscript(glob.glob('tests/*/SConstruct'))
 
-env.rst2html('README.html','README.rst')
-
+# for dirpath, dirnames, filenames in os.walk('tests'):
+#     print dirpath, dirnames, filenames
+    
