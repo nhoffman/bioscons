@@ -18,25 +18,6 @@ try:
 except ImportError:
     Seq = None
     
-# copyfile
-def copyfile_emitter(target, source, env):
-    """
-    target - name of file or directory
-    source - filename
-    """
-
-    sname = str(source[0])
-    tname = str(target[0])
-    if os.path.isdir(tname):
-        target = join(tname, split(sname)[1])
-
-    return target, source
-
-copyfile = Builder(
-    emitter=copyfile_emitter,
-    action='cp $SOURCE $TARGET'
-    )
-
 def sample_wr(population, k):
     "Chooses k random elements (with replacement) from a population"
     n = len(population)

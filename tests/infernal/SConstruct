@@ -1,0 +1,43 @@
+import os
+from os.path import join,split,splitext
+
+from bioscons.fileutils import bunzip2, split_path
+from bioscons.infernal import cmalign, cmalign_mpi, cmmerge
+
+vars = Variables()
+vars.Add('cmfile_archive', 'example alignment profile (compressed)',
+         '../testfiles/bacteria16S_508_mod5.cm.bz2')
+vars.Add('fasta', 'DNA sequences in fasta format',
+         '../testfiles/short16s.fasta')
+
+env = Environment(ENV=os.environ, variables=vars)
+
+env['BUILDERS']['bunzip2'] = bunzip2
+env['BUILDERS']['cmalign'] = cmalign
+env['BUILDERS']['cmalign_mpi'] = cmalign_mpi
+env['BUILDERS']['cmmerge'] = cmmerge
+
+cmfile = env.bunzip2(target=None, source='$cmfile_archive')
+
+_, faname, _ = split_path(env['fasta'])
+
+# TODO: write output files to some outdir
+
+align1, scores1 = env.cmalign(
+    target = Flatten([faname+'1.sto', faname+'1_scores.txt']), 
+    source = Flatten([cmfile, '$fasta'])
+    )
+
+merged = env.cmmerge(
+    target = 'merged.sto',
+    source = Flatten([cmfile, align1, align1])
+    )
+
+align2, scores2 = env.cmalign_mpi(
+    target = Flatten([faname+'2.sto', faname+'2_scores.txt']), 
+    source = Flatten([cmfile, '$fasta'])
+    )
+
+# fails if pdflatex not in $PATH
+# env.PDF(source=texfile)
+
