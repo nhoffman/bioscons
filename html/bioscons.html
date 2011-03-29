@@ -1,0 +1,226 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>bioscons Documentation &mdash; bioscons v0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="bioscons v0.0.1 documentation" href="index.html" />
+    <link rel="prev" title="Welcome to bioscons’s documentation!" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to bioscons’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">bioscons v0.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="bioscons-documentation">
+<h1><tt class="docutils literal"><span class="pre">bioscons</span></tt> Documentation<a class="headerlink" href="#bioscons-documentation" title="Permalink to this headline">¶</a></h1>
+<p>This page contains the <tt class="docutils literal"><span class="pre">bioscons</span></tt> Package documentation.</p>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul class="simple">
+</ul>
+</div>
+</div>
+<div class="section" id="module-bioscons.infernal">
+<span id="the-infernal-module"></span><h2>The <tt class="xref py py-mod docutils literal"><span class="pre">infernal</span></tt> Module<a class="headerlink" href="#module-bioscons.infernal" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="builders">
+<h3>Builders<a class="headerlink" href="#builders" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="cmalign">
+<h4>cmalign<a class="headerlink" href="#cmalign" title="Permalink to this headline">¶</a></h4>
+<p>Aligns sequences in the source fasta-file given
+alignment-profile. Returns the Stockholm-format alignment and a file
+containing the alignment statistics for each sequence.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">source:</th><td class="field-body">[alignment-profile, fasta-file]</td>
+</tr>
+<tr class="field"><th class="field-name">target:</th><td class="field-body">[file in stockholm format, file containing align scores]</td>
+</tr>
+<tr class="field"><th class="field-name" colspan="2">environment variables:</th></tr>
+<tr><td>&nbsp;</td><td class="field-body">env[&#8216;cmalign&#8217;] provides an alternative path to the cmalign executable (default &#8216;cmalign&#8217;).</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="cmalign-mpi">
+<h4>cmalign_mpi<a class="headerlink" href="#cmalign-mpi" title="Permalink to this headline">¶</a></h4>
+<p>Aligns sequences in the source fasta-file given
+alignment-profile. Returns the Stockholm-format alignment and a file
+containing the alignment statistics for each sequence. cmalign is run
+using <tt class="docutils literal"><span class="pre">mpirun</span> <span class="pre">-np</span> <span class="pre">N</span> <span class="pre">cmalign</span> <span class="pre">--mpi</span></tt>; note that &#8216;cmalign &#8211;mpi&#8217; is
+only available if cmalign is compiled with the &#8216;&#8211;enable-mpi&#8217; flag.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">source:</th><td class="field-body"><p class="first">[alignment-profile, fasta-file]</p>
+</td>
+</tr>
+<tr class="field"><th class="field-name">target:</th><td class="field-body"><p class="first">[file in stockholm format, file containing align scores]</p>
+</td>
+</tr>
+<tr class="field"><th class="field-name" colspan="2">environment variables:</th></tr>
+<tr><td>&nbsp;</td><td class="field-body"><ul class="first last simple">
+<li>env[&#8216;cmalign&#8217;] provides an alternative path to the cmalign executable (default &#8216;cmalign&#8217;).</li>
+<li>env[&#8216;cmalign_nproc&#8217;] defines the number of processors (default 2).</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="cmmerge">
+<h4>cmmerge<a class="headerlink" href="#cmmerge" title="Permalink to this headline">¶</a></h4>
+<p>Merges two sequence alignments in Stockholm format given
+alignment-profile using <tt class="docutils literal"><span class="pre">cmalign</span> <span class="pre">--merge</span></tt>. Returns the Stockholm-format alignment.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">source:</th><td class="field-body">[alignment-profile, stockholm-file1, stockholm-file2]</td>
+</tr>
+<tr class="field"><th class="field-name">target:</th><td class="field-body">[alignment in stockholm format]</td>
+</tr>
+<tr class="field"><th class="field-name" colspan="2">environment variables:</th></tr>
+<tr><td>&nbsp;</td><td class="field-body">env[&#8216;cmalign&#8217;] provides an alternative path to the cmalign executable (default &#8216;cmalign&#8217;).</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="public-functions">
+<h3>Public functions<a class="headerlink" href="#public-functions" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="bioscons.infernal.check_cmalign">
+<tt class="descclassname">bioscons.infernal.</tt><tt class="descname">check_cmalign</tt><big>(</big><em>env</em><big>)</big><a class="reference internal" href="_modules/bioscons/infernal.html#check_cmalign"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.infernal.check_cmalign" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determines whether the cmalign executable can be used to generate
+a version string. Uses either the path to the cmalign executable
+defined in env[&#8216;cmalign&#8217;] or &#8216;cmalign&#8217; by default. If successful,
+returns (path-to-executable, version-string). Raises SystemError
+on failure.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="bioscons.infernal.check_mpirun">
+<tt class="descclassname">bioscons.infernal.</tt><tt class="descname">check_mpirun</tt><big>(</big><em>env</em><big>)</big><a class="reference internal" href="_modules/bioscons/infernal.html#check_mpirun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.infernal.check_mpirun" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determines whether the mpirun executable can be used to generate
+a version string. Uses either the path to the mpirun executable
+defined in env[&#8216;mpirun&#8217;] or &#8216;mpirun&#8217; by default. If successful,
+returns (path-to-executable, version-string). Raises SystemError
+on failure.</p>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#"><tt class="docutils literal"><span class="pre">bioscons</span></tt> Documentation</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-bioscons.infernal">The <tt class="docutils literal"><span class="pre">infernal</span></tt> Module</a><ul>
+<li><a class="reference internal" href="#builders">Builders</a><ul>
+<li><a class="reference internal" href="#cmalign">cmalign</a></li>
+<li><a class="reference internal" href="#cmalign-mpi">cmalign_mpi</a></li>
+<li><a class="reference internal" href="#cmmerge">cmmerge</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#public-functions">Public functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to bioscons&#8217;s documentation!</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/bioscons.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to bioscons’s documentation!"
+             >previous</a> |</li>
+        <li><a href="index.html">bioscons v0.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Noah Hoffman.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>
