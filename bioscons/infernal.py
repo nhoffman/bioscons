@@ -1,3 +1,54 @@
+"""
+Builders
+--------
+
+cmalign
++++++++
+
+Aligns sequences in the source fasta-file given
+alignment-profile. Returns the Stockholm-format alignment and a file
+containing the alignment statistics for each sequence.
+
+:source: [alignment-profile, fasta-file]
+
+:target: [file in stockholm format, file containing align scores]
+
+:environment variables: env['cmalign'] provides an alternative path to the cmalign executable (default 'cmalign').
+
+cmalign_mpi
++++++++++++
+
+Aligns sequences in the source fasta-file given
+alignment-profile. Returns the Stockholm-format alignment and a file
+containing the alignment statistics for each sequence. cmalign is run
+using ``mpirun -np N cmalign --mpi``; note that 'cmalign --mpi' is
+only available if cmalign is compiled with the '--enable-mpi' flag.
+
+:source: [alignment-profile, fasta-file]
+
+:target: [file in stockholm format, file containing align scores]
+
+:environment variables:
+ * env['cmalign'] provides an alternative path to the cmalign executable (default 'cmalign').
+ * env['cmalign_nproc'] defines the number of processors (default 2).
+
+cmmerge
++++++++
+
+Merges two sequence alignments in Stockholm format given
+alignment-profile using ``cmalign --merge``. Returns the Stockholm-format alignment.
+
+
+:source: [alignment-profile, stockholm-file1, stockholm-file2]
+
+:target: [alignment in stockholm format]
+
+:environment variables: env['cmalign'] provides an alternative path to the cmalign executable (default 'cmalign').
+
+Public functions
+----------------
+"""
+
 from os.path import join,split,splitext
 import os
 import subprocess
@@ -12,6 +63,13 @@ except ImportError:
     pass
 
 def check_cmalign(env):
+    """
+    Determines whether the cmalign executable can be used to generate
+    a version string. Uses either the path to the cmalign executable
+    defined in env['cmalign'] or 'cmalign' by default. If successful,
+    returns (path-to-executable, version-string). Raises SystemError
+    on failure.
+    """
     
     try:
         cmalign = env['cmalign']
@@ -32,6 +90,13 @@ def check_cmalign(env):
     return cmalign, version
 
 def check_mpirun(env):
+    """
+    Determines whether the mpirun executable can be used to generate
+    a version string. Uses either the path to the mpirun executable
+    defined in env['mpirun'] or 'mpirun' by default. If successful,
+    returns (path-to-executable, version-string). Raises SystemError
+    on failure.
+    """
     
     try:
         mpirun = env['mpirun']
@@ -54,7 +119,7 @@ def check_mpirun(env):
 
 
 # cmalign
-def cmalign_action(target, source, env):
+def _cmalign_action(target, source, env):
     """
     target - [file in stockholm format, file containing align scores]
     source - [alignment profile, fasta file]
@@ -77,9 +142,9 @@ def cmalign_action(target, source, env):
         scorefile.write(out)
 
 cmalign = Builder(
-    action=cmalign_action)
+    action=_cmalign_action)
 
-def cmalign_mpi_action(target, source, env):
+def _cmalign_mpi_action(target, source, env):
     """
     Run cmalign using mpi (mpirun)
 
@@ -130,13 +195,13 @@ def cmalign_mpi_action(target, source, env):
     #     scorefile.write(scorestr)
 
 cmalign_mpi = Builder(
-    action=cmalign_mpi_action)
+    action=_cmalign_mpi_action)
 
 # cmalign = Builder(
 #     action='cmalign --hbanded --sub --dna -o ${TARGETS[0]} $cmfile $SOURCES | tee ${TARGETS[1]}'
 #     )
 
-def cmmerge_action(target, source, env):
+def _cmmerge_action(target, source, env):
     """
     target - file in stockholm format
     source - [cmfile, cmalign1.sto, cmalign2.sto]
@@ -153,7 +218,7 @@ def cmmerge_action(target, source, env):
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
     # print p.communicate()[0]
 
-cmmerge = Builder(action=cmmerge_action)
+cmmerge = Builder(action=_cmmerge_action)
 
 # def cmmerge_all_action(target, source, env):
 #     """
