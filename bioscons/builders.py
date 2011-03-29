@@ -1,3 +1,7 @@
+"""
+Docstring for builders.py
+"""
+
 import itertools
 import subprocess
 import ConfigParser
@@ -6,11 +10,13 @@ import shutil
 import random
 from os.path import join,split,splitext
 import os.path
+import sys
 
+# we expect this to fail unless imported from within SConstruct
+sys.path.insert(0,'/usr/local/lib/scons')
 try:
     from SCons.Script import *
 except ImportError:
-    # we expect this to fail unless imported from within SConstruct
     pass
 
 try:
@@ -86,25 +92,6 @@ def mergedToFasta_action(target, source, env):
         outfile.write(Seq.io_fasta.write(list(qseqs)))
 
 mergedToFasta = Builder(action=mergedToFasta_action)
-
-
-def fa_to_seqmat_action(target, source, env):
-    """
-    Read a fasta format alignment and save a binary sequence matrix (package ape)
-    """
-
-    infile, outfile = source[0],target[0]
-
-    rcmd = """library(ape)
-    seqmat <- read.dna("%(infile)s", format="fasta", as.matrix=TRUE)
-    save(seqmat, file="%(outfile)s")
-    stopifnot(file.exists("%(outfile)s"))
-    q()""" % locals()
-
-    p = subprocess.Popen(["R", "--vanilla"], stdin=subprocess.PIPE, stdout=sys.stdout)
-    p.communicate(rcmd)
-
-fa_to_seqmat = Builder(action=fa_to_seqmat_action)
 
 # stockholm format to phylip (replace names in phylip file to make
 # raxml happy)

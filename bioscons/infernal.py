@@ -5,7 +5,11 @@ import logging
 
 log = logging
 
-from SCons.Script import *
+# we expect this to fail unless imported from within SConstruct
+try:
+    from SCons.Script import *
+except ImportError:
+    pass
 
 def check_cmalign(env):
     

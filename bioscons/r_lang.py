@@ -65,6 +65,25 @@ def fa_to_seqlist_action(target, source, env):
     p = subprocess.Popen(["R", "--vanilla"], stdin=subprocess.PIPE, stdout=sys.stdout)
     p.communicate(rcmd)
 
+fa_to_seqlist = Builder(action=fa_to_seqlist_action)    
+
+def fa_to_seqmat_action(target, source, env):
+    """
+    Read a fasta format alignment and save a binary sequence matrix (package ape)
+    """
+
+    infile, outfile = source[0],target[0]
+
+    rcmd = """library(ape)
+    seqmat <- read.dna("%(infile)s", format="fasta", as.matrix=TRUE)
+    save(seqmat, file="%(outfile)s")
+    stopifnot(file.exists("%(outfile)s"))
+    q()""" % locals()
+
+    p = subprocess.Popen(["R", "--vanilla"], stdin=subprocess.PIPE, stdout=sys.stdout)
+    p.communicate(rcmd)
+
+fa_to_seqmat = Builder(action=fa_to_seqmat_action)
 
 def sto_to_dnamultalign_action(target, source, env):
 
@@ -82,8 +101,6 @@ def sto_to_dnamultalign_action(target, source, env):
     p2 = subprocess.Popen(["R", "--vanilla"], stdin=p1.stdout, stdout=sys.stdout)
 
 sto_to_dnamultalign = Builder(action=sto_to_dnamultalign_action)
-
-fa_to_seqlist = Builder(action=fa_to_seqlist_action)
 
 # builder for R scripts
 # the first source is the name of the script
