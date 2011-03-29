@@ -11,9 +11,12 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys, os
+import sys, os, glob
 # For SCons
-from SCons import Builder
+# note that the below is not necessary if scons is installed with
+# setup.py install --standard-lib (I think)
+sys.path = glob.glob(os.path.join(sys.exec_prefix,'lib','scons*')) + sys.path
+from SCons.Script import *
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
