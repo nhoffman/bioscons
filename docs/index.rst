@@ -11,6 +11,8 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   bioscons
+
 Indices and tables
 ==================
 
