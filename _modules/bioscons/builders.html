@@ -46,6 +46,10 @@
           <div class="body">
             
   <h1>Source code for bioscons.builders</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Docstring for builders.py</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
 <span class="kn">import</span> <span class="nn">itertools</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">ConfigParser</span>
@@ -54,11 +58,13 @@
 <span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">join</span><span class="p">,</span><span class="n">split</span><span class="p">,</span><span class="n">splitext</span>
 <span class="kn">import</span> <span class="nn">os.path</span>
+<span class="kn">import</span> <span class="nn">sys</span>
 
+<span class="c"># we expect this to fail unless imported from within SConstruct</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="s">&#39;/usr/local/lib/scons&#39;</span><span class="p">)</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">SCons.Script</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="c"># we expect this to fail unless imported from within SConstruct</span>
     <span class="k">pass</span>
 
 <span class="k">try</span><span class="p">:</span>
@@ -134,25 +140,6 @@
         <span class="n">outfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">Seq</span><span class="o">.</span><span class="n">io_fasta</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">qseqs</span><span class="p">)))</span>
 </div>
 <span class="n">mergedToFasta</span> <span class="o">=</span> <span class="n">Builder</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="n">mergedToFasta_action</span><span class="p">)</span>
-
-
-<div class="viewcode-block" id="fa_to_seqmat_action"><a class="viewcode-back" href="../../bioscons.html#bioscons.builders.fa_to_seqmat_action">[docs]</a><span class="k">def</span> <span class="nf">fa_to_seqmat_action</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">env</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Read a fasta format alignment and save a binary sequence matrix (package ape)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">infile</span><span class="p">,</span> <span class="n">outfile</span> <span class="o">=</span> <span class="n">source</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">target</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-    <span class="n">rcmd</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;library(ape)</span>
-<span class="s">    seqmat &lt;- read.dna(&quot;</span><span class="si">%(infile)s</span><span class="s">&quot;, format=&quot;fasta&quot;, as.matrix=TRUE)</span>
-<span class="s">    save(seqmat, file=&quot;</span><span class="si">%(outfile)s</span><span class="s">&quot;)</span>
-<span class="s">    stopifnot(file.exists(&quot;</span><span class="si">%(outfile)s</span><span class="s">&quot;))</span>
-<span class="s">    q()&quot;&quot;&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
-
-    <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="s">&quot;R&quot;</span><span class="p">,</span> <span class="s">&quot;--vanilla&quot;</span><span class="p">],</span> <span class="n">stdin</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
-    <span class="n">p</span><span class="o">.</span><span class="n">communicate</span><span class="p">(</span><span class="n">rcmd</span><span class="p">)</span>
-</div>
-<span class="n">fa_to_seqmat</span> <span class="o">=</span> <span class="n">Builder</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="n">fa_to_seqmat_action</span><span class="p">)</span>
 
 <span class="c"># stockholm format to phylip (replace names in phylip file to make</span>
 <span class="c"># raxml happy)</span>

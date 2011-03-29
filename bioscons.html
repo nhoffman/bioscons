@@ -59,12 +59,7 @@
 </div>
 <div class="section" id="module-bioscons.builders">
 <span id="the-builders-module"></span><h2>The <tt class="xref py py-mod docutils literal"><span class="pre">builders</span></tt> Module<a class="headerlink" href="#module-bioscons.builders" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="bioscons.builders.fa_to_seqmat_action">
-<tt class="descclassname">bioscons.builders.</tt><tt class="descname">fa_to_seqmat_action</tt><big>(</big><em>target</em>, <em>source</em>, <em>env</em><big>)</big><a class="reference internal" href="_modules/bioscons/builders.html#fa_to_seqmat_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.builders.fa_to_seqmat_action" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read a fasta format alignment and save a binary sequence matrix (package ape)</p>
-</dd></dl>
-
+<p>Docstring for builders.py</p>
 <dl class="function">
 <dt id="bioscons.builders.mergedToFasta_action">
 <tt class="descclassname">bioscons.builders.</tt><tt class="descname">mergedToFasta_action</tt><big>(</big><em>target</em>, <em>source</em>, <em>env</em><big>)</big><a class="reference internal" href="_modules/bioscons/builders.html#mergedToFasta_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.builders.mergedToFasta_action" title="Permalink to this definition">¶</a></dt>
@@ -94,6 +89,44 @@ source = [stockhom format alignment]</p>
 <dd></dd></dl>
 
 </div>
+<div class="section" id="module-bioscons.infernal">
+<span id="the-infernal-module"></span><h2>The <tt class="xref py py-mod docutils literal"><span class="pre">infernal</span></tt> Module<a class="headerlink" href="#module-bioscons.infernal" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="bioscons.infernal.check_cmalign">
+<tt class="descclassname">bioscons.infernal.</tt><tt class="descname">check_cmalign</tt><big>(</big><em>env</em><big>)</big><a class="reference internal" href="_modules/bioscons/infernal.html#check_cmalign"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.infernal.check_cmalign" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="bioscons.infernal.check_mpirun">
+<tt class="descclassname">bioscons.infernal.</tt><tt class="descname">check_mpirun</tt><big>(</big><em>env</em><big>)</big><a class="reference internal" href="_modules/bioscons/infernal.html#check_mpirun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.infernal.check_mpirun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="bioscons.infernal.cmalign_action">
+<tt class="descclassname">bioscons.infernal.</tt><tt class="descname">cmalign_action</tt><big>(</big><em>target</em>, <em>source</em>, <em>env</em><big>)</big><a class="reference internal" href="_modules/bioscons/infernal.html#cmalign_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.infernal.cmalign_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>target - [file in stockholm format, file containing align scores]
+source - [alignment profile, fasta file]</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="bioscons.infernal.cmalign_mpi_action">
+<tt class="descclassname">bioscons.infernal.</tt><tt class="descname">cmalign_mpi_action</tt><big>(</big><em>target</em>, <em>source</em>, <em>env</em><big>)</big><a class="reference internal" href="_modules/bioscons/infernal.html#cmalign_mpi_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.infernal.cmalign_mpi_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run cmalign using mpi (mpirun)</p>
+<p>Number of processors (default 2) is set using
+&#8216;cmalign_nproc&#8217;. Note that &#8216;cmalign &#8211;mpi&#8217; is only available if
+cmalign is configured using the &#8216;&#8211;enable-mpi&#8217; on compilation.</p>
+<p>target - [file in stockholm format, file containing align scores]
+source - [alignment profile, fasta file]</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="bioscons.infernal.cmmerge_action">
+<tt class="descclassname">bioscons.infernal.</tt><tt class="descname">cmmerge_action</tt><big>(</big><em>target</em>, <em>source</em>, <em>env</em><big>)</big><a class="reference internal" href="_modules/bioscons/infernal.html#cmmerge_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.infernal.cmmerge_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>target - file in stockholm format
+source - [cmfile, cmalign1.sto, cmalign2.sto]</p>
+</dd></dl>
+
+</div>
 </div>
 
 
@@ -109,6 +142,7 @@ source = [stockhom format alignment]</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-bioscons.builders">The <tt class="docutils literal"><span class="pre">builders</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-bioscons.infernal">The <tt class="docutils literal"><span class="pre">infernal</span></tt> Module</a></li>
 </ul>
 </li>
 </ul>

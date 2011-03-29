@@ -16,3 +16,11 @@ The :mod:`builders` Module
     :members:
     :undoc-members:
     :show-inheritance:
+
+The :mod:`infernal` Module
+--------------------------
+
+.. automodule:: bioscons.infernal
+    :members:
+    :undoc-members:
+    :show-inheritance:
