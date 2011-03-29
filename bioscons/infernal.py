@@ -1,8 +1,53 @@
 from os.path import join,split,splitext
 import os
 import subprocess
+import logging
+
+log = logging
 
 from SCons.Script import *
+
+def check_cmalign(env):
+    
+    try:
+        cmalign = env['cmalign']
+    except KeyError:
+        cmalign = 'cmalign'
+        
+    p = subprocess.Popen('%s -h' % cmalign,
+                         stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    out, err = p.communicate()
+    
+    if err:
+        raise SystemError('"%s" could not be executed. Is it installed?' % cmalign)
+
+    version = out.splitlines()[1].rstrip('# ')
+
+    log.info('using %s, %s' % (cmalign, version))
+
+    return cmalign, version
+
+def check_mpirun(env):
+    
+    try:
+        mpirun = env['mpirun']
+    except KeyError:
+        mpirun = 'mpirun'
+
+    # version info is in stderr. Yeah.
+    p = subprocess.Popen('%s -V' % mpirun,
+                         stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    out, err = p.communicate()
+    
+    if p.returncode > 0:
+        raise SystemError('"%s" could not be executed. Is it installed?' % mpirun)
+
+    version = err.splitlines()[0]
+
+    log.info('using %s, %s' % (mpirun, version))
+
+    return mpirun, version
+
 
 # cmalign
 def cmalign_action(target, source, env):
@@ -11,21 +56,21 @@ def cmalign_action(target, source, env):
     source - [alignment profile, fasta file]
     """
 
+    cmalign, version = check_cmalign(env)
+    
     cmfile, fasta = map(str, source)
     sto, scores = map(str, target)
-    
-    cmd = ['cmalign','--hbanded','--sub','--dna','-1',
+        
+    cmd = [cmalign,'--hbanded','--sub','--dna','-1',
            '-o', sto, cmfile, fasta]
 
-    print ' '.join(cmd)
-
-    p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
-
-    print p.communicate()
-    # scorestr = p.communicate()[0]
+    log.info(' '.join(cmd))
     
-    # with open(scores, 'w') as scorefile:
-    #     scorefile.write(scorestr)
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    out, err = p.communicate()
+        
+    with open(scores, 'w') as scorefile:
+        scorefile.write(out)
 
 cmalign = Builder(
     action=cmalign_action)
@@ -34,26 +79,26 @@ def cmalign_mpi_action(target, source, env):
     """
     Run cmalign using mpi (mpirun)
 
-    Number of processors (default 1) is set using 'cmalign_nproc'.
+    Number of processors (default 2) is set using
+    'cmalign_nproc'. Note that 'cmalign --mpi' is only available if
+    cmalign is configured using the '--enable-mpi' on compilation.
 
     target - [file in stockholm format, file containing align scores]
     source - [alignment profile, fasta file]
     """
-
+    
+    mpirun, mpi_version = check_mpirun(env)
+    cmalign, cmalign_version = check_cmalign(env)
+    
     cmfile, fasta = map(str, source)
     sto, scores = map(str, target)
 
     try:
         nproc = int(env['cmalign_nproc'])
     except (KeyError, ValueError):
-        nproc = 1
+        nproc = 2
 
-    try:
-        cmalign = env['cmalign']
-    except KeyError:
-        cmalign = 'cmalign'
-
-    cmd = ['mpirun',
+    cmd = [mpirun,
            '-np %s' % nproc,
            cmalign,
            '--mpi','--hbanded','--sub','--dna','-1',
@@ -61,9 +106,10 @@ def cmalign_mpi_action(target, source, env):
            '|', 'tee', scores]
 
     cmd = ' '.join(cmd)
+    log.info(cmd)
     os.system(cmd)
 
-    # TODO: there is some problem with the executaion environment that
+    # TODO: there is some problem with the execution environment that
     # results in an error in mpirun when executed usimg subprocess
 
     # cmd = ['mpirun',
@@ -101,7 +147,7 @@ def cmmerge_action(target, source, env):
     print ' '.join(cmd)
 
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
-    print p.communicate()[0]
+    # print p.communicate()[0]
 
 cmmerge = Builder(action=cmmerge_action)
 
