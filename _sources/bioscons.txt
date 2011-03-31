@@ -8,11 +8,10 @@ Subpackages
 
 .. toctree::
 
-
-The :mod:`builders` Module
+The :mod:`infernal` Module
 --------------------------
 
-.. automodule:: bioscons.builders
+.. automodule:: bioscons.infernal
     :members:
     :undoc-members:
     :show-inheritance:
