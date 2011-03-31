@@ -1,9 +1,13 @@
-============
- sconstools
-============
+==========
+ bioscons
+==========
 
-This package extends the scons build tool to support reproducible
-research in bioinformatics.
+This package extends the scons build tool for the construction of reproducible
+workflows in bioinformatics.
+
+This project is in fairly early stages of development, although I have
+been using scons to create workflows using an earlier version of this
+package for some time.
 
 
 Background
@@ -31,7 +35,16 @@ ruffus
   It also supports incremental recalculation.
   It does not, however, provide assistance for making system calls or managing files, and these must be done with explict sytem calls on "hand-built" strings.
 
+galaxy galaxy_ is a web-based tool for building remotely-executed
+  workflows. This is a hugely attractive framework for exposing
+  complex workflows using a graphical-interface, but occupies a very
+  different niche from this project (which provides a command line
+  interface to locally-executed programs).
+   
+Documentation
+=============
 
+Documentation is available on github: http://nhoffman.github.com/bioscons/
 
 Installation
 ============
@@ -46,32 +59,22 @@ Development of this project begin using the 1.x version of scons, and
 seems to work so far using version 2.x. Future development will focus
 on version 2.x.
 
-Seq
-~~~
-
-At the moment, this package depends on my Seq package. Down the road I will likely transition to using biopython instead. For now, Seq is also on github: https://github.com/nhoffman/Seq
-
-Installation is as you would expect (see the Seq repo above for dependencies)::
-
- git clone git://github.com/nhoffman/Seq.git
- cd Seq
- python setup.py install
-
 source
 ------
 
 Obtain the source code from github. For read-only access::
 
- git clone git://github.com/nhoffman/sconstools.git
+ git clone git://github.com/nhoffman/bioscons.git
 
 For committers::
 
- git clone git@github.com:nhoffman/sconstools.git
+ git clone git@github.com:nhoffman/bioscons.git
 
 Then install::
 
- cd sconstools
+ cd bioscons
  python setup.py install
 
 .. Targets ..
 .. _ruffus : http://wwwfgu.anat.ox.ac.uk/~lg/oss/ruffus/index.html
+.. _galaxy : http://galaxy.psu.edu/

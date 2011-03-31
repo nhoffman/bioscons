@@ -9,5 +9,5 @@
 (cd html && git add . && git commit -m "Automated sphinx doc build" && git push) && \
 git add html && \
 echo "changes to html staged - commit and push manually, eg"
-echo "git commit -m \"updated sphinx docs\" && git push"
+echo "git commit -m \"updated sphinx docs\" && git push [--force]"
 
