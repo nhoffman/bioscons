@@ -46,6 +46,57 @@
           <div class="body">
             
   <h1>Source code for bioscons.infernal</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Builders</span>
+<span class="sd">--------</span>
+
+<span class="sd">cmalign</span>
+<span class="sd">+++++++</span>
+
+<span class="sd">Aligns sequences in the source fasta-file given</span>
+<span class="sd">alignment-profile. Returns the Stockholm-format alignment and a file</span>
+<span class="sd">containing the alignment statistics for each sequence.</span>
+
+<span class="sd">:source: [alignment-profile, fasta-file]</span>
+
+<span class="sd">:target: [file in stockholm format, file containing align scores]</span>
+
+<span class="sd">:environment variables: env[&#39;cmalign&#39;] provides an alternative path to the cmalign executable (default &#39;cmalign&#39;).</span>
+
+<span class="sd">cmalign_mpi</span>
+<span class="sd">+++++++++++</span>
+
+<span class="sd">Aligns sequences in the source fasta-file given</span>
+<span class="sd">alignment-profile. Returns the Stockholm-format alignment and a file</span>
+<span class="sd">containing the alignment statistics for each sequence. cmalign is run</span>
+<span class="sd">using ``mpirun -np N cmalign --mpi``; note that &#39;cmalign --mpi&#39; is</span>
+<span class="sd">only available if cmalign is compiled with the &#39;--enable-mpi&#39; flag.</span>
+
+<span class="sd">:source: [alignment-profile, fasta-file]</span>
+
+<span class="sd">:target: [file in stockholm format, file containing align scores]</span>
+
+<span class="sd">:environment variables:</span>
+<span class="sd"> * env[&#39;cmalign&#39;] provides an alternative path to the cmalign executable (default &#39;cmalign&#39;).</span>
+<span class="sd"> * env[&#39;cmalign_nproc&#39;] defines the number of processors (default 2).</span>
+
+<span class="sd">cmmerge</span>
+<span class="sd">+++++++</span>
+
+<span class="sd">Merges two sequence alignments in Stockholm format given</span>
+<span class="sd">alignment-profile using ``cmalign --merge``. Returns the Stockholm-format alignment.</span>
+
+
+<span class="sd">:source: [alignment-profile, stockholm-file1, stockholm-file2]</span>
+
+<span class="sd">:target: [alignment in stockholm format]</span>
+
+<span class="sd">:environment variables: env[&#39;cmalign&#39;] provides an alternative path to the cmalign executable (default &#39;cmalign&#39;).</span>
+
+<span class="sd">Public functions</span>
+<span class="sd">----------------</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
 <span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">join</span><span class="p">,</span><span class="n">split</span><span class="p">,</span><span class="n">splitext</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
@@ -60,6 +111,13 @@
     <span class="k">pass</span>
 
 <div class="viewcode-block" id="check_cmalign"><a class="viewcode-back" href="../../bioscons.html#bioscons.infernal.check_cmalign">[docs]</a><span class="k">def</span> <span class="nf">check_cmalign</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Determines whether the cmalign executable can be used to generate</span>
+<span class="sd">    a version string. Uses either the path to the cmalign executable</span>
+<span class="sd">    defined in env[&#39;cmalign&#39;] or &#39;cmalign&#39; by default. If successful,</span>
+<span class="sd">    returns (path-to-executable, version-string). Raises SystemError</span>
+<span class="sd">    on failure.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="k">try</span><span class="p">:</span>
         <span class="n">cmalign</span> <span class="o">=</span> <span class="n">env</span><span class="p">[</span><span class="s">&#39;cmalign&#39;</span><span class="p">]</span>
@@ -80,6 +138,13 @@
     <span class="k">return</span> <span class="n">cmalign</span><span class="p">,</span> <span class="n">version</span>
 </div>
 <div class="viewcode-block" id="check_mpirun"><a class="viewcode-back" href="../../bioscons.html#bioscons.infernal.check_mpirun">[docs]</a><span class="k">def</span> <span class="nf">check_mpirun</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Determines whether the mpirun executable can be used to generate</span>
+<span class="sd">    a version string. Uses either the path to the mpirun executable</span>
+<span class="sd">    defined in env[&#39;mpirun&#39;] or &#39;mpirun&#39; by default. If successful,</span>
+<span class="sd">    returns (path-to-executable, version-string). Raises SystemError</span>
+<span class="sd">    on failure.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="k">try</span><span class="p">:</span>
         <span class="n">mpirun</span> <span class="o">=</span> <span class="n">env</span><span class="p">[</span><span class="s">&#39;mpirun&#39;</span><span class="p">]</span>
@@ -102,7 +167,7 @@
 
 
 <span class="c"># cmalign</span></div>
-<div class="viewcode-block" id="cmalign_action"><a class="viewcode-back" href="../../bioscons.html#bioscons.infernal.cmalign_action">[docs]</a><span class="k">def</span> <span class="nf">cmalign_action</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">env</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_cmalign_action</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">env</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    target - [file in stockholm format, file containing align scores]</span>
 <span class="sd">    source - [alignment profile, fasta file]</span>
@@ -123,11 +188,11 @@
         
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">scorefile</span><span class="p">:</span>
         <span class="n">scorefile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
-</div>
-<span class="n">cmalign</span> <span class="o">=</span> <span class="n">Builder</span><span class="p">(</span>
-    <span class="n">action</span><span class="o">=</span><span class="n">cmalign_action</span><span class="p">)</span>
 
-<div class="viewcode-block" id="cmalign_mpi_action"><a class="viewcode-back" href="../../bioscons.html#bioscons.infernal.cmalign_mpi_action">[docs]</a><span class="k">def</span> <span class="nf">cmalign_mpi_action</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">env</span><span class="p">):</span>
+<span class="n">cmalign</span> <span class="o">=</span> <span class="n">Builder</span><span class="p">(</span>
+    <span class="n">action</span><span class="o">=</span><span class="n">_cmalign_action</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_cmalign_mpi_action</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">env</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Run cmalign using mpi (mpirun)</span>
 
@@ -176,15 +241,15 @@
 
     <span class="c"># with open(scores, &#39;w&#39;) as scorefile:</span>
     <span class="c">#     scorefile.write(scorestr)</span>
-</div>
+
 <span class="n">cmalign_mpi</span> <span class="o">=</span> <span class="n">Builder</span><span class="p">(</span>
-    <span class="n">action</span><span class="o">=</span><span class="n">cmalign_mpi_action</span><span class="p">)</span>
+    <span class="n">action</span><span class="o">=</span><span class="n">_cmalign_mpi_action</span><span class="p">)</span>
 
 <span class="c"># cmalign = Builder(</span>
 <span class="c">#     action=&#39;cmalign --hbanded --sub --dna -o ${TARGETS[0]} $cmfile $SOURCES | tee ${TARGETS[1]}&#39;</span>
 <span class="c">#     )</span>
 
-<div class="viewcode-block" id="cmmerge_action"><a class="viewcode-back" href="../../bioscons.html#bioscons.infernal.cmmerge_action">[docs]</a><span class="k">def</span> <span class="nf">cmmerge_action</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">env</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_cmmerge_action</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">env</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    target - file in stockholm format</span>
 <span class="sd">    source - [cmfile, cmalign1.sto, cmalign2.sto]</span>
@@ -200,8 +265,8 @@
 
     <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
     <span class="c"># print p.communicate()[0]</span>
-</div>
-<span class="n">cmmerge</span> <span class="o">=</span> <span class="n">Builder</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="n">cmmerge_action</span><span class="p">)</span>
+
+<span class="n">cmmerge</span> <span class="o">=</span> <span class="n">Builder</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="n">_cmmerge_action</span><span class="p">)</span>
 
 <span class="c"># def cmmerge_all_action(target, source, env):</span>
 <span class="c">#     &quot;&quot;&quot;</span>
