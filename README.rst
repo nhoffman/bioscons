@@ -35,7 +35,8 @@ ruffus
   It also supports incremental recalculation.
   It does not, however, provide assistance for making system calls or managing files, and these must be done with explict sytem calls on "hand-built" strings.
 
-galaxy galaxy_ is a web-based tool for building remotely-executed
+galaxy 
+  galaxy_ is a web-based tool for building remotely-executed
   workflows. This is a hugely attractive framework for exposing
   complex workflows using a graphical-interface, but occupies a very
   different niche from this project (which provides a command line
