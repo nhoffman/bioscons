@@ -16,11 +16,10 @@ The :mod:`infernal` Module
     :undoc-members:
     :show-inheritance:
 
-.. note: the above directive will document module data preceded by a comment like this
-.. #: some comment
-.. but will not show the value of the data
+The :mod:`r_lang` Module
+--------------------------
 
-.. .. automodule:: bioscons.r_lang
-..     :members:
-..     :undoc-members:
-..     :show-inheritance:
+.. automodule:: bioscons.r_lang
+    :members:
+    :undoc-members:
+    :show-inheritance:
