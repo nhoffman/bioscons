@@ -1,5 +1,9 @@
 import os
 from os.path import join,split,splitext
+import sys
+
+# use local (not system) version of the package
+sys.path.insert(0, '../..')
 
 from bioscons.fileutils import bunzip2, split_path
 from bioscons.infernal import cmalign, cmalign_mpi, cmmerge
