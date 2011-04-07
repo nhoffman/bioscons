@@ -15,3 +15,10 @@ The :mod:`infernal` Module
     :members:
     :undoc-members:
     :show-inheritance:
+
+.. py:data:: bioscons.infernal
+
+.. .. automodule:: bioscons.r_lang
+..     :members:
+..     :undoc-members:
+..     :show-inheritance:

@@ -13,8 +13,10 @@ containing the alignment statistics for each sequence.
 
 :target: [file in stockholm format, file containing align scores]
 
-:environment variables: env['cmalign'] provides an alternative path to the cmalign executable (default 'cmalign').
-
+:environment variables:
+ * env['CMALIGN'] provides an alternative path to the cmalign executable. (default 'cmalign').
+ * env['CMALIGN_FLAGS'] is a string containing optional command line parameters.
+ 
 cmalign_mpi
 +++++++++++
 
@@ -29,8 +31,9 @@ only available if cmalign is compiled with the '--enable-mpi' flag.
 :target: [file in stockholm format, file containing align scores]
 
 :environment variables:
- * env['cmalign'] provides an alternative path to the cmalign executable (default 'cmalign').
- * env['cmalign_nproc'] defines the number of processors (default 2).
+ * env['CMALIGN'] provides an alternative path to the cmalign executable (default 'cmalign').
+ * env['CMALIGN_FLAGS'] is a string containing optional command line parameters.
+ * env['CMALIGN_NPROC'] defines the number of processors (default 2).
 
 cmmerge
 +++++++
@@ -43,7 +46,9 @@ alignment-profile using ``cmalign --merge``. Returns the Stockholm-format alignm
 
 :target: [alignment in stockholm format]
 
-:environment variables: env['cmalign'] provides an alternative path to the cmalign executable (default 'cmalign').
+:environment variables:
+ * env['CMALIGN'] provides an alternative path to the cmalign executable (default 'cmalign').
+ * env['CMALIGN_FLAGS'] is a string containing optional command line parameters.
 
 Public functions
 ----------------
@@ -62,6 +67,12 @@ try:
 except ImportError:
     pass
 
+CMALIGN = 'cmalign'
+CMALIGN_FLAGS = '--hbanded --sub --dna -1'
+CMALIGN_NPROC = 2
+
+MPIRUN = 'mpirun'
+
 def check_cmalign(env):
     """
     Determines whether the cmalign executable can be used to generate
@@ -72,9 +83,9 @@ def check_cmalign(env):
     """
     
     try:
-        cmalign = env['cmalign']
+        cmalign = env['CMALIGN']
     except KeyError:
-        cmalign = 'cmalign'
+        cmalign = CMALIGN
         
     p = subprocess.Popen('%s -h' % cmalign,
                          stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
@@ -99,9 +110,9 @@ def check_mpirun(env):
     """
     
     try:
-        mpirun = env['mpirun']
+        mpirun = env['MPIRUN']
     except KeyError:
-        mpirun = 'mpirun'
+        mpirun = MPIRUN
 
     # version info is in stderr. Yeah.
     p = subprocess.Popen('%s -V' % mpirun,
@@ -129,9 +140,13 @@ def _cmalign_action(target, source, env):
     
     cmfile, fasta = map(str, source)
     sto, scores = map(str, target)
-        
-    cmd = [cmalign,'--hbanded','--sub','--dna','-1',
-           '-o', sto, cmfile, fasta]
+
+    try:
+        flags = env['CMALIGN_FLAGS'].split()
+    except KeyError:
+        flags = CMALIGN_FLAGS.split()
+    
+    cmd = [cmalign] + flags + ['-o', sto, cmfile, fasta]
 
     log.info(' '.join(cmd))
     
@@ -163,16 +178,19 @@ def _cmalign_mpi_action(target, source, env):
     sto, scores = map(str, target)
 
     try:
-        nproc = int(env['cmalign_nproc'])
+        nproc = int(env['CMALIGN_NPROC'])
     except (KeyError, ValueError):
-        nproc = 2
+        nproc = CMALIGN_NPROC
 
-    cmd = [mpirun,
-           '-np %s' % nproc,
-           cmalign,
-           '--mpi','--hbanded','--sub','--dna','-1',
-           '-o', sto, cmfile, fasta,
-           '|', 'tee', scores]
+    try:
+        flags = env['CMALIGN_FLAGS'].split()
+    except KeyError:
+        flags = CMALIGN_FLAGS.split()
+        
+    cmd = [mpirun, '-np', str(nproc), \
+               cmalign, '--mpi'] + flags + \
+               ['-o', sto, cmfile, fasta,
+                '|', 'tee', scores]
 
     cmd = ' '.join(cmd)
     log.info(cmd)
@@ -207,11 +225,17 @@ def _cmmerge_action(target, source, env):
     source - [cmfile, cmalign1.sto, cmalign2.sto]
     """
 
+    cmalign, version = check_cmalign(env)
+    
     cmfile, sto1, sto2 = map(str, source)
     sto_out = str(target[0])
 
-    cmd = ['cmalign','--hbanded','--sub','--merge','--dna','-1','-o',
-           sto_out, cmfile, sto1, sto2]
+    try:
+        flags = env['CMALIGN_FLAGS'].split()
+    except KeyError:
+        flags = CMALIGN_FLAGS.split()
+    
+    cmd = [cmalign, '--merge'] + flags + ['-o', sto_out, cmfile, sto1, sto2]
 
     print ' '.join(cmd)
 
