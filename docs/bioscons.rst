@@ -16,7 +16,9 @@ The :mod:`infernal` Module
     :undoc-members:
     :show-inheritance:
 
-.. py:data:: bioscons.infernal
+.. note: the above directive will document module data preceded by a comment like this
+.. #: some comment
+.. but will not show the value of the data
 
 .. .. automodule:: bioscons.r_lang
 ..     :members:

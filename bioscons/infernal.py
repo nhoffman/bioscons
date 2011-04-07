@@ -13,9 +13,8 @@ containing the alignment statistics for each sequence.
 
 :target: [file in stockholm format, file containing align scores]
 
-:environment variables:
- * env['CMALIGN'] provides an alternative path to the cmalign executable. (default 'cmalign').
- * env['CMALIGN_FLAGS'] is a string containing optional command line parameters.
+:environment variables (module globals define defaults):
+ * env['CMALIGN'], env['CMALIGN_FLAGS']
  
 cmalign_mpi
 +++++++++++
@@ -30,10 +29,8 @@ only available if cmalign is compiled with the '--enable-mpi' flag.
 
 :target: [file in stockholm format, file containing align scores]
 
-:environment variables:
- * env['CMALIGN'] provides an alternative path to the cmalign executable (default 'cmalign').
- * env['CMALIGN_FLAGS'] is a string containing optional command line parameters.
- * env['CMALIGN_NPROC'] defines the number of processors (default 2).
+:environment variables (module globals define defaults):
+ * env['CMALIGN'], env['CMALIGN_FLAGS'], env['CMALIGN_NPROC']
 
 cmmerge
 +++++++
@@ -46,12 +43,11 @@ alignment-profile using ``cmalign --merge``. Returns the Stockholm-format alignm
 
 :target: [alignment in stockholm format]
 
-:environment variables:
- * env['CMALIGN'] provides an alternative path to the cmalign executable (default 'cmalign').
- * env['CMALIGN_FLAGS'] is a string containing optional command line parameters.
+:environment variables (module globals define defaults):
+ * env['CMALIGN'], env['CMALIGN_FLAGS']
 
-Public functions
-----------------
+Public functions and variables
+------------------------------
 """
 
 from os.path import join,split,splitext
@@ -67,8 +63,13 @@ try:
 except ImportError:
     pass
 
+#: Defines the absolute path of the cmalign executable. ['cmalign']
 CMALIGN = 'cmalign'
+
+#: String containing optional command line parameters. ['--hbanded --sub --dna -1']
 CMALIGN_FLAGS = '--hbanded --sub --dna -1'
+
+#: Number of processors used by cmalign_mpi. [2]
 CMALIGN_NPROC = 2
 
 MPIRUN = 'mpirun'
@@ -76,10 +77,10 @@ MPIRUN = 'mpirun'
 def check_cmalign(env):
     """
     Determines whether the cmalign executable can be used to generate
-    a version string. Uses either the path to the cmalign executable
-    defined in env['cmalign'] or 'cmalign' by default. If successful,
-    returns (path-to-executable, version-string). Raises SystemError
-    on failure.
+    a version string. Uses either env['CMALIGN'] if defined or
+    infernal.CMALIGN otherwise. If successful, returns
+    (path-to-executable, version-string). Raises SystemError on
+    failure.
     """
     
     try:
@@ -102,11 +103,11 @@ def check_cmalign(env):
 
 def check_mpirun(env):
     """
-    Determines whether the mpirun executable can be used to generate
-    a version string. Uses either the path to the mpirun executable
-    defined in env['mpirun'] or 'mpirun' by default. If successful,
-    returns (path-to-executable, version-string). Raises SystemError
-    on failure.
+    Determines whether the mpirun executable can be used to generate a
+    version string. Uses either env['MPIRUN'] if defined or
+    infernal.MPIRUN otherwise. If successful, returns
+    (path-to-executable, version-string). Raises SystemError on
+    failure.
     """
     
     try:
