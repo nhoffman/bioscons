@@ -187,13 +187,12 @@ def _cmalign_mpi_action(target, source, env):
     except KeyError:
         flags = CMALIGN_FLAGS.split()
         
-    cmd = [mpirun, '-np', str(nproc), \
-               cmalign, '--mpi'] + flags + \
-               ['-o', sto, cmfile, fasta,
-                '|', 'tee', scores]
+    cmd = [mpirun, '-np', str(nproc), cmalign, '--mpi'] + \
+        flags + \
+        ['-o', sto, cmfile, fasta, '|','tee', scores]
 
     cmd = ' '.join(cmd)
-    log.info(cmd)
+    print cmd
     os.system(cmd)
 
     # TODO: there is some problem with the execution environment that
