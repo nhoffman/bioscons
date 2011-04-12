@@ -1,0 +1,205 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>bioscons.r_lang &mdash; bioscons v0.0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="bioscons v0.0.1 documentation" href="../../index.html" />
+    <link rel="up" title="bioscons" href="../bioscons.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">bioscons v0.0.1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../bioscons.html" accesskey="U">bioscons</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for bioscons.r_lang</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">join</span><span class="p">,</span><span class="n">split</span><span class="p">,</span><span class="n">splitext</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">pprint</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">SCons.Script</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="c"># we expect this to fail unless imported from within SConstruct</span>
+    <span class="k">pass</span>
+
+<div class="viewcode-block" id="sweave_generator"><a class="viewcode-back" href="../../bioscons.html#bioscons.r_lang.sweave_generator">[docs]</a><span class="k">def</span> <span class="nf">sweave_generator</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">for_signature</span><span class="p">):</span>
+    <span class="n">dirname</span><span class="p">,</span> <span class="n">fname</span> <span class="o">=</span> <span class="n">split</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+    <span class="n">action</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">dirname</span><span class="p">:</span>
+        <span class="n">action</span> <span class="o">+=</span> <span class="s">&#39;cd &quot;</span><span class="si">%s</span><span class="s">&quot; &amp;&amp; &#39;</span> <span class="o">%</span> <span class="n">dirname</span>
+
+    <span class="n">action</span> <span class="o">+=</span> <span class="s">r&#39;echo Sweave\(\&quot;</span><span class="si">%s</span><span class="s">\&quot;\) | R --slave&#39;</span> <span class="o">%</span> <span class="n">fname</span>
+
+    <span class="c"># action += &#39;R CMD Sweave &quot;%s&quot;&#39; % fname</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">source</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">action</span> <span class="o">+=</span> <span class="s">&#39; --args ${SOURCES[1:]}&#39;</span>
+
+    <span class="k">return</span> <span class="n">action</span>
+</div>
+<span class="n">sweave</span> <span class="o">=</span> <span class="n">Builder</span><span class="p">(</span>
+    <span class="n">generator</span><span class="o">=</span><span class="n">sweave_generator</span><span class="p">,</span>
+    <span class="n">emitter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="p">(</span><span class="n">splitext</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="mi">0</span><span class="p">]))[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s">&#39;.tex&#39;</span><span class="p">,</span> <span class="n">source</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="c"># stangle</span>
+<div class="viewcode-block" id="stangle_generator"><a class="viewcode-back" href="../../bioscons.html#bioscons.r_lang.stangle_generator">[docs]</a><span class="k">def</span> <span class="nf">stangle_generator</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">for_signature</span><span class="p">):</span>
+    <span class="n">dirname</span><span class="p">,</span> <span class="n">fname</span> <span class="o">=</span> <span class="n">split</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+    <span class="n">action</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">dirname</span><span class="p">:</span>
+        <span class="n">action</span> <span class="o">+=</span> <span class="s">&#39;cd &quot;</span><span class="si">%s</span><span class="s">&quot; &amp;&amp; &#39;</span> <span class="o">%</span> <span class="n">dirname</span>
+
+    <span class="n">action</span> <span class="o">+=</span> <span class="s">&#39;R CMD Stangle &quot;</span><span class="si">%s</span><span class="s">&quot;&#39;</span> <span class="o">%</span> <span class="n">fname</span>
+
+    <span class="k">return</span> <span class="n">action</span>
+</div>
+<span class="n">stangle</span> <span class="o">=</span> <span class="n">Builder</span><span class="p">(</span>
+    <span class="n">generator</span><span class="o">=</span><span class="n">stangle_generator</span><span class="p">,</span>
+    <span class="n">emitter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="p">(</span><span class="n">splitext</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="mi">0</span><span class="p">]))[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s">&#39;.R&#39;</span><span class="p">,</span> <span class="n">source</span><span class="p">)</span>
+<span class="p">)</span>
+
+<div class="viewcode-block" id="fa_to_seqlist_action"><a class="viewcode-back" href="../../bioscons.html#bioscons.r_lang.fa_to_seqlist_action">[docs]</a><span class="k">def</span> <span class="nf">fa_to_seqlist_action</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">env</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read a fasta format alignment and save a binary sequence list (package ape)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">infile</span><span class="p">,</span> <span class="n">outfile</span> <span class="o">=</span> <span class="n">source</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">target</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">rcmd</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;library(ape)</span>
+<span class="s">    seqlist &lt;- read.dna(&quot;</span><span class="si">%(infile)s</span><span class="s">&quot;, format=&quot;fasta&quot;, as.matrix=FALSE)</span>
+<span class="s">    save(seqlist, file=&quot;</span><span class="si">%(outfile)s</span><span class="s">&quot;)</span>
+<span class="s">    stopifnot(file.exists(&quot;</span><span class="si">%(outfile)s</span><span class="s">&quot;))</span>
+<span class="s">    q()&quot;&quot;&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+
+    <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="s">&quot;R&quot;</span><span class="p">,</span> <span class="s">&quot;--vanilla&quot;</span><span class="p">],</span> <span class="n">stdin</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">communicate</span><span class="p">(</span><span class="n">rcmd</span><span class="p">)</span>
+</div>
+<span class="n">fa_to_seqlist</span> <span class="o">=</span> <span class="n">Builder</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="n">fa_to_seqlist_action</span><span class="p">)</span>    
+
+<div class="viewcode-block" id="fa_to_seqmat_action"><a class="viewcode-back" href="../../bioscons.html#bioscons.r_lang.fa_to_seqmat_action">[docs]</a><span class="k">def</span> <span class="nf">fa_to_seqmat_action</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">env</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read a fasta format alignment and save a binary sequence matrix (package ape)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">infile</span><span class="p">,</span> <span class="n">outfile</span> <span class="o">=</span> <span class="n">source</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">target</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">rcmd</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;library(ape)</span>
+<span class="s">    seqmat &lt;- read.dna(&quot;</span><span class="si">%(infile)s</span><span class="s">&quot;, format=&quot;fasta&quot;, as.matrix=TRUE)</span>
+<span class="s">    save(seqmat, file=&quot;</span><span class="si">%(outfile)s</span><span class="s">&quot;)</span>
+<span class="s">    stopifnot(file.exists(&quot;</span><span class="si">%(outfile)s</span><span class="s">&quot;))</span>
+<span class="s">    q()&quot;&quot;&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+
+    <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="s">&quot;R&quot;</span><span class="p">,</span> <span class="s">&quot;--vanilla&quot;</span><span class="p">],</span> <span class="n">stdin</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">communicate</span><span class="p">(</span><span class="n">rcmd</span><span class="p">)</span>
+</div>
+<span class="n">fa_to_seqmat</span> <span class="o">=</span> <span class="n">Builder</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="n">fa_to_seqmat_action</span><span class="p">)</span>
+
+<div class="viewcode-block" id="sto_to_dnamultalign_action"><a class="viewcode-back" href="../../bioscons.html#bioscons.r_lang.sto_to_dnamultalign_action">[docs]</a><span class="k">def</span> <span class="nf">sto_to_dnamultalign_action</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">env</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read a stockholm format alignment and save a DNAMultipleAlignment</span>
+<span class="sd">    object (package Biostrings).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">rcmd</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
+<span class="s">    library(Biostrings);</span>
+<span class="s">    msa &lt;- read.DNAMultipleAlignment(filepath=&quot;</span><span class="si">%s</span><span class="s">&quot;, format=&quot;stockholm&quot;);</span>
+<span class="s">    save(msa, file=&quot;</span><span class="si">%s</span><span class="s">&quot;)&quot;&quot;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">target</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="n">p1</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="s">&#39;echo&#39;</span><span class="p">,</span><span class="n">rcmd</span><span class="p">],</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+    <span class="n">p2</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="s">&quot;R&quot;</span><span class="p">,</span> <span class="s">&quot;--vanilla&quot;</span><span class="p">],</span> <span class="n">stdin</span><span class="o">=</span><span class="n">p1</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+</div>
+<span class="n">sto_to_dnamultalign</span> <span class="o">=</span> <span class="n">Builder</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="n">sto_to_dnamultalign_action</span><span class="p">)</span>
+
+<span class="c"># builder for R scripts</span>
+<span class="c"># the first source is the name of the script</span>
+<span class="n">RScript</span> <span class="o">=</span> <span class="n">Builder</span><span class="p">(</span>
+    <span class="n">action</span><span class="o">=</span><span class="s">&#39;R -q --slave -f ${SOURCES[0]} --args $TARGETS ${SOURCES[1:]}&#39;</span><span class="p">)</span>
+
+<span class="c"># an even simpler builder for an R script</span>
+<span class="n">runR</span> <span class="o">=</span> <span class="n">Builder</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s">&#39;R -q --slave -f ${SOURCES[0]} --args ${SOURCES[1:]}&#39;</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">bioscons v0.0.1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../bioscons.html" >bioscons</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Noah Hoffman.
+      Last updated on Apr 12, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

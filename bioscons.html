@@ -70,12 +70,17 @@ containing the alignment statistics for each sequence.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">source:</th><td class="field-body">[alignment-profile, fasta-file]</td>
+<tr class="field"><th class="field-name">source:</th><td class="field-body"><p class="first">[alignment-profile, fasta-file]</p>
+</td>
 </tr>
-<tr class="field"><th class="field-name">target:</th><td class="field-body">[file in stockholm format, file containing align scores]</td>
+<tr class="field"><th class="field-name">target:</th><td class="field-body"><p class="first">[file in stockholm format, file containing align scores]</p>
+</td>
 </tr>
-<tr class="field"><th class="field-name" colspan="2">environment variables:</th></tr>
-<tr><td>&nbsp;</td><td class="field-body">env[&#8216;cmalign&#8217;] provides an alternative path to the cmalign executable (default &#8216;cmalign&#8217;).</td>
+<tr class="field"><th class="field-name" colspan="2">environment variables (module globals define defaults):</th></tr>
+<tr><td>&nbsp;</td><td class="field-body"><ul class="first last simple">
+<li>env[&#8216;CMALIGN&#8217;], env[&#8216;CMALIGN_FLAGS&#8217;]</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
@@ -97,10 +102,9 @@ only available if cmalign is compiled with the &#8216;&#8211;enable-mpi&#8217; f
 <tr class="field"><th class="field-name">target:</th><td class="field-body"><p class="first">[file in stockholm format, file containing align scores]</p>
 </td>
 </tr>
-<tr class="field"><th class="field-name" colspan="2">environment variables:</th></tr>
+<tr class="field"><th class="field-name" colspan="2">environment variables (module globals define defaults):</th></tr>
 <tr><td>&nbsp;</td><td class="field-body"><ul class="first last simple">
-<li>env[&#8216;cmalign&#8217;] provides an alternative path to the cmalign executable (default &#8216;cmalign&#8217;).</li>
-<li>env[&#8216;cmalign_nproc&#8217;] defines the number of processors (default 2).</li>
+<li>env[&#8216;CMALIGN&#8217;], env[&#8216;CMALIGN_FLAGS&#8217;], env[&#8216;CMALIGN_NPROC&#8217;]</li>
 </ul>
 </td>
 </tr>
@@ -115,37 +119,207 @@ alignment-profile using <tt class="docutils literal"><span class="pre">cmalign</
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">source:</th><td class="field-body">[alignment-profile, stockholm-file1, stockholm-file2]</td>
+<tr class="field"><th class="field-name">source:</th><td class="field-body"><p class="first">[alignment-profile, stockholm-file1, stockholm-file2]</p>
+</td>
 </tr>
-<tr class="field"><th class="field-name">target:</th><td class="field-body">[alignment in stockholm format]</td>
+<tr class="field"><th class="field-name">target:</th><td class="field-body"><p class="first">[alignment in stockholm format]</p>
+</td>
 </tr>
-<tr class="field"><th class="field-name" colspan="2">environment variables:</th></tr>
-<tr><td>&nbsp;</td><td class="field-body">env[&#8216;cmalign&#8217;] provides an alternative path to the cmalign executable (default &#8216;cmalign&#8217;).</td>
+<tr class="field"><th class="field-name" colspan="2">environment variables (module globals define defaults):</th></tr>
+<tr><td>&nbsp;</td><td class="field-body"><ul class="first last simple">
+<li>env[&#8216;CMALIGN&#8217;], env[&#8216;CMALIGN_FLAGS&#8217;]</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
-<div class="section" id="public-functions">
-<h3>Public functions<a class="headerlink" href="#public-functions" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="public-functions-and-variables">
+<h3>Public functions and variables<a class="headerlink" href="#public-functions-and-variables" title="Permalink to this headline">¶</a></h3>
+<dl class="data">
+<dt id="bioscons.infernal.CMALIGN">
+<tt class="descclassname">bioscons.infernal.</tt><tt class="descname">CMALIGN</tt><a class="headerlink" href="#bioscons.infernal.CMALIGN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the absolute path of the cmalign executable. [&#8216;cmalign&#8217;]</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="bioscons.infernal.CMALIGN_FLAGS">
+<tt class="descclassname">bioscons.infernal.</tt><tt class="descname">CMALIGN_FLAGS</tt><a class="headerlink" href="#bioscons.infernal.CMALIGN_FLAGS" title="Permalink to this definition">¶</a></dt>
+<dd><p>String containing optional command line parameters. [&#8216;&#8211;hbanded &#8211;sub &#8211;dna -1&#8217;]</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="bioscons.infernal.CMALIGN_NPROC">
+<tt class="descclassname">bioscons.infernal.</tt><tt class="descname">CMALIGN_NPROC</tt><a class="headerlink" href="#bioscons.infernal.CMALIGN_NPROC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of processors used by cmalign_mpi. [2]</p>
+</dd></dl>
+
 <dl class="function">
 <dt id="bioscons.infernal.check_cmalign">
 <tt class="descclassname">bioscons.infernal.</tt><tt class="descname">check_cmalign</tt><big>(</big><em>env</em><big>)</big><a class="reference internal" href="_modules/bioscons/infernal.html#check_cmalign"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.infernal.check_cmalign" title="Permalink to this definition">¶</a></dt>
 <dd><p>Determines whether the cmalign executable can be used to generate
-a version string. Uses either the path to the cmalign executable
-defined in env[&#8216;cmalign&#8217;] or &#8216;cmalign&#8217; by default. If successful,
-returns (path-to-executable, version-string). Raises SystemError
-on failure.</p>
+a version string. Uses either env[&#8216;CMALIGN&#8217;] if defined or
+infernal.CMALIGN otherwise. If successful, returns
+(path-to-executable, version-string). Raises SystemError on
+failure.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="bioscons.infernal.check_mpirun">
 <tt class="descclassname">bioscons.infernal.</tt><tt class="descname">check_mpirun</tt><big>(</big><em>env</em><big>)</big><a class="reference internal" href="_modules/bioscons/infernal.html#check_mpirun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.infernal.check_mpirun" title="Permalink to this definition">¶</a></dt>
-<dd><p>Determines whether the mpirun executable can be used to generate
-a version string. Uses either the path to the mpirun executable
-defined in env[&#8216;mpirun&#8217;] or &#8216;mpirun&#8217; by default. If successful,
-returns (path-to-executable, version-string). Raises SystemError
-on failure.</p>
+<dd><p>Determines whether the mpirun executable can be used to generate a
+version string. Uses either env[&#8216;MPIRUN&#8217;] if defined or
+infernal.MPIRUN otherwise. If successful, returns
+(path-to-executable, version-string). Raises SystemError on
+failure.</p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-bioscons.r_lang">
+<span id="the-r-lang-module"></span><h2>The <tt class="xref py py-mod docutils literal"><span class="pre">r_lang</span></tt> Module<a class="headerlink" href="#module-bioscons.r_lang" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id1">
+<h3>Builders<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="fa-to-seqlist">
+<h4>fa_to_seqlist<a class="headerlink" href="#fa-to-seqlist" title="Permalink to this headline">¶</a></h4>
+<p>Save the sequence alignment as a list-like object of class DNAbin, for example:</p>
+<div class="highlight-python"><pre>&gt; library(ape)
+&gt; seqlist &lt;- read.dna(source, format="fasta", as.matrix=FALSE)
+&gt; save(seqlist, file=target)</pre>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">source:</th><td class="field-body">[fasta-file]</td>
+</tr>
+<tr class="field"><th class="field-name">target:</th><td class="field-body">[R data file]</td>
+</tr>
+<tr class="field"><th class="field-name" colspan="2">environment variables (module globals define defaults):</th></tr>
+<tr><td>&nbsp;</td><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="fa-to-seqmat">
+<h4>fa_to_seqmat<a class="headerlink" href="#fa-to-seqmat" title="Permalink to this headline">¶</a></h4>
+<p>Save the sequence alignment as a matrix-like object of class DNAbin, for example:</p>
+<div class="highlight-python"><pre>&gt; library(ape)
+&gt; seqlist &lt;- read.dna(source, format="fasta", as.matrix=TRUE)
+&gt; save(seqlist, file=target)</pre>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">source:</th><td class="field-body">[fasta-file]</td>
+</tr>
+<tr class="field"><th class="field-name">target:</th><td class="field-body">[R data file]</td>
+</tr>
+<tr class="field"><th class="field-name" colspan="2">environment variables (module globals define defaults):</th></tr>
+<tr><td>&nbsp;</td><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="rscript">
+<h4>RScript<a class="headerlink" href="#rscript" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="runr">
+<h4>runR<a class="headerlink" href="#runr" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="sweave">
+<h4>sweave<a class="headerlink" href="#sweave" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="stangle">
+<h4>stangle<a class="headerlink" href="#stangle" title="Permalink to this headline">¶</a></h4>
+</div>
+</div>
+<div class="section" id="id2">
+<h3>Public functions and variables<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+<div class="section" id="module-bioscons.raxml">
+<span id="the-raxml-module"></span><h2>The <tt class="xref py py-mod docutils literal"><span class="pre">raxml</span></tt> Module<a class="headerlink" href="#module-bioscons.raxml" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id3">
+<h3>Builders<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="raxml">
+<h4>raxml<a class="headerlink" href="#raxml" title="Permalink to this headline">¶</a></h4>
+<p>Calculates a maximum likelihood phylogenetic tree using RAxML. Will
+attempt to execute a multithreaded version if RAXML_PTHREADS &gt; 1. The
+output will be written to the same directory as the input file, with
+filenames matching the pattern [RAxML_info.foo, RAxML_result.foo]
+given an alignment named <cite>foo.phy</cite>. Other files not returned as
+targets may also be generated.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">source:</th><td class="field-body"><p class="first">[input alignment (relaxed phylip format)]</p>
+</td>
+</tr>
+<tr class="field"><th class="field-name">target:</th><td class="field-body"><p class="first">[info_file, result_file]</p>
+</td>
+</tr>
+<tr class="field"><th class="field-name" colspan="2">environment variables (module globals define defaults):</th></tr>
+<tr><td>&nbsp;</td><td class="field-body"><ul class="first last simple">
+<li>env[&#8216;RAXML&#8217;]</li>
+<li>env[&#8216;RAXML_FLAGS&#8217;]</li>
+<li>env[&#8216;RAXML_NTHREADS&#8217;]</li>
+<li>env[&#8216;RAXML_PTHREADS&#8217;]</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="example">
+<h3>example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">bioscons.raxml</span> <span class="kn">import</span> <span class="n">raxml</span>
+<span class="n">env</span><span class="p">[</span><span class="s">&#39;BUILDERS&#39;</span><span class="p">][</span><span class="s">&#39;raxml&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">raxml</span>
+
+<span class="n">info_file</span><span class="p">,</span> <span class="n">result_file</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">raxml</span><span class="p">(</span><span class="s">&#39;alignment.phy&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id4">
+<h3>Public functions and variables<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<dl class="data">
+<dt id="bioscons.raxml.RAXML">
+<tt class="descclassname">bioscons.raxml.</tt><tt class="descname">RAXML</tt><a class="headerlink" href="#bioscons.raxml.RAXML" title="Permalink to this definition">¶</a></dt>
+<dd><p>Name of the RAxML executable if
+RAXML_NTHREADS == 1. [&#8216;raxmlHPC-SSE3&#8217;]</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="bioscons.raxml.RAXML_FLAGS">
+<tt class="descclassname">bioscons.raxml.</tt><tt class="descname">RAXML_FLAGS</tt><a class="headerlink" href="#bioscons.raxml.RAXML_FLAGS" title="Permalink to this definition">¶</a></dt>
+<dd><p>String containing optional command line parameters. []</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="bioscons.raxml.RAXML_NTHREADS">
+<tt class="descclassname">bioscons.raxml.</tt><tt class="descname">RAXML_NTHREADS</tt><a class="headerlink" href="#bioscons.raxml.RAXML_NTHREADS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of threads used by RAxML. [1]</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="bioscons.raxml.RAXML_PTHREADS">
+<tt class="descclassname">bioscons.raxml.</tt><tt class="descname">RAXML_PTHREADS</tt><a class="headerlink" href="#bioscons.raxml.RAXML_PTHREADS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Name of the RAxML executable if
+RAXML_NTHREADS &gt; 1. [&#8216;raxmlHPC-PTHREADS-SSE3&#8217;]</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="bioscons.raxml.check_raxml">
+<tt class="descclassname">bioscons.raxml.</tt><tt class="descname">check_raxml</tt><big>(</big><em>env</em><big>)</big><a class="headerlink" href="#bioscons.raxml.check_raxml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determines whether the raxml executable can be executed, and if
+so, generates a version string. Returns environment-defined or
+default values of either RAXML or RAXML_PTHREADS as
+appropriate. If successful, returns (path-to-executable,
+version-string). Raises SystemError on failure.</p>
 </dd></dl>
 
 </div>
@@ -171,7 +345,29 @@ on failure.</p>
 <li><a class="reference internal" href="#cmmerge">cmmerge</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#public-functions">Public functions</a></li>
+<li><a class="reference internal" href="#public-functions-and-variables">Public functions and variables</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-bioscons.r_lang">The <tt class="docutils literal"><span class="pre">r_lang</span></tt> Module</a><ul>
+<li><a class="reference internal" href="#id1">Builders</a><ul>
+<li><a class="reference internal" href="#fa-to-seqlist">fa_to_seqlist</a></li>
+<li><a class="reference internal" href="#fa-to-seqmat">fa_to_seqmat</a></li>
+<li><a class="reference internal" href="#rscript">RScript</a></li>
+<li><a class="reference internal" href="#runr">runR</a></li>
+<li><a class="reference internal" href="#sweave">sweave</a></li>
+<li><a class="reference internal" href="#stangle">stangle</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id2">Public functions and variables</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-bioscons.raxml">The <tt class="docutils literal"><span class="pre">raxml</span></tt> Module</a><ul>
+<li><a class="reference internal" href="#id3">Builders</a><ul>
+<li><a class="reference internal" href="#raxml">raxml</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#example">example</a></li>
+<li><a class="reference internal" href="#id4">Public functions and variables</a></li>
 </ul>
 </li>
 </ul>
@@ -220,7 +416,7 @@ on failure.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2011, Noah Hoffman.
-      Last updated on Mar 31, 2011.
+      Last updated on Apr 12, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>
