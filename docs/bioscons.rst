@@ -23,3 +23,14 @@ The :mod:`r_lang` Module
     :members:
     :undoc-members:
     :show-inheritance:
+
+The :mod:`raxml` Module
+--------------------------
+
+.. automodule:: bioscons.raxml
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+
