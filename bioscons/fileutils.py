@@ -4,25 +4,28 @@ from os.path import join, split, splitext, abspath
 
 from SCons.Script import *
 
-def split_path(path, split_ext=True):
+def split_path(pth, split_ext=False):
     """
-    Returns file name elements given `path`, which may be a string, an
-    object coercible to a string using str(), or a single-element list
-    of either. If `split_ext` is True, the name of the file is further
-    split into a base component and the file suffix, ie, (pth, base,
-    suffix), and (pth, filename, None) otherwise.
+    Returns file name elements given an absolute or relative path
+    `pth`, which may be a string, an object coercible to a string
+    using str(), or a single-element list of either. If `split_ext` is
+    True, the name of the file is further split into a base component
+    and the file suffix, ie, (pth, base, suffix), and (pth, filename,
+    None) otherwise.
     """
-
-    if isinstance(path, list) or isinstance(path, tuple):
-        path = path[0]
+    
+    if isinstance(pth, list) or isinstance(pth, tuple) or hasattr(pth, 'pop'):
+        pth = pth[0]
+                
+    pth = abspath(str(pth))
         
-    pth, filename = split(str(path))
+    directory, filename = split(pth)
 
     if split_ext:
         base, suffix = splitext(filename)
-        return (abspath(pth), base, suffix)
+        return (directory, base, suffix)
     else:
-        return (abspath(pth), filename, None)
+        return (directory, filename)
 
 # copyfile
 def _copyfile_emitter(target, source, env):
