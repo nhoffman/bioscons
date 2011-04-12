@@ -1,0 +1,5 @@
+import os
+from os import path
+
+targets = [path.join(pth, 'SConstruct') for pth, dirs, files in os.walk('.') if 'SConstruct' in files]
+SConscript(targets[1:])
