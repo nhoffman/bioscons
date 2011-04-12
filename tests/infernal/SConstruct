@@ -5,31 +5,34 @@ import sys
 # use local (not system) version of the package
 sys.path.insert(0, '../..')
 
-from bioscons.fileutils import bunzip2, split_path
+from bioscons.fileutils import bunzip2, split_path, copyfile
 from bioscons.infernal import cmalign, cmalign_mpi, cmmerge
 
 vars = Variables()
-vars.Add('cmfile_archive', 'example alignment profile (compressed)',
-         '../testfiles/bacteria16S_508_mod5.cm.bz2')
-vars.Add('fasta', 'DNA sequences in fasta format',
-         '../testfiles/short16s.fasta')
-
+varlist = [
+    # files
+    PathVariable('testfiles', 'input file directory', '../../tests/testfiles', PathVariable.PathIsDir),    
+    # environment variables for executables
+    ('CMALIGN_NPROC', '', 2)
+    ]
+vars.AddVariables(*varlist)
 env = Environment(ENV=os.environ, variables=vars)
 
 env['BUILDERS']['bunzip2'] = bunzip2
 env['BUILDERS']['cmalign'] = cmalign
 env['BUILDERS']['cmalign_mpi'] = cmalign_mpi
 env['BUILDERS']['cmmerge'] = cmmerge
+env['BUILDERS']['copyfile'] = copyfile
 
-cmfile = env.bunzip2(target=None, source='$cmfile_archive')
+cmfile_archive = env.copyfile(target=Dir('.'), source='$testfiles/bacteria16S_508_mod5.cm.bz2')
+cmfile = env.bunzip2(target=None, source=cmfile_archive)
+fasta = env.copyfile(target=Dir('.'), source='$testfiles/short16s.fasta')
 
-_, faname, _ = split_path(env['fasta'])
-
-# TODO: write output files to some outdir
+_, faname, _ = split_path(fasta, split_ext = True)
 
 align1, scores1 = env.cmalign(
-    target = Flatten([faname+'1.sto', faname+'1_scores.txt']), 
-    source = Flatten([cmfile, '$fasta'])
+    target = Flatten([faname+'.sto', faname+'_scores.txt']), 
+    source = Flatten([cmfile, fasta])
     )
 
 merged = env.cmmerge(
@@ -38,10 +41,8 @@ merged = env.cmmerge(
     )
 
 align2, scores2 = env.cmalign_mpi(
-    target = Flatten([faname+'2.sto', faname+'2_scores.txt']), 
-    source = Flatten([cmfile, '$fasta'])
+    target = Flatten([faname+'_mpi.sto', faname+'_mpi_scores.txt']), 
+    source = Flatten([cmfile, fasta])
     )
 
-# fails if pdflatex not in $PATH
-# env.PDF(source=texfile)
 

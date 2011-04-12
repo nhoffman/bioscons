@@ -82,11 +82,8 @@ def check_cmalign(env):
     (path-to-executable, version-string). Raises SystemError on
     failure.
     """
-    
-    try:
-        cmalign = env['CMALIGN']
-    except KeyError:
-        cmalign = CMALIGN
+
+    cmalign = env.get('CMALIGN', CMALIGN)
         
     p = subprocess.Popen('%s -h' % cmalign,
                          stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
@@ -109,11 +106,8 @@ def check_mpirun(env):
     (path-to-executable, version-string). Raises SystemError on
     failure.
     """
-    
-    try:
-        mpirun = env['MPIRUN']
-    except KeyError:
-        mpirun = MPIRUN
+
+    mpirun = env.get('MPIRUN', MPIRUN)
 
     # version info is in stderr. Yeah.
     p = subprocess.Popen('%s -V' % mpirun,
@@ -142,10 +136,7 @@ def _cmalign_action(target, source, env):
     cmfile, fasta = map(str, source)
     sto, scores = map(str, target)
 
-    try:
-        flags = env['CMALIGN_FLAGS'].split()
-    except KeyError:
-        flags = CMALIGN_FLAGS.split()
+    flags = env.get('CMALIGN_FLAGS', CMALIGN_FLAGS).split()
     
     cmd = [cmalign] + flags + ['-o', sto, cmfile, fasta]
 
@@ -178,15 +169,8 @@ def _cmalign_mpi_action(target, source, env):
     cmfile, fasta = map(str, source)
     sto, scores = map(str, target)
 
-    try:
-        nproc = int(env['CMALIGN_NPROC'])
-    except (KeyError, ValueError):
-        nproc = CMALIGN_NPROC
-
-    try:
-        flags = env['CMALIGN_FLAGS'].split()
-    except KeyError:
-        flags = CMALIGN_FLAGS.split()
+    nproc = int(env.get('CMALIGN_NPROC', CMALIGN_NPROC))
+    flags = env.get('CMALIGN_FLAGS', CMALIGN_FLAGS).split()
         
     cmd = [mpirun, '-np', str(nproc), cmalign, '--mpi'] + \
         flags + \
@@ -230,10 +214,7 @@ def _cmmerge_action(target, source, env):
     cmfile, sto1, sto2 = map(str, source)
     sto_out = str(target[0])
 
-    try:
-        flags = env['CMALIGN_FLAGS'].split()
-    except KeyError:
-        flags = CMALIGN_FLAGS.split()
+    flags = env.get('CMALIGN_FLAGS', CMALIGN_FLAGS).split()
     
     cmd = [cmalign, '--merge'] + flags + ['-o', sto_out, cmfile, sto1, sto2]
 
