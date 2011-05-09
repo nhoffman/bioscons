@@ -32,5 +32,13 @@ The :mod:`raxml` Module
     :undoc-members:
     :show-inheritance:
 
+The :mod:`refpkg` Module
+--------------------------
+
+.. automodule:: bioscons.refpkg
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 
