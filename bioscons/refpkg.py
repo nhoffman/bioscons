@@ -9,13 +9,13 @@ def get_vars(pth):
     refpkg are identified by keys in the 'files' dictionary (each
     value is a PathVariable object), and 'refpkg' provides the path to
     the reference package itself as an instance of
-    PathVariable.PathIsDir. For example:
+    PathVariable.PathIsDir. For example::
 
-    > from bioscons.refpkg import get_vars 
-    > vars = Variables()
-    > vars.AddVariables(*get_vars('/path/to/refpkg'))
-    > env = Environment(ENV=os.environ, variables=vars)
-    > path_to_refpkg = env['refpkg']
+      > from bioscons.refpkg import get_vars 
+      > vars = Variables()
+      > vars.AddVariables(*get_vars('/path/to/refpkg'))
+      > env = Environment(ENV=os.environ, variables=vars)
+      > path_to_refpkg = env['refpkg']
     """
 
     _fullpath = lambda fname: path.abspath(path.join(pth, fname))
