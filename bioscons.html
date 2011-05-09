@@ -335,11 +335,12 @@ refpkg are identified by keys in the &#8216;files&#8217; dictionary (each
 value is a PathVariable object), and &#8216;refpkg&#8217; provides the path to
 the reference package itself as an instance of
 PathVariable.PathIsDir. For example:</p>
-<p>&gt; from bioscons.refpkg import get_vars 
+<div class="highlight-python"><pre>&gt; from bioscons.refpkg import get_vars 
 &gt; vars = Variables()
-&gt; vars.AddVariables(<a href="#id5"><span class="problematic" id="id6">*</span></a>get_vars(&#8216;/path/to/refpkg&#8217;))
+&gt; vars.AddVariables(*get_vars('/path/to/refpkg'))
 &gt; env = Environment(ENV=os.environ, variables=vars)
-&gt; path_to_refpkg = env[&#8216;refpkg&#8217;]</p>
+&gt; path_to_refpkg = env['refpkg']</pre>
+</div>
 </dd></dl>
 
 </div>
