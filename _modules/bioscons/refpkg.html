@@ -1,0 +1,129 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>bioscons.refpkg &mdash; bioscons v0.0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="bioscons v0.0.1 documentation" href="../../index.html" />
+    <link rel="up" title="bioscons" href="../bioscons.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">bioscons v0.0.1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../bioscons.html" accesskey="U">bioscons</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for bioscons.refpkg</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">path</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">SCons.Script</span> <span class="kn">import</span> <span class="o">*</span>
+
+<div class="viewcode-block" id="get_vars"><a class="viewcode-back" href="../../bioscons.html#bioscons.refpkg.get_vars">[docs]</a><span class="k">def</span> <span class="nf">get_vars</span><span class="p">(</span><span class="n">pth</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return a list of tuples describing refpkg contents. The output can</span>
+<span class="sd">    be used to define environment variables, where files within the</span>
+<span class="sd">    refpkg are identified by keys in the &#39;files&#39; dictionary (each</span>
+<span class="sd">    value is a PathVariable object), and &#39;refpkg&#39; provides the path to</span>
+<span class="sd">    the reference package itself as an instance of</span>
+<span class="sd">    PathVariable.PathIsDir. For example:</span>
+
+<span class="sd">    &gt; from bioscons.refpkg import get_vars </span>
+<span class="sd">    &gt; vars = Variables()</span>
+<span class="sd">    &gt; vars.AddVariables(*get_vars(&#39;/path/to/refpkg&#39;))</span>
+<span class="sd">    &gt; env = Environment(ENV=os.environ, variables=vars)</span>
+<span class="sd">    &gt; path_to_refpkg = env[&#39;refpkg&#39;]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_fullpath</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">fname</span><span class="p">:</span> <span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pth</span><span class="p">,</span> <span class="n">fname</span><span class="p">))</span>
+
+    <span class="n">output</span> <span class="o">=</span> <span class="p">[</span><span class="n">PathVariable</span><span class="p">(</span><span class="s">&#39;refpkg&#39;</span><span class="p">,</span><span class="s">&#39;refpkg directory&#39;</span><span class="p">,</span> <span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">pth</span><span class="p">),</span>
+                           <span class="n">PathVariable</span><span class="o">.</span><span class="n">PathIsDir</span><span class="p">)]</span>
+    
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">_fullpath</span><span class="p">(</span><span class="s">&#39;CONTENTS.json&#39;</span><span class="p">),</span> <span class="s">&#39;rU&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fobj</span><span class="p">:</span>
+            <span class="n">contents</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fobj</span><span class="p">)</span>
+
+    <span class="n">output</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+        <span class="p">[(</span><span class="n">key</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">_fullpath</span><span class="p">(</span><span class="n">val</span><span class="p">),</span> <span class="n">PathVariable</span><span class="p">)</span> \
+             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">contents</span><span class="p">[</span><span class="s">&#39;files&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">output</span>
+    </div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">bioscons v0.0.1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../bioscons.html" >bioscons</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Noah Hoffman.
+      Last updated on May 09, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

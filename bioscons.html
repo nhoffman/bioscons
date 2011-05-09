@@ -324,6 +324,25 @@ version-string). Raises SystemError on failure.</p>
 
 </div>
 </div>
+<div class="section" id="module-bioscons.refpkg">
+<span id="the-refpkg-module"></span><h2>The <tt class="xref py py-mod docutils literal"><span class="pre">refpkg</span></tt> Module<a class="headerlink" href="#module-bioscons.refpkg" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="bioscons.refpkg.get_vars">
+<tt class="descclassname">bioscons.refpkg.</tt><tt class="descname">get_vars</tt><big>(</big><em>pth</em><big>)</big><a class="reference internal" href="_modules/bioscons/refpkg.html#get_vars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.refpkg.get_vars" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of tuples describing refpkg contents. The output can
+be used to define environment variables, where files within the
+refpkg are identified by keys in the &#8216;files&#8217; dictionary (each
+value is a PathVariable object), and &#8216;refpkg&#8217; provides the path to
+the reference package itself as an instance of
+PathVariable.PathIsDir. For example:</p>
+<p>&gt; from bioscons.refpkg import get_vars 
+&gt; vars = Variables()
+&gt; vars.AddVariables(<a href="#id5"><span class="problematic" id="id6">*</span></a>get_vars(&#8216;/path/to/refpkg&#8217;))
+&gt; env = Environment(ENV=os.environ, variables=vars)
+&gt; path_to_refpkg = env[&#8216;refpkg&#8217;]</p>
+</dd></dl>
+
+</div>
 </div>
 
 
@@ -370,6 +389,7 @@ version-string). Raises SystemError on failure.</p>
 <li><a class="reference internal" href="#id4">Public functions and variables</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#module-bioscons.refpkg">The <tt class="docutils literal"><span class="pre">refpkg</span></tt> Module</a></li>
 </ul>
 </li>
 </ul>
@@ -416,7 +436,7 @@ version-string). Raises SystemError on failure.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2011, Noah Hoffman.
-      Last updated on Apr 12, 2011.
+      Last updated on May 09, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>
