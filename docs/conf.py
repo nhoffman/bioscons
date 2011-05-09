@@ -16,8 +16,13 @@ import sys, os, glob
 # note that the below is not necessary if scons is installed with
 # setup.py install --standard-lib (I think)
 sys.path = glob.glob(os.path.join(sys.exec_prefix,'lib','scons*')) + sys.path
-from SCons.Script import *
 
+try:
+    from SCons.Script import *
+except ImportError, err:
+    print "can't find SCons module. Perhaps you could try installing scons with '--standard-lib'"
+    raise err
+    
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
