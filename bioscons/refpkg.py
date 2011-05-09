@@ -1,9 +1,8 @@
-
 from os import path
 import json
 from SCons.Script import *
 
-def get_vars(refpkg):
+def get_vars(pth):
     """
     Return a list of tuples describing refpkg contents. The output can
     be used to define environment variables, where files within the
@@ -19,17 +18,17 @@ def get_vars(refpkg):
     > path_to_refpkg = env['refpkg']
     """
 
-    _fullpath = lambda fname: path.abspath(path.join(refpkg, fname))
+    _fullpath = lambda fname: path.abspath(path.join(pth, fname))
 
-    output = [PathVariable('refpkg','refpkg directory', path.abspath(refpkg),
+    output = [PathVariable('refpkg','refpkg directory', path.abspath(pth),
                            PathVariable.PathIsDir)]
     
     with open(_fullpath('CONTENTS.json'), 'rU') as fobj:
             contents = json.load(fobj)
 
     output.extend(
-        [(label, label, _fullpath(pth), PathVariable) \
-             for label, pth in contents['files'].items()]
+        [(key, key, _fullpath(val), PathVariable) \
+             for key, val in contents['files'].items()]
         )
 
     return output
