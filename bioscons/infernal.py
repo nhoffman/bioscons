@@ -54,6 +54,7 @@ from os.path import join,split,splitext
 import os
 import subprocess
 import logging
+import time
 
 log = logging
 
@@ -180,6 +181,10 @@ def _cmalign_mpi_action(target, source, env):
     print cmd
     os.system(cmd)
 
+    # cmalign seems to need a moment to complete writing files to disk
+    # after returning
+    time.sleep(1)
+    
     # TODO: there is some problem with the execution environment that
     # results in an error in mpirun when executed usimg subprocess
 
