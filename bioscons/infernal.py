@@ -228,6 +228,11 @@ def _cmmerge_action(target, source, env):
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
     # print p.communicate()[0]
 
+    # cmmerge seems to need a moment to complete writing files to disk
+    # after returning
+    time.sleep(1)
+
+
 cmmerge = Builder(action=_cmmerge_action)
 
 # def cmmerge_all_action(target, source, env):
