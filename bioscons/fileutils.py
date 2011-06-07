@@ -27,6 +27,21 @@ def split_path(pth, split_ext=False):
     else:
         return (directory, filename)
 
+def sub_ext(pth, ext=''):
+    """
+    Replace the file extension in `pth` with `sub`. `pth` may be a
+    string, an object coercible to a string using str(), or a
+    single-element list of either.
+    """
+
+    if isinstance(pth, list) or isinstance(pth, tuple) or hasattr(pth, 'pop'):
+        pth = pth[0]
+                
+    pth = str(pth)
+        
+    base, suffix = splitext(filename)
+    return base + ext
+    
 # copyfile
 def _copyfile_emitter(target, source, env):
     """
