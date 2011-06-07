@@ -36,10 +36,8 @@ def sub_ext(pth, ext=''):
 
     if isinstance(pth, list) or isinstance(pth, tuple) or hasattr(pth, 'pop'):
         pth = pth[0]
-                
-    pth = str(pth)
-        
-    base, suffix = splitext(filename)
+                        
+    base, suffix = splitext(str(pth))
     return base + ext
     
 # copyfile
