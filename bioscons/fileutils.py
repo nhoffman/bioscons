@@ -1,28 +1,44 @@
 import subprocess
 import shutil
-from os.path import join, split, splitext, abspath
+from os import path
 
 from SCons.Script import *
 
-def split_path(pth, split_ext=False):
+def rename(fname, pth=None, ext=None):
     """
-    Returns file name elements given an absolute or relative path
-    `pth`, which may be a string, an object coercible to a string
-    using str(), or a single-element list of either. If `split_ext` is
-    True, the name of the file is further split into a base component
-    and the file suffix, ie, (pth, base, suffix), and (pth, filename,
-    None) otherwise.
+    Replace the directory or file extension in `fname` with `pth`
+    and `ext`, respectively. `fname` may be a string, an object
+    coercible to a string using str(), or a single-element list of
+    either.
     """
     
-    if isinstance(pth, list) or isinstance(pth, tuple) or hasattr(pth, 'pop'):
-        pth = pth[0]
+    dirname, base, suffix = split_path(fname, split_ext = True)
+    pth = pth or dirname
+    ext = ext or suffix
+    
+    newname = os.path.join(pth, base) + ext    
+    return newname
+    
+def split_path(fname, split_ext=False):
+    """
+    Returns file name elements given an absolute or relative path
+    `fname`, which may be a string, an object coercible to a string
+    using str(), or a single-element list of either. If `split_ext` is
+    True, the name of the file is further split into a base component
+    and the file suffix, ie, (dir, base, suffix), and (dir, filename)
+    otherwise.
+    """
+    
+    if isinstance(fname, list) or isinstance(fname, tuple) or hasattr(fname, 'pop'):
+        fname = fname[0]
                 
-    pth = abspath(str(pth))
+    fname = str(fname)
+    # fname = path.abspath(str(fname))
         
-    directory, filename = split(pth)
+    directory, filename = path.split(fname)
 
     if split_ext:
-        base, suffix = splitext(filename)
+        base, suffix = path.splitext(filename)
         return (directory, base, suffix)
     else:
         return (directory, filename)
@@ -37,7 +53,7 @@ def sub_ext(pth, ext=''):
     if isinstance(pth, list) or isinstance(pth, tuple) or hasattr(pth, 'pop'):
         pth = pth[0]
                         
-    base, suffix = splitext(str(pth))
+    base, suffix = path.splitext(str(pth))
     return base + ext
     
 # copyfile
@@ -51,7 +67,7 @@ def _copyfile_emitter(target, source, env):
     (tname,) = map(str, target)
 
     if os.path.isdir(tname):
-        target = join(tname, split(sname)[1])
+        target = path.join(tname, path.split(sname)[1])
 
     return target, source
 
