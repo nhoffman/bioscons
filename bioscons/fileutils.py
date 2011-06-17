@@ -4,7 +4,7 @@ from os import path
 
 from SCons.Script import *
 
-def rename(fname, pth=None, ext=None):
+def rename(fname, ext=None, pth=None):
     """
     Replace the directory or file extension in `fname` with `pth`
     and `ext`, respectively. `fname` may be a string, an object
@@ -43,18 +43,18 @@ def split_path(fname, split_ext=False):
     else:
         return (directory, filename)
 
-def sub_ext(pth, ext=''):
-    """
-    Replace the file extension in `pth` with `sub`. `pth` may be a
-    string, an object coercible to a string using str(), or a
-    single-element list of either.
-    """
+# def sub_ext(pth, ext=''):
+#     """
+#     Replace the file extension in `pth` with `sub`. `pth` may be a
+#     string, an object coercible to a string using str(), or a
+#     single-element list of either.
+#     """
 
-    if isinstance(pth, list) or isinstance(pth, tuple) or hasattr(pth, 'pop'):
-        pth = pth[0]
+#     if isinstance(pth, list) or isinstance(pth, tuple) or hasattr(pth, 'pop'):
+#         pth = pth[0]
                         
-    base, suffix = path.splitext(str(pth))
-    return base + ext
+#     base, suffix = path.splitext(str(pth))
+#     return base + ext
     
 # copyfile
 def _copyfile_emitter(target, source, env):
