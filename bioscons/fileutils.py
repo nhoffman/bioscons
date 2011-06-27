@@ -10,6 +10,17 @@ def rename(fname, ext=None, pth=None):
     and `ext`, respectively. `fname` may be a string, an object
     coercible to a string using str(), or a single-element list of
     either.
+
+    Example::
+
+      from bioscons import rename
+      stofile = 'align.sto'
+      fastafile = env.Command(
+          target = rename(stofile, ext='.fasta'),
+          source = stofile,
+          action = 'seqmagick convert $SOURCE $TARGET'
+          )
+
     """
     
     dirname, base, suffix = split_path(fname, split_ext = True)
@@ -47,20 +58,20 @@ def list_targets(environment):
     """
     Given a dict containing {name:object} pairs (eg, the output of
     locals()), return a dict providing {varname:path} for each object
-    that has a 'NodeInfo' attribute. Lists of objects are flattened.
+    that has a `NodeInfo` attribute. Lists of objects are flattened.
 
     An example use case for this function is to generate a set of all
     target paths to compare against the contents of an output
-    directory to identify extraneous files:
+    directory to identify extraneous files::
 
-    > import pprint
-    > from itertools import chain, ifilter
-    > from bioscons import list_targets
-    > targets = list_targets(locals())
-    > pprint.pprint(targets)
-    > print 'extraneous files in ./output:'
-    > print set(glob.glob('output/*')) - \
-    > set(ifilter(lambda fn: fn.startswith('output/'), chain.from_iterable(targets.values())))
+      import pprint
+      from itertools import chain, ifilter
+      from bioscons import list_targets
+      targets = list_targets(locals())
+      pprint.pprint(targets)
+      print 'extraneous files in ./output:'
+      print set(glob.glob('output/*')) - \\
+      set(ifilter(lambda fn: fn.startswith('output/'), chain.from_iterable(targets.values())))
     """
 
     targets = {}
