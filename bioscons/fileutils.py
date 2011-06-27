@@ -10,6 +10,17 @@ def rename(fname, ext=None, pth=None):
     and `ext`, respectively. `fname` may be a string, an object
     coercible to a string using str(), or a single-element list of
     either.
+
+    Example::
+
+      from bioscons import rename
+      stofile = 'align.sto'
+      fastafile = env.Command(
+          target = rename(stofile, ext='.fasta'),
+          source = stofile,
+          action = 'seqmagick convert $SOURCE $TARGET'
+          )
+
     """
     
     dirname, base, suffix = split_path(fname, split_ext = True)
@@ -43,6 +54,42 @@ def split_path(fname, split_ext=False):
     else:
         return (directory, filename)
 
+def list_targets(environment):
+    """
+    Given a dict containing {name:object} pairs (eg, the output of
+    locals()), return a dict providing {varname:path} for each object
+    that has a `NodeInfo` attribute. Lists of objects are flattened.
+
+    An example use case for this function is to generate a set of all
+    target paths to compare against the contents of an output
+    directory to identify extraneous files::
+
+      import pprint
+      from itertools import chain, ifilter
+      from bioscons import list_targets
+      targets = list_targets(locals())
+      pprint.pprint(targets)
+      print 'extraneous files in ./output:'
+      print set(glob.glob('output/*')) - \\
+      set(ifilter(lambda fn: fn.startswith('output/'), chain.from_iterable(targets.values())))
+    """
+
+    targets = {}
+    for objname, obj in environment.items():    
+        if hasattr(obj, 'NodeInfo'):
+            targets[objname] = [str(obj)]
+            continue
+
+        try:
+            is_node_obj = hasattr(obj[0], 'NodeInfo')
+        except (TypeError, KeyError, IndexError):
+            pass
+        else:
+            if is_node_obj:
+                targets[objname] = [str(x) for x in obj]
+
+    return targets
+        
 # def sub_ext(pth, ext=''):
 #     """
 #     Replace the file extension in `pth` with `sub`. `pth` may be a

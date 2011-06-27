@@ -8,6 +8,14 @@ Subpackages
 
 .. toctree::
 
+The :mod:`fileutils` Module
+---------------------------
+
+.. automodule:: bioscons.fileutils
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 The :mod:`infernal` Module
 --------------------------
 
