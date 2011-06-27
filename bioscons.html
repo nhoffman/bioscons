@@ -57,6 +57,60 @@
 </ul>
 </div>
 </div>
+<div class="section" id="module-bioscons.fileutils">
+<span id="the-fileutils-module"></span><h2>The <tt class="xref py py-mod docutils literal"><span class="pre">fileutils</span></tt> Module<a class="headerlink" href="#module-bioscons.fileutils" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="bioscons.fileutils.list_targets">
+<tt class="descclassname">bioscons.fileutils.</tt><tt class="descname">list_targets</tt><big>(</big><em>environment</em><big>)</big><a class="reference internal" href="_modules/bioscons/fileutils.html#list_targets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.fileutils.list_targets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a dict containing {name:object} pairs (eg, the output of
+locals()), return a dict providing {varname:path} for each object
+that has a <cite>NodeInfo</cite> attribute. Lists of objects are flattened.</p>
+<p>An example use case for this function is to generate a set of all
+target paths to compare against the contents of an output
+directory to identify extraneous files:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">pprint</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span><span class="p">,</span> <span class="n">ifilter</span>
+<span class="kn">from</span> <span class="nn">bioscons</span> <span class="kn">import</span> <span class="n">list_targets</span>
+<span class="n">targets</span> <span class="o">=</span> <span class="n">list_targets</span><span class="p">(</span><span class="nb">locals</span><span class="p">())</span>
+<span class="n">pprint</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span>
+<span class="k">print</span> <span class="s">&#39;extraneous files in ./output:&#39;</span>
+<span class="k">print</span> <span class="nb">set</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s">&#39;output/*&#39;</span><span class="p">))</span> <span class="o">-</span> \
+<span class="nb">set</span><span class="p">(</span><span class="n">ifilter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">fn</span><span class="p">:</span> <span class="n">fn</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;output/&#39;</span><span class="p">),</span> <span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">targets</span><span class="o">.</span><span class="n">values</span><span class="p">())))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="bioscons.fileutils.rename">
+<tt class="descclassname">bioscons.fileutils.</tt><tt class="descname">rename</tt><big>(</big><em>fname</em>, <em>ext=None</em>, <em>pth=None</em><big>)</big><a class="reference internal" href="_modules/bioscons/fileutils.html#rename"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.fileutils.rename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replace the directory or file extension in <cite>fname</cite> with <cite>pth</cite>
+and <cite>ext</cite>, respectively. <cite>fname</cite> may be a string, an object
+coercible to a string using str(), or a single-element list of
+either.</p>
+<p>Example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">bioscons</span> <span class="kn">import</span> <span class="n">rename</span>
+<span class="n">stofile</span> <span class="o">=</span> <span class="s">&#39;align.sto&#39;</span>
+<span class="n">fastafile</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">Command</span><span class="p">(</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="n">rename</span><span class="p">(</span><span class="n">stofile</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s">&#39;.fasta&#39;</span><span class="p">),</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="n">stofile</span><span class="p">,</span>
+    <span class="n">action</span> <span class="o">=</span> <span class="s">&#39;seqmagick convert $SOURCE $TARGET&#39;</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="bioscons.fileutils.split_path">
+<tt class="descclassname">bioscons.fileutils.</tt><tt class="descname">split_path</tt><big>(</big><em>fname</em>, <em>split_ext=False</em><big>)</big><a class="reference internal" href="_modules/bioscons/fileutils.html#split_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.fileutils.split_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns file name elements given an absolute or relative path
+<cite>fname</cite>, which may be a string, an object coercible to a string
+using str(), or a single-element list of either. If <cite>split_ext</cite> is
+True, the name of the file is further split into a base component
+and the file suffix, ie, (dir, base, suffix), and (dir, filename)
+otherwise.</p>
+</dd></dl>
+
+</div>
 <div class="section" id="module-bioscons.infernal">
 <span id="the-infernal-module"></span><h2>The <tt class="xref py py-mod docutils literal"><span class="pre">infernal</span></tt> Module<a class="headerlink" href="#module-bioscons.infernal" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="builders">
@@ -358,6 +412,7 @@ PathVariable.PathIsDir. For example:</p>
 <li><a class="reference internal" href="#subpackages">Subpackages</a><ul>
 </ul>
 </li>
+<li><a class="reference internal" href="#module-bioscons.fileutils">The <tt class="docutils literal"><span class="pre">fileutils</span></tt> Module</a></li>
 <li><a class="reference internal" href="#module-bioscons.infernal">The <tt class="docutils literal"><span class="pre">infernal</span></tt> Module</a><ul>
 <li><a class="reference internal" href="#builders">Builders</a><ul>
 <li><a class="reference internal" href="#cmalign">cmalign</a></li>
@@ -437,7 +492,7 @@ PathVariable.PathIsDir. For example:</p>
     </div>
     <div class="footer">
         &copy; Copyright 2011, Noah Hoffman.
-      Last updated on Jun 14, 2011.
+      Last updated on Jun 27, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>

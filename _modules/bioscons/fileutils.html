@@ -1,0 +1,224 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>bioscons.fileutils &mdash; bioscons v0.0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="bioscons v0.0.1 documentation" href="../../index.html" />
+    <link rel="up" title="bioscons" href="../bioscons.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">bioscons v0.0.1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../bioscons.html" accesskey="U">bioscons</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for bioscons.fileutils</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">path</span>
+
+<span class="kn">from</span> <span class="nn">SCons.Script</span> <span class="kn">import</span> <span class="o">*</span>
+
+<div class="viewcode-block" id="rename"><a class="viewcode-back" href="../../bioscons.html#bioscons.fileutils.rename">[docs]</a><span class="k">def</span> <span class="nf">rename</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">pth</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Replace the directory or file extension in `fname` with `pth`</span>
+<span class="sd">    and `ext`, respectively. `fname` may be a string, an object</span>
+<span class="sd">    coercible to a string using str(), or a single-element list of</span>
+<span class="sd">    either.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">dirname</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">suffix</span> <span class="o">=</span> <span class="n">split_path</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">split_ext</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+    <span class="n">pth</span> <span class="o">=</span> <span class="n">pth</span> <span class="ow">or</span> <span class="n">dirname</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="n">ext</span> <span class="ow">or</span> <span class="n">suffix</span>
+    
+    <span class="n">newname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pth</span><span class="p">,</span> <span class="n">base</span><span class="p">)</span> <span class="o">+</span> <span class="n">ext</span>    
+    <span class="k">return</span> <span class="n">newname</span>
+    </div>
+<div class="viewcode-block" id="split_path"><a class="viewcode-back" href="../../bioscons.html#bioscons.fileutils.split_path">[docs]</a><span class="k">def</span> <span class="nf">split_path</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">split_ext</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns file name elements given an absolute or relative path</span>
+<span class="sd">    `fname`, which may be a string, an object coercible to a string</span>
+<span class="sd">    using str(), or a single-element list of either. If `split_ext` is</span>
+<span class="sd">    True, the name of the file is further split into a base component</span>
+<span class="sd">    and the file suffix, ie, (dir, base, suffix), and (dir, filename)</span>
+<span class="sd">    otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s">&#39;pop&#39;</span><span class="p">):</span>
+        <span class="n">fname</span> <span class="o">=</span> <span class="n">fname</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                
+    <span class="n">fname</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+    <span class="c"># fname = path.abspath(str(fname))</span>
+        
+    <span class="n">directory</span><span class="p">,</span> <span class="n">filename</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">split_ext</span><span class="p">:</span>
+        <span class="n">base</span><span class="p">,</span> <span class="n">suffix</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">suffix</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="list_targets"><a class="viewcode-back" href="../../bioscons.html#bioscons.fileutils.list_targets">[docs]</a><span class="k">def</span> <span class="nf">list_targets</span><span class="p">(</span><span class="n">environment</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given a dict containing {name:object} pairs (eg, the output of</span>
+<span class="sd">    locals()), return a dict providing {varname:path} for each object</span>
+<span class="sd">    that has a &#39;NodeInfo&#39; attribute. Lists of objects are flattened.</span>
+
+<span class="sd">    An example use case for this function is to generate a set of all</span>
+<span class="sd">    target paths to compare against the contents of an output</span>
+<span class="sd">    directory to identify extraneous files:</span>
+
+<span class="sd">    &gt; import pprint</span>
+<span class="sd">    &gt; from itertools import chain, ifilter</span>
+<span class="sd">    &gt; from bioscons import list_targets</span>
+<span class="sd">    &gt; targets = list_targets(locals())</span>
+<span class="sd">    &gt; pprint.pprint(targets)</span>
+<span class="sd">    &gt; print &#39;extraneous files in ./output:&#39;</span>
+<span class="sd">    &gt; print set(glob.glob(&#39;output/*&#39;)) - \</span>
+<span class="sd">    &gt; set(ifilter(lambda fn: fn.startswith(&#39;output/&#39;), chain.from_iterable(targets.values())))</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">targets</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">objname</span><span class="p">,</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">environment</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>    
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s">&#39;NodeInfo&#39;</span><span class="p">):</span>
+            <span class="n">targets</span><span class="p">[</span><span class="n">objname</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">obj</span><span class="p">)]</span>
+            <span class="k">continue</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">is_node_obj</span> <span class="o">=</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s">&#39;NodeInfo&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">):</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">is_node_obj</span><span class="p">:</span>
+                <span class="n">targets</span><span class="p">[</span><span class="n">objname</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">targets</span>
+        
+<span class="c"># def sub_ext(pth, ext=&#39;&#39;):</span>
+<span class="c">#     &quot;&quot;&quot;</span>
+<span class="c">#     Replace the file extension in `pth` with `sub`. `pth` may be a</span>
+<span class="c">#     string, an object coercible to a string using str(), or a</span>
+<span class="c">#     single-element list of either.</span>
+<span class="c">#     &quot;&quot;&quot;</span>
+
+<span class="c">#     if isinstance(pth, list) or isinstance(pth, tuple) or hasattr(pth, &#39;pop&#39;):</span>
+<span class="c">#         pth = pth[0]</span>
+                        
+<span class="c">#     base, suffix = path.splitext(str(pth))</span>
+<span class="c">#     return base + ext</span>
+    
+<span class="c"># copyfile</span></div>
+<span class="k">def</span> <span class="nf">_copyfile_emitter</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">env</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    target - name of file or directory</span>
+<span class="sd">    source - filename</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="p">(</span><span class="n">sname</span><span class="p">,)</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">source</span><span class="p">)</span>
+    <span class="p">(</span><span class="n">tname</span><span class="p">,)</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">tname</span><span class="p">):</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tname</span><span class="p">,</span> <span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">sname</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">target</span><span class="p">,</span> <span class="n">source</span>
+
+<span class="n">copyfile</span> <span class="o">=</span> <span class="n">Builder</span><span class="p">(</span>
+    <span class="n">emitter</span><span class="o">=</span><span class="n">_copyfile_emitter</span><span class="p">,</span>
+    <span class="n">action</span><span class="o">=</span><span class="s">&#39;cp $SOURCE $TARGET&#39;</span>
+    <span class="p">)</span>
+
+<span class="c"># bunzip2</span>
+<span class="k">def</span> <span class="nf">_bunzip2_emitter</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">env</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Decompress source file, keeping original.</span>
+
+<span class="sd">    target - name of source with .bz2 suffix removed</span>
+<span class="sd">    source - file compressed using bzip2</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+        
+    <span class="p">(</span><span class="n">sname</span><span class="p">,)</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">source</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">sname</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;.bz2&#39;</span><span class="p">,</span><span class="s">&#39;&#39;</span><span class="p">),</span> <span class="n">source</span>
+
+<span class="n">bunzip2</span> <span class="o">=</span> <span class="n">Builder</span><span class="p">(</span>
+    <span class="n">emitter</span> <span class="o">=</span> <span class="n">_bunzip2_emitter</span><span class="p">,</span>
+    <span class="n">action</span> <span class="o">=</span> <span class="s">&#39;bunzip2 --keep $SOURCE&#39;</span>
+    <span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">bioscons v0.0.1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../bioscons.html" >bioscons</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Noah Hoffman.
+      Last updated on Jun 27, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>
