@@ -82,7 +82,7 @@ def list_targets(environment):
 
         try:
             is_node_obj = hasattr(obj[0], 'NodeInfo')
-        except (TypeError, KeyError, IndexError):
+        except (TypeError, KeyError, IndexError, AttributeError):
             pass
         else:
             if is_node_obj:
