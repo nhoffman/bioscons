@@ -175,7 +175,7 @@ def _cmalign_mpi_action(target, source, env):
         
     cmd = [mpirun, '-np', str(nproc), cmalign, '--mpi'] + \
         flags + \
-        ['-o', sto, cmfile, fasta, '|','tee', scores]
+        ['-o', sto, cmfile, fasta, '>', scores]
 
     cmd = ' '.join(cmd)
     print cmd
