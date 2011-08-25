@@ -183,7 +183,7 @@ def _cmalign_mpi_action(target, source, env):
 
     # cmalign seems to need a moment to complete writing files to disk
     # after returning
-    time.sleep(1)
+    time.sleep(5)
     
     # TODO: there is some problem with the execution environment that
     # results in an error in mpirun when executed usimg subprocess
@@ -230,7 +230,7 @@ def _cmmerge_action(target, source, env):
 
     # cmmerge seems to need a moment to complete writing files to disk
     # after returning
-    time.sleep(1)
+    time.sleep(5)
 
 
 cmmerge = Builder(action=_cmmerge_action)
