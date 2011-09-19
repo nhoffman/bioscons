@@ -6,7 +6,7 @@ def pplacer_emitter(target, source, env):
 
 def pplacer_generator(source, target, env, for_signature):
     """
-    target = [.place file (derived from query align)]
+    target = [.json file (derived from query align)]
     source = [refpkg, ref align, query align]
 
     Will add flags defined by env['pplacer_flags']
