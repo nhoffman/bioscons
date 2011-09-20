@@ -23,16 +23,16 @@ env = Environment(ENV=os.environ, variables=vars)
 env['BUILDERS']['copyfile'] = copyfile
 env['BUILDERS']['raxml'] = raxml
 
-input_alignment = env.copyfile(
-    source = '$testfiles/short16s.phy',
-    target = Dir('.')
-    )
+# input_alignment = env.copyfile(
+#     source = '$testfiles/short16s.phy',
+#     target = Dir('.')
+#     )
 
-print check_raxml(env)
-info_file, result_file = env.raxml(input_alignment)
+# print check_raxml(env)
+# info_file, result_file = env.raxml(input_alignment)
 
-clean_extras = env.Command(
-    target = None,
-    source = [f for f in glob.glob('RAxML_*') + glob.glob('*.reduced') \
-                  if not re.search(r'RAxML_(info|result)',f)],
-    action='rm -f $SOURCES')
+# clean_extras = env.Command(
+#     target = None,
+#     source = [f for f in glob.glob('RAxML_*') + glob.glob('*.reduced') \
+#                   if not re.search(r'RAxML_(info|result)',f)],
+#     action='rm -f $SOURCES')

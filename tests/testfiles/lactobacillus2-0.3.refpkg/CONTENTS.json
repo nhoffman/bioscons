@@ -1,0 +1,65 @@
+{
+    "files": {
+        "profile": "bacteria16S_508_mod5.cm", 
+        "phylo_model": "tmp7bBF_U", 
+        "taxonomy": "taxtable.csv", 
+        "tree": "tmp5q3HzL", 
+        "aln_fasta": "chosen.fasta-convex", 
+        "seq_info": "chosen.csv-convex", 
+        "aln_sto": "lactobacillus2.sto-convex", 
+        "tree_stats": "RAxML_info.lactobacillus2"
+    }, 
+    "rollback": {
+        "files": {
+            "profile": "bacteria16S_508_mod5.cm", 
+            "phylo_model": "tmp7bBF_U", 
+            "taxonomy": "taxtable.csv", 
+            "tree": "RAxML_result.lactobacillus2", 
+            "aln_fasta": "chosen.fasta-convex", 
+            "seq_info": "chosen.csv-convex", 
+            "aln_sto": "lactobacillus2.sto-convex", 
+            "tree_stats": "RAxML_info.lactobacillus2"
+        }, 
+        "rollback": null, 
+        "metadata": {
+            "package_version": "0.3", 
+            "locus": "16S rRNA gene", 
+            "create_date": "2011-09-19 14:24:39", 
+            "format_version": "1.1", 
+            "author": "Noah Hoffman <ngh2@uw.edu>, Sujatha Srinivasan <ssriniva@fhcrc.org>, Erick Matsen <matsen@fhcrc.org>"
+        }, 
+        "md5": {
+            "profile": "7b36841cae1db2a2c4d60ea44db4aba9", 
+            "phylo_model": "79eca6674a9e20ebeef321aaa2db6ec0", 
+            "taxonomy": "96c59c2ad193a11b168f56b2053808d4", 
+            "tree": "f83cf3ce33d33213e5a8996671a14df2", 
+            "aln_fasta": "74c66040c4bb746026c8e81a4073fa06", 
+            "seq_info": "4f3c150072bffddbc03f0804b06ed94b", 
+            "aln_sto": "291c21aeda53062a8bed88956be39f21", 
+            "tree_stats": "562f89651b6c092ef4d1c98f26d8a576"
+        }
+    }, 
+    "log": [
+        "Rerooting refpkg", 
+        "Stripped refpkg (removed 0 files)", 
+        "Loaded initial files into empty refpkg"
+    ], 
+    "metadata": {
+        "package_version": "0.3", 
+        "author": "Noah Hoffman <ngh2@uw.edu>, Sujatha Srinivasan <ssriniva@fhcrc.org>, Erick Matsen <matsen@fhcrc.org>", 
+        "create_date": "2011-09-19 14:24:39", 
+        "format_version": "1.1", 
+        "locus": "16S rRNA gene"
+    }, 
+    "rollforward": null, 
+    "md5": {
+        "profile": "7b36841cae1db2a2c4d60ea44db4aba9", 
+        "phylo_model": "79eca6674a9e20ebeef321aaa2db6ec0", 
+        "taxonomy": "96c59c2ad193a11b168f56b2053808d4", 
+        "tree": "d6a47cafbf3c888027c8de11c944d01a", 
+        "aln_fasta": "74c66040c4bb746026c8e81a4073fa06", 
+        "seq_info": "4f3c150072bffddbc03f0804b06ed94b", 
+        "aln_sto": "291c21aeda53062a8bed88956be39f21", 
+        "tree_stats": "562f89651b6c092ef4d1c98f26d8a576"
+    }
+}
