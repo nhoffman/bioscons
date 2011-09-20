@@ -64,6 +64,8 @@ try:
 except ImportError:
     pass
 
+from fileutils import rename
+
 #: Defines the absolute path of the cmalign executable. ['cmalign']
 CMALIGN = 'cmalign'
 
@@ -75,7 +77,7 @@ CMALIGN_NPROC = 2
 
 MPIRUN = 'mpirun'
 
-def check_cmalign(env):
+def check_cmalign(env, cmd = None):
     """
     Determines whether the cmalign executable can be used to generate
     a version string. Uses either env['CMALIGN'] if defined or
@@ -84,7 +86,7 @@ def check_cmalign(env):
     failure.
     """
 
-    cmalign = env.get('CMALIGN', CMALIGN)
+    cmalign = cmd or env.get('CMALIGN', CMALIGN)
         
     p = subprocess.Popen('%s -h' % cmalign,
                          stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
@@ -99,7 +101,7 @@ def check_cmalign(env):
 
     return cmalign, version
 
-def check_mpirun(env):
+def check_mpirun(env, cmd = None):
     """
     Determines whether the mpirun executable can be used to generate a
     version string. Uses either env['MPIRUN'] if defined or
@@ -108,7 +110,7 @@ def check_mpirun(env):
     failure.
     """
 
-    mpirun = env.get('MPIRUN', MPIRUN)
+    mpirun = cmd or env.get('MPIRUN', MPIRUN)
 
     # version info is in stderr. Yeah.
     p = subprocess.Popen('%s -V' % mpirun,
@@ -280,3 +282,55 @@ cmmerge = Builder(action=_cmmerge_action)
 #     #shutil.rmtree(tempdir)
 
 # cmmerge_all = Builder(action=cmmerge_all_action)
+
+def cmalign_method(env, profile, fasta, outname = None, outdir = None, nproc = 1, options = None):
+
+    if outname:
+        fasta = outname + '.fasta'
+    
+    if outdir:
+        sto_target = rename(fasta, '.sto', outdir)
+        scores_target = rename(fasta, '.cmscores', outdir)
+    else:
+        sto_target = rename(fasta, '.sto')
+        scores_target = rename(fasta, '.cmscores')        
+
+    cmalign, cmalign_version = check_cmalign(env)        
+    cmd = []
+    if nproc == 1:
+        cmd.append(cmalign)
+    else:
+        mpirun, mpirun_version = check_mpirun(env)
+        cmd.extend([mpirun, '-np', str(nproc), cmalign, '--mpi'])
+
+    if options:
+        cmd.append(options)
+
+    cmd.extend(['-o', '${TARGETS[0]}', '$SOURCES', '>', '${TARGETS[1]}'])
+        
+    return env.Command(
+        target = Flatten([sto_target, scores_target]),
+        source = Flatten([profile, fasta]),
+        action = ' '.join(cmd)
+        )
+        
+def cmmerge_method(env, profile, fasta1, fasta2, outname = 'merged.sto', outdir = None, options = None):
+    if outdir:
+        sto_target = rename(outname, pth = outdir)
+    else:
+        sto_target = outname
+    
+    cmalign, cmalign_version = check_cmalign(env)
+    cmd = [cmalign, '--merge']
+
+    if options:
+        cmd.append(options)
+
+    cmd.extend(['-o', '$TARGET', '$SOURCES'])
+
+    return env.Command(
+        target = sto_target,
+        source = Flatten([profile, fasta1, fasta2]),
+        action = ' '.join(cmd)
+        )
+    
