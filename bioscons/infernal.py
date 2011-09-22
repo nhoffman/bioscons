@@ -285,15 +285,37 @@ cmmerge = Builder(action=_cmmerge_action)
 
 def cmalign_method(env, profile, fasta, outname = None, outdir = None, nproc = 1, options = None):
 
+    """
+    Align sequences using ``cmalign``
+
+     * profile - path to file containing the structural model
+     * fasta - path to file containing unaligned sequences
+     * outname - optional label for constructing the output file names.
+       If provided, files will be named '%(label)s.sto' and '%(label)s.cmscores';
+       otherwise, file will be named using basename of ``fasta``.
+     * outdir - optional output directory; if None, uses same directory as ``fasta``.
+     * nproc - number of processors (uses ``mpirun``).
+     * options - an optional string defining arguments to ``cmalign``
+
+     Returns ``(stockholm_file, scores_file)``
+     
+     Example::
+
+         from bioscons.infernal import cmalign_method
+         env.AddMethod(cmalign_method, 'cmalign')
+         sto, scores = env.cmalign(profile, fasta,
+             options = '--hbanded --sub --dna -1')    
+     """
+    
     if outname:
         fasta = outname + '.fasta'
-    
+        
     if outdir:
-        sto_target = rename(fasta, '.sto', outdir)
-        scores_target = rename(fasta, '.cmscores', outdir)
+        sto = rename(fasta, '.sto', outdir)
+        scores = rename(fasta, '.cmscores', outdir)
     else:
-        sto_target = rename(fasta, '.sto')
-        scores_target = rename(fasta, '.cmscores')        
+        sto = rename(fasta, '.sto')
+        scores = rename(fasta, '.cmscores')        
 
     cmalign, cmalign_version = check_cmalign(env)        
     cmd = []
@@ -307,9 +329,9 @@ def cmalign_method(env, profile, fasta, outname = None, outdir = None, nproc = 1
         cmd.append(options)
 
     cmd.extend(['-o', '${TARGETS[0]}', '$SOURCES', '>', '${TARGETS[1]}'])
-        
+    
     return env.Command(
-        target = Flatten([sto_target, scores_target]),
+        target = Flatten([sto, scores]),
         source = Flatten([profile, fasta]),
         action = ' '.join(cmd)
         )
