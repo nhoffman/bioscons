@@ -2,6 +2,13 @@
 Builders
 --------
 
+None: note that ``pplacer`` related functionality is exposed within an
+SCons script via ``AddMethod`` - see below for examples.
+
+
+Public functions and variables
+------------------------------
+
 """
 
 # we expect this to fail unless imported from within SConstruct
@@ -21,7 +28,8 @@ def pplacer(env, refpkg, alignment, outdir = None, options = None, nproc = 2):
 
      * env - Environment instance.
      * refpkg - path to a reference package directory.
-     * aligned - aligned query sequenecs merged with reference sequences in fasta or stockholm formats.
+     * aligned - aligned query sequenecs merged with reference
+       sequences in fasta or stockholm formats.
      * options - command line options to be provided to
        pplacer. Note that substitution of variables defined within the
        current environment will occur.
@@ -29,7 +37,17 @@ def pplacer(env, refpkg, alignment, outdir = None, options = None, nproc = 2):
        directory as alignment if unspecified.
      * nproc - number of processes (``pplacer -j``)
 
-    Returns [placefile] (where the file extension of ``alignment`` is replaced with '.jplace') 
+    Returns [placefile] (where the file extension of ``alignment`` is replaced with '.jplace')
+
+    Example::
+
+        from bioscons.pplacer import pplacer
+        placefile = env.pplacer(
+            refpkg = 'my.refpkg',
+            alignment = 'merged.sto',
+            outdir = 'output',
+            nproc = 4
+        )        
     """
 
     cmd = ['pplacer', '-j %i' % int(nproc)]

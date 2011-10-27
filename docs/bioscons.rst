@@ -24,6 +24,14 @@ The :mod:`infernal` Module
     :undoc-members:
     :show-inheritance:
 
+The :mod:`pplacer` Module
+--------------------------
+
+.. automodule:: bioscons.pplacer
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 The :mod:`r_lang` Module
 --------------------------
 
