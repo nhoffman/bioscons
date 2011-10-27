@@ -47,6 +47,7 @@ _, faname, _ = split_path(fasta, split_ext = True)
 #     )
 
 env.AddMethod(cmalign_method, "cmalignMethod")
+env.AddMethod(align_and_merge, "align_and_merge")
 
 align3, scores3 = env.cmalignMethod(cmfile, fasta,
                                     options = '--hbanded --sub --dna -1')
@@ -82,6 +83,9 @@ merge5 = env.cmmergeMethod(cmfile, align5, align5,
 merge6 = env.cmmergeMethod(cmfile, align5, align5,
                            outname = 'merge6/merged6.sto',
                            options = '--hbanded --sub --dna -1')
+
+## tests for align_and_merge are in tests/pplacer
+
 
 for f in glob.glob('align*') + glob.glob('merge*'):
     Clean(merge6, Dir(f))

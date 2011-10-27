@@ -7,7 +7,8 @@ import pprint
 # use local (not system) version of the package
 sys.path.insert(0, '../..')
 
-from bioscons.pplacer import align_and_place
+from bioscons.infernal import align_and_merge
+from bioscons.pplacer import align_and_place, pplacer
 
 refpkg = '../../tests/testfiles/lactobacillus2-0.3.refpkg'
 qseqs = '../../tests/testfiles/short16s.fasta'
@@ -15,9 +16,9 @@ qseqs = '../../tests/testfiles/short16s.fasta'
 vars = Variables()
 env = Environment(ENV=os.environ, variables=vars)
 
-from bioscons.pplacer import align_and_place
-
-env.AddMethod(align_and_place, "align_and_place")    
+env.AddMethod(align_and_place, "align_and_place")
+env.AddMethod(align_and_merge, "align_and_merge")
+env.AddMethod(pplacer, "pplacer")
 
 sto, scores, merged, placefile = env.align_and_place(
     refpkg, qseqs, outdir = '.')
@@ -25,16 +26,28 @@ sto, scores, merged, placefile = env.align_and_place(
 sto, scores, merged, placefile = env.align_and_place(
     refpkg = refpkg,
     qseqs = qseqs,
-    options = '-p --inform-prior --map-identity',
+    pplacer_options = '-p --inform-prior --map-identity',
     outdir = 'place1'
     )
 
 sto, scores, merged, placefile = env.align_and_place(
     refpkg = refpkg,
     qseqs = qseqs,
-    options = '-p --inform-prior --map-identity',
+    pplacer_options = '-p --inform-prior --map-identity',
     outdir = 'place2',
     nproc = 4
     )
 
+sto, scores, merged = env.align_and_merge(
+    refpkg = refpkg,
+    qseqs = qseqs,
+    outdir = 'place3',
+    nproc = 4
+    )
 
+placefile = env.pplacer(
+    refpkg = refpkg,
+    alignment = merged,
+    outdir = 'place3',
+    nproc = 4
+    )

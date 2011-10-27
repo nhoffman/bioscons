@@ -13,10 +13,25 @@ except ImportError:
 from taxtastic.refpkg import Refpkg
 
 from fileutils import rename
-from infernal import cmalign_method, cmmerge_method
+from infernal import cmalign_method, cmmerge_method, CMALIGN_FLAGS
 
 def pplacer(env, refpkg, alignment, outdir = None, options = None, nproc = 2):
-    
+    """
+    Run pplacer.
+
+     * env - Environment instance.
+     * refpkg - path to a reference package directory.
+     * aligned - aligned query sequenecs merged with reference sequences in fasta or stockholm formats.
+     * options - command line options to be provided to
+       pplacer. Note that substitution of variables defined within the
+       current environment will occur.
+     * outdir - optional output directory; saves files to same
+       directory as alignment if unspecified.
+     * nproc - number of processes (``pplacer -j``)
+
+    Returns [placefile] (where the file extension of ``alignment`` is replaced with '.jplace') 
+    """
+
     cmd = ['pplacer', '-j %i' % int(nproc)]
 
     if outdir:
@@ -34,7 +49,7 @@ def pplacer(env, refpkg, alignment, outdir = None, options = None, nproc = 2):
         )
     
 def align_and_place(env, refpkg, qseqs, outdir = None,
-                    options = None, nproc = 1):
+                    pplacer_options = None, cmalign_options = None, nproc = 1):
 
     """
     Align sequences in ``qseqs``, merge with the reference alignment,
@@ -44,11 +59,11 @@ def align_and_place(env, refpkg, qseqs, outdir = None,
      * refpkg - path to a reference package directory.
      * qseqs - unaligned query sequenecs in fasta format.
      * options - command line options to be provided to
-       pplacer. Note that substitution of variables defined withon the
+       pplacer. Note that substitution of variables defined within the
        current environment will occur.
      * outdir - optional output directory; saves files to same
        directory as qseqs if unspecified.
-     * number of processors to use for ``cmalign`` and ``pplacer``.
+     * nproc - number of processors to use for ``cmalign`` and ``pplacer``.
 
     Returns (sto, scores, merged, placefile)
 
@@ -61,8 +76,6 @@ def align_and_place(env, refpkg, qseqs, outdir = None,
             pplacer_options = '-p --inform-prior --map-identity'
         )
     """
-
-    cmalign_options = '--hbanded --sub --dna -1'
     
     if not hasattr(env, 'cmalign_method'):
         env.AddMethod(cmalign_method, 'cmalign_method')
@@ -73,6 +86,8 @@ def align_and_place(env, refpkg, qseqs, outdir = None,
     if not hasattr(env, 'pplacer_method'):
         env.AddMethod(pplacer, 'pplacer_method')
 
+    cmalign_options = cmalign_options or CMALIGN_FLAGS
+        
     pkg = Refpkg(refpkg)        
     profile = pkg.file_abspath('profile')
     ref_sto = pkg.file_abspath('aln_sto')
@@ -99,7 +114,7 @@ def align_and_place(env, refpkg, qseqs, outdir = None,
         refpkg = refpkg,
         alignment = merged,
         outdir = outdir,
-        options = options,
+        options = pplacer_options,
         nproc = nproc
         )
 
