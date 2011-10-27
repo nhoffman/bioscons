@@ -3,17 +3,20 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>bioscons.fileutils &mdash; bioscons v0.0.1 documentation</title>
+    <title>bioscons.fileutils &mdash; bioscons 0.3 documentation</title>
+    
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.0.1',
+        VERSION:     '0.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -22,8 +25,8 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="bioscons v0.0.1 documentation" href="../../index.html" />
-    <link rel="up" title="bioscons" href="../bioscons.html" /> 
+    <link rel="top" title="bioscons 0.3 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -35,9 +38,8 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">bioscons v0.0.1 documentation</a> &raquo;</li>
-          <li><a href="../index.html" >Module code</a> &raquo;</li>
-          <li><a href="../bioscons.html" accesskey="U">bioscons</a> &raquo;</li> 
+        <li><a href="../../index.html">bioscons 0.3 documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -59,6 +61,17 @@
 <span class="sd">    and `ext`, respectively. `fname` may be a string, an object</span>
 <span class="sd">    coercible to a string using str(), or a single-element list of</span>
 <span class="sd">    either.</span>
+
+<span class="sd">    Example::</span>
+
+<span class="sd">      from bioscons import rename</span>
+<span class="sd">      stofile = &#39;align.sto&#39;</span>
+<span class="sd">      fastafile = env.Command(</span>
+<span class="sd">          target = rename(stofile, ext=&#39;.fasta&#39;),</span>
+<span class="sd">          source = stofile,</span>
+<span class="sd">          action = &#39;seqmagick convert $SOURCE $TARGET&#39;</span>
+<span class="sd">          )</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="n">dirname</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">suffix</span> <span class="o">=</span> <span class="n">split_path</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">split_ext</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
@@ -96,20 +109,20 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Given a dict containing {name:object} pairs (eg, the output of</span>
 <span class="sd">    locals()), return a dict providing {varname:path} for each object</span>
-<span class="sd">    that has a &#39;NodeInfo&#39; attribute. Lists of objects are flattened.</span>
+<span class="sd">    that has a `NodeInfo` attribute. Lists of objects are flattened.</span>
 
 <span class="sd">    An example use case for this function is to generate a set of all</span>
 <span class="sd">    target paths to compare against the contents of an output</span>
-<span class="sd">    directory to identify extraneous files:</span>
+<span class="sd">    directory to identify extraneous files::</span>
 
-<span class="sd">    &gt; import pprint</span>
-<span class="sd">    &gt; from itertools import chain, ifilter</span>
-<span class="sd">    &gt; from bioscons import list_targets</span>
-<span class="sd">    &gt; targets = list_targets(locals())</span>
-<span class="sd">    &gt; pprint.pprint(targets)</span>
-<span class="sd">    &gt; print &#39;extraneous files in ./output:&#39;</span>
-<span class="sd">    &gt; print set(glob.glob(&#39;output/*&#39;)) - \</span>
-<span class="sd">    &gt; set(ifilter(lambda fn: fn.startswith(&#39;output/&#39;), chain.from_iterable(targets.values())))</span>
+<span class="sd">      import pprint</span>
+<span class="sd">      from itertools import chain, ifilter</span>
+<span class="sd">      from bioscons import list_targets</span>
+<span class="sd">      targets = list_targets(locals())</span>
+<span class="sd">      pprint.pprint(targets)</span>
+<span class="sd">      print &#39;extraneous files in ./output:&#39;</span>
+<span class="sd">      print set(glob.glob(&#39;output/*&#39;)) - \\</span>
+<span class="sd">      set(ifilter(lambda fn: fn.startswith(&#39;output/&#39;), chain.from_iterable(targets.values())))</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">targets</span> <span class="o">=</span> <span class="p">{}</span>
@@ -120,7 +133,7 @@
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">is_node_obj</span> <span class="o">=</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s">&#39;NodeInfo&#39;</span><span class="p">)</span>
-        <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">):</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">):</span>
             <span class="k">pass</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">is_node_obj</span><span class="p">:</span>
@@ -187,7 +200,7 @@
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -210,15 +223,14 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">bioscons v0.0.1 documentation</a> &raquo;</li>
-          <li><a href="../index.html" >Module code</a> &raquo;</li>
-          <li><a href="../bioscons.html" >bioscons</a> &raquo;</li> 
+        <li><a href="../../index.html">bioscons 0.3 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2011, Noah Hoffman.
-      Last updated on Aug 29, 2011.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+      Last updated on Oct 27, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.
     </div>
   </body>
 </html>
