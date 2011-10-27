@@ -65,6 +65,7 @@ except ImportError:
     pass
 
 from fileutils import rename
+from taxtastic.refpkg import Refpkg
 
 #: Defines the absolute path of the cmalign executable. ['cmalign']
 CMALIGN = 'cmalign'
@@ -356,3 +357,60 @@ def cmmerge_method(env, profile, fasta1, fasta2, outname = 'merged.sto', outdir 
         action = ' '.join(cmd)
         )
     
+def align_and_merge(env, refpkg, qseqs, outdir = None,
+                    options = None, nproc = 1):
+
+    """
+    Align sequences in ``qseqs`` and merge with the reference alignment. 
+
+     * env - Environment instance.
+     * refpkg - path to a reference package directory.
+     * qseqs - unaligned query sequenecs in fasta format.
+     * outdir - optional output directory; saves files to same
+       directory as qseqs if unspecified.
+     * options - flags for cmalign [default infernal.CMALIGN_FLAGS]
+     * nproc - number of processors to use for ``cmalign``.
+
+    Returns (sto, scores, merged)
+
+    Example::
+
+        from bioscons.pplacer import align_and_merge
+        env.AddMethod(align_and_merge, "align_and_merge")    
+        sto, scores, merged = env.align_and_merge(
+            refpkg = 'my.refpkg', qseqs = 'myseqs.fasta'
+        )
+    """
+    
+    if not hasattr(env, 'cmalign_method'):
+        env.AddMethod(cmalign_method, 'cmalign_method')
+
+    if not hasattr(env, 'cmmerge_method'):
+        env.AddMethod(cmmerge_method, 'cmmerge_method')
+
+    pkg = Refpkg(refpkg)        
+    profile = pkg.file_abspath('profile')
+    ref_sto = pkg.file_abspath('aln_sto')
+    
+    # align sequences
+    sto, scores = env.cmalign_method(
+        profile = profile,
+        fasta = qseqs,
+        nproc = nproc,
+        options = options or CMALIGN_FLAGS,
+        outdir = outdir
+        )
+    
+    # merge with reference set
+    merged = env.cmmerge_method(
+        profile, ref_sto, sto,
+        outname = rename(sto, '_merged.sto'),
+        options = options or CMALIGN_FLAGS,
+        outdir = outdir
+        )
+
+    if outdir and not outdir == '.':
+        Clean(merged, Dir(outdir))
+    
+    return Flatten([sto, scores, merged])
+
