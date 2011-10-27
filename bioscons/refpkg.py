@@ -1,8 +1,8 @@
 from os import path
 import json
 from SCons.Script import *
-
-def get_vars(pth):
+    
+def get_varlist(pth):
     """
     Return a list of tuples describing refpkg contents. The output can
     be used to define environment variables, where files within the
@@ -11,11 +11,12 @@ def get_vars(pth):
     the reference package itself as an instance of
     PathVariable.PathIsDir. For example::
 
-      > from bioscons.refpkg import get_vars 
-      > vars = Variables()
-      > vars.AddVariables(*get_vars('/path/to/refpkg'))
-      > env = Environment(ENV=os.environ, variables=vars)
-      > path_to_refpkg = env['refpkg']
+        from bioscons.refpkg import get_vars 
+        vars = Variables()
+        vars.AddVariables(*get_vars('/path/to/refpkg'))
+        env = Environment(ENV=os.environ, variables=vars)
+        path_to_refpkg = env['refpkg']
+        path_to_profile = env['refpkg_profile']
     """
 
     _fullpath = lambda fname: path.abspath(path.join(pth, fname))
@@ -27,7 +28,7 @@ def get_vars(pth):
             contents = json.load(fobj)
 
     output.extend(
-        [(key, key, _fullpath(val), PathVariable) \
+        [('refpkg_'+key, key, _fullpath(val), PathVariable) \
              for key, val in contents['files'].items()]
         )
 

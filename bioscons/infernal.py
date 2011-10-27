@@ -64,6 +64,9 @@ try:
 except ImportError:
     pass
 
+from fileutils import rename
+from taxtastic.refpkg import Refpkg
+
 #: Defines the absolute path of the cmalign executable. ['cmalign']
 CMALIGN = 'cmalign'
 
@@ -75,7 +78,7 @@ CMALIGN_NPROC = 2
 
 MPIRUN = 'mpirun'
 
-def check_cmalign(env):
+def check_cmalign(env, cmd = None):
     """
     Determines whether the cmalign executable can be used to generate
     a version string. Uses either env['CMALIGN'] if defined or
@@ -84,7 +87,7 @@ def check_cmalign(env):
     failure.
     """
 
-    cmalign = env.get('CMALIGN', CMALIGN)
+    cmalign = cmd or env.get('CMALIGN', CMALIGN)
         
     p = subprocess.Popen('%s -h' % cmalign,
                          stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
@@ -99,7 +102,7 @@ def check_cmalign(env):
 
     return cmalign, version
 
-def check_mpirun(env):
+def check_mpirun(env, cmd = None):
     """
     Determines whether the mpirun executable can be used to generate a
     version string. Uses either env['MPIRUN'] if defined or
@@ -108,7 +111,7 @@ def check_mpirun(env):
     failure.
     """
 
-    mpirun = env.get('MPIRUN', MPIRUN)
+    mpirun = cmd or env.get('MPIRUN', MPIRUN)
 
     # version info is in stderr. Yeah.
     p = subprocess.Popen('%s -V' % mpirun,
@@ -183,7 +186,7 @@ def _cmalign_mpi_action(target, source, env):
 
     # cmalign seems to need a moment to complete writing files to disk
     # after returning
-    time.sleep(1)
+    time.sleep(5)
     
     # TODO: there is some problem with the execution environment that
     # results in an error in mpirun when executed usimg subprocess
@@ -230,7 +233,7 @@ def _cmmerge_action(target, source, env):
 
     # cmmerge seems to need a moment to complete writing files to disk
     # after returning
-    time.sleep(1)
+    time.sleep(5)
 
 
 cmmerge = Builder(action=_cmmerge_action)
@@ -280,3 +283,134 @@ cmmerge = Builder(action=_cmmerge_action)
 #     #shutil.rmtree(tempdir)
 
 # cmmerge_all = Builder(action=cmmerge_all_action)
+
+def cmalign_method(env, profile, fasta, outname = None, outdir = None, nproc = 1, options = None):
+
+    """
+    Align sequences using ``cmalign``
+
+     * profile - path to file containing the structural model
+     * fasta - path to file containing unaligned sequences
+     * outname - optional label for constructing the output file names.
+       If provided, files will be named '%(label)s.sto' and '%(label)s.cmscores';
+       otherwise, file will be named using basename of ``fasta``.
+     * outdir - optional output directory; if None, uses same directory as ``fasta``.
+     * nproc - number of processors (uses ``mpirun``).
+     * options - an optional string defining arguments to ``cmalign``
+
+     Returns ``(stockholm_file, scores_file)``
+     
+     Example::
+
+         from bioscons.infernal import cmalign_method
+         env.AddMethod(cmalign_method, 'cmalign')
+         sto, scores = env.cmalign(profile, fasta,
+             options = '--hbanded --sub --dna -1')    
+     """
+    
+    if outname:
+        fasta = outname + '.fasta'
+        
+    if outdir:
+        sto = rename(fasta, '.sto', outdir)
+        scores = rename(fasta, '.cmscores', outdir)
+    else:
+        sto = rename(fasta, '.sto')
+        scores = rename(fasta, '.cmscores')        
+
+    cmalign, cmalign_version = check_cmalign(env)        
+    cmd = []
+    if nproc == 1:
+        cmd.append(cmalign)
+    else:
+        mpirun, mpirun_version = check_mpirun(env)
+        cmd.extend([mpirun, '-np', str(nproc), cmalign, '--mpi'])
+
+    if options:
+        cmd.append(options)
+
+    cmd.extend(['-o', '${TARGETS[0]}', '$SOURCES', '>', '${TARGETS[1]}'])
+    
+    return env.Command(
+        target = Flatten([sto, scores]),
+        source = Flatten([profile, fasta]),
+        action = ' '.join(cmd)
+        )
+        
+def cmmerge_method(env, profile, fasta1, fasta2, outname = 'merged.sto', outdir = None, options = None):
+    if outdir:
+        sto_target = rename(outname, pth = outdir)
+    else:
+        sto_target = outname
+    
+    cmalign, cmalign_version = check_cmalign(env)
+    cmd = [cmalign, '--merge']
+
+    if options:
+        cmd.append(options)
+
+    cmd.extend(['-o', '$TARGET', '$SOURCES'])
+
+    return env.Command(
+        target = sto_target,
+        source = Flatten([profile, fasta1, fasta2]),
+        action = ' '.join(cmd)
+        )
+    
+def align_and_merge(env, refpkg, qseqs, outdir = None,
+                    options = None, nproc = 1):
+
+    """
+    Align sequences in ``qseqs`` and merge with the reference alignment. 
+
+     * env - Environment instance.
+     * refpkg - path to a reference package directory.
+     * qseqs - unaligned query sequenecs in fasta format.
+     * outdir - optional output directory; saves files to same
+       directory as qseqs if unspecified.
+     * options - flags for cmalign [default infernal.CMALIGN_FLAGS]
+     * nproc - number of processors to use for ``cmalign``.
+
+    Returns (sto, scores, merged)
+
+    Example::
+
+        from bioscons.pplacer import align_and_merge
+        env.AddMethod(align_and_merge, "align_and_merge")    
+        sto, scores, merged = env.align_and_merge(
+            refpkg = 'my.refpkg', qseqs = 'myseqs.fasta'
+        )
+    """
+    
+    if not hasattr(env, 'cmalign_method'):
+        env.AddMethod(cmalign_method, 'cmalign_method')
+
+    if not hasattr(env, 'cmmerge_method'):
+        env.AddMethod(cmmerge_method, 'cmmerge_method')
+
+    pkg = Refpkg(refpkg)        
+    profile = pkg.file_abspath('profile')
+    ref_sto = pkg.file_abspath('aln_sto')
+    
+    # align sequences
+    sto, scores = env.cmalign_method(
+        profile = profile,
+        fasta = qseqs,
+        nproc = nproc,
+        options = options or CMALIGN_FLAGS,
+        outdir = outdir
+        )
+    
+    # merge with reference set
+    merged = env.cmmerge_method(
+        profile, ref_sto, sto,
+        outname = rename(sto, '_merged.sto'),
+        options = options or CMALIGN_FLAGS,
+        outdir = outdir
+        )
+
+    if outdir and not outdir == '.':
+        Clean(merged, Dir(outdir))
+    
+    return Flatten([sto, scores, merged])
+

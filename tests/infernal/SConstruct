@@ -1,12 +1,13 @@
 import os
 from os.path import join,split,splitext
 import sys
+import glob
 
 # use local (not system) version of the package
 sys.path.insert(0, '../..')
 
 from bioscons.fileutils import bunzip2, split_path, copyfile
-from bioscons.infernal import cmalign, cmalign_mpi, cmmerge
+from bioscons.infernal import cmalign, cmalign_mpi, cmmerge, cmalign_method, cmmerge_method
 
 vars = Variables()
 varlist = [
@@ -30,19 +31,61 @@ fasta = env.copyfile(target=Dir('.'), source='$testfiles/short16s.fasta')
 
 _, faname, _ = split_path(fasta, split_ext = True)
 
-align1, scores1 = env.cmalign(
-    target = Flatten([faname+'.sto', faname+'_scores.txt']), 
-    source = Flatten([cmfile, fasta])
-    )
+# align1, scores1 = env.cmalign(
+#     target = Flatten([faname+'.sto', faname+'_scores.txt']), 
+#     source = Flatten([cmfile, fasta])
+#     )
 
-merged = env.cmmerge(
-    target = 'merged.sto',
-    source = Flatten([cmfile, align1, align1])
-    )
+# merged = env.cmmerge(
+#     target = 'merged.sto',
+#     source = Flatten([cmfile, align1, align1])
+#     )
 
-align2, scores2 = env.cmalign_mpi(
-    target = Flatten([faname+'_mpi.sto', faname+'_mpi_scores.txt']), 
-    source = Flatten([cmfile, fasta])
-    )
+# align2, scores2 = env.cmalign_mpi(
+#     target = Flatten([faname+'_mpi.sto', faname+'_mpi_scores.txt']), 
+#     source = Flatten([cmfile, fasta])
+#     )
+
+env.AddMethod(cmalign_method, "cmalignMethod")
+env.AddMethod(align_and_merge, "align_and_merge")
+
+align3, scores3 = env.cmalignMethod(cmfile, fasta,
+                                    options = '--hbanded --sub --dna -1')
+Alias('align3', align3)
+
+align4, scores4 = env.cmalignMethod(cmfile, fasta,
+                                    outdir = 'align4',
+                                    options = '--hbanded --sub --dna -1')
+Alias('align4', align4)
+
+align5, scores5 = env.cmalignMethod(cmfile, fasta,
+                                    outdir = 'align5',
+                                    options = '--hbanded --sub --dna -1',
+                                    nproc = 4)
+Alias('align5', align5)
 
 
+env.AddMethod(cmmerge_method, "cmmergeMethod")
+
+merge1 = env.cmmergeMethod(cmfile, align5, align5)
+merge2 = env.cmmergeMethod(cmfile, align5, align5,
+                           outdir = 'merge2')
+merge3 = env.cmmergeMethod(cmfile, align5, align5,
+                           outdir = 'merge3',
+                           options = '--hbanded --sub --dna -1')
+merge4 = env.cmmergeMethod(cmfile, align5, align5,
+                           outname = 'merge4.sto',
+                           outdir = 'merge4',
+                           options = '--hbanded --sub --dna -1')
+merge5 = env.cmmergeMethod(cmfile, align5, align5,
+                           outname = 'merge5/merged.sto',
+                           options = '--hbanded --sub --dna -1')
+merge6 = env.cmmergeMethod(cmfile, align5, align5,
+                           outname = 'merge6/merged6.sto',
+                           options = '--hbanded --sub --dna -1')
+
+## tests for align_and_merge are in tests/pplacer
+
+
+for f in glob.glob('align*') + glob.glob('merge*'):
+    Clean(merge6, Dir(f))
