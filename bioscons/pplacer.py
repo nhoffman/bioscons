@@ -22,7 +22,7 @@ from taxtastic.refpkg import Refpkg
 from fileutils import rename
 from infernal import cmalign_method, cmmerge_method, CMALIGN_FLAGS
 
-def pplacer(env, refpkg, alignment, outdir = None, options = None, nproc = 2):
+def pplacer(env, refpkg, alignment, outdir = None, options = None, nproc = 2, pplacer_binary = 'pplacer'):
     """
     Run pplacer.
 
@@ -50,7 +50,7 @@ def pplacer(env, refpkg, alignment, outdir = None, options = None, nproc = 2):
         )        
     """
 
-    cmd = ['pplacer', '-j %i' % int(nproc)]
+    cmd = [pplacer_binary, '-j %i' % int(nproc)]
 
     if outdir:
         cmd.extend(['--out-dir', env.subst(outdir)])
