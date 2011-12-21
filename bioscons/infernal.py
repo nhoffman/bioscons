@@ -15,7 +15,7 @@ containing the alignment statistics for each sequence.
 
 :environment variables (module globals define defaults):
  * env['CMALIGN'], env['CMALIGN_FLAGS']
- 
+
 cmalign_mpi
 +++++++++++
 
@@ -88,11 +88,11 @@ def check_cmalign(env, cmd = None):
     """
 
     cmalign = cmd or env.get('CMALIGN', CMALIGN)
-        
+
     p = subprocess.Popen('%s -h' % cmalign,
                          stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     out, err = p.communicate()
-    
+
     if err:
         raise SystemError('"%s" could not be executed. Is it installed?' % cmalign)
 
@@ -117,7 +117,7 @@ def check_mpirun(env, cmd = None):
     p = subprocess.Popen('%s -V' % mpirun,
                          stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     out, err = p.communicate()
-    
+
     if p.returncode > 0:
         raise SystemError('"%s" could not be executed. Is it installed?' % mpirun)
 
@@ -136,19 +136,19 @@ def _cmalign_action(target, source, env):
     """
 
     cmalign, version = check_cmalign(env)
-    
+
     cmfile, fasta = map(str, source)
     sto, scores = map(str, target)
 
     flags = env.get('CMALIGN_FLAGS', CMALIGN_FLAGS).split()
-    
+
     cmd = [cmalign] + flags + ['-o', sto, cmfile, fasta]
 
     log.info(' '.join(cmd))
-    
+
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     out, err = p.communicate()
-        
+
     with open(scores, 'w') as scorefile:
         scorefile.write(out)
 
@@ -166,16 +166,16 @@ def _cmalign_mpi_action(target, source, env):
     target - [file in stockholm format, file containing align scores]
     source - [alignment profile, fasta file]
     """
-    
+
     mpirun, mpi_version = check_mpirun(env)
     cmalign, cmalign_version = check_cmalign(env)
-    
+
     cmfile, fasta = map(str, source)
     sto, scores = map(str, target)
 
     nproc = int(env.get('CMALIGN_NPROC', CMALIGN_NPROC))
     flags = env.get('CMALIGN_FLAGS', CMALIGN_FLAGS).split()
-        
+
     cmd = [mpirun, '-np', str(nproc), cmalign, '--mpi'] + \
         flags + \
         ['-o', sto, cmfile, fasta, '>', scores]
@@ -187,7 +187,7 @@ def _cmalign_mpi_action(target, source, env):
     # cmalign seems to need a moment to complete writing files to disk
     # after returning
     time.sleep(5)
-    
+
     # TODO: there is some problem with the execution environment that
     # results in an error in mpirun when executed usimg subprocess
 
@@ -218,12 +218,12 @@ def _cmmerge_action(target, source, env):
     """
 
     cmalign, version = check_cmalign(env)
-    
+
     cmfile, sto1, sto2 = map(str, source)
     sto_out = str(target[0])
 
     flags = env.get('CMALIGN_FLAGS', CMALIGN_FLAGS).split()
-    
+
     cmd = [cmalign, '--merge'] + flags + ['-o', sto_out, cmfile, sto1, sto2]
 
     print ' '.join(cmd)
@@ -299,7 +299,7 @@ def cmalign_method(env, profile, fasta, outname = None, outdir = None, nproc = 1
      * options - an optional string defining arguments to ``cmalign``
 
      Returns ``(stockholm_file, scores_file)``
-     
+
      Example::
 
          from bioscons.infernal import cmalign_method
@@ -310,15 +310,15 @@ def cmalign_method(env, profile, fasta, outname = None, outdir = None, nproc = 1
     
     if outname:
         fasta = outname + '.fasta'
-        
+
     if outdir:
         sto = rename(fasta, '.sto', outdir)
         scores = rename(fasta, '.cmscores', outdir)
     else:
         sto = rename(fasta, '.sto')
-        scores = rename(fasta, '.cmscores')        
+        scores = rename(fasta, '.cmscores')
 
-    cmalign, cmalign_version = check_cmalign(env)        
+    cmalign, cmalign_version = check_cmalign(env)
     cmd = []
     if nproc == 1:
         cmd.append(cmalign)
@@ -330,19 +330,19 @@ def cmalign_method(env, profile, fasta, outname = None, outdir = None, nproc = 1
         cmd.append(options)
 
     cmd.extend(['-o', '${TARGETS[0]}', '$SOURCES', '>', '${TARGETS[1]}'])
-    
+
     return env.Command(
         target = Flatten([sto, scores]),
         source = Flatten([profile, fasta]),
         action = ' '.join(cmd)
         )
-        
+
 def cmmerge_method(env, profile, fasta1, fasta2, outname = 'merged.sto', outdir = None, options = None):
     if outdir:
         sto_target = rename(outname, pth = outdir)
     else:
         sto_target = outname
-    
+
     cmalign, cmalign_version = check_cmalign(env)
     cmd = [cmalign, '--merge']
 
@@ -376,22 +376,22 @@ def align_and_merge(env, refpkg, qseqs, outdir = None,
     Example::
 
         from bioscons.pplacer import align_and_merge
-        env.AddMethod(align_and_merge, "align_and_merge")    
+        env.AddMethod(align_and_merge, "align_and_merge")
         sto, scores, merged = env.align_and_merge(
             refpkg = 'my.refpkg', qseqs = 'myseqs.fasta'
         )
     """
-    
+
     if not hasattr(env, 'cmalign_method'):
         env.AddMethod(cmalign_method, 'cmalign_method')
 
     if not hasattr(env, 'cmmerge_method'):
         env.AddMethod(cmmerge_method, 'cmmerge_method')
 
-    pkg = Refpkg(refpkg)        
+    pkg = Refpkg(refpkg)
     profile = pkg.file_abspath('profile')
     ref_sto = pkg.file_abspath('aln_sto')
-    
+
     # align sequences
     sto, scores = env.cmalign_method(
         profile = profile,
@@ -400,7 +400,7 @@ def align_and_merge(env, refpkg, qseqs, outdir = None,
         options = options or CMALIGN_FLAGS,
         outdir = outdir
         )
-    
+
     # merge with reference set
     merged = env.cmmerge_method(
         profile, ref_sto, sto,
@@ -411,6 +411,6 @@ def align_and_merge(env, refpkg, qseqs, outdir = None,
 
     if outdir and not outdir == '.':
         Clean(merged, Dir(outdir))
-    
+
     return Flatten([sto, scores, merged])
 
