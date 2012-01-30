@@ -20,6 +20,6 @@ params = {'author': 'Noah Hoffman',
           'scripts': scripts,
           'url': 'http://github.com/nhoffman/bioscons',
           'version': __version__,
-          'requires':['python (>= 2.6)','scons (>= 2.0)']}
+          'requires':['python (>= 2.7)','scons (>= 2.0)']}
 
 setup(**params)

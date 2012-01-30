@@ -1,0 +1,28 @@
+import os
+from os import path
+import sys
+import pprint
+
+# use local (not system) version of the package
+sys.path.insert(0, '../..')
+
+from bioscons.slurm import SlurmEnvironment
+
+vars = Variables()
+env = SlurmEnvironment(ENV=os.environ, variables=vars,
+                       use_cluster = True, slurm_queus = 'pubnorm')
+
+stdout1 = env.SRun(
+    target = 'stdout1.txt',
+    source = None,
+    action = './test.sh >> $TARGET',
+    ncores = 2
+    )
+Depends(stdout1, ['./test.sh', 'SConstruct'])
+
+stdout2 = env.Command(
+    target = 'stdout2.txt',
+    source = None,
+    action = './test.sh >> $TARGET'
+    )
+Depends(stdout2, ['./test.sh', 'SConstruct'])

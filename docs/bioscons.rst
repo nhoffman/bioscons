@@ -56,5 +56,13 @@ The :mod:`refpkg` Module
     :undoc-members:
     :show-inheritance:
 
+The :mod:`slurm` Module
+--------------------------
+
+.. automodule:: bioscons.slurm
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 
