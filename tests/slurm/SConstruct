@@ -18,11 +18,18 @@ stdout1 = env.SRun(
     action = './test.sh >> $TARGET',
     ncores = 2
     )
-Depends(stdout1, ['./test.sh', 'SConstruct'])
 
 stdout2 = env.Command(
     target = 'stdout2.txt',
     source = None,
     action = './test.sh >> $TARGET'
     )
-Depends(stdout2, ['./test.sh', 'SConstruct'])
+
+stdout3 = env.Command(
+    target = 'stdout3.txt',
+    source = None,
+    action = './test.sh >> $TARGET',
+    use_cluster = False
+    )
+
+Depends([stdout1, stdout2, stdout3], ['./test.sh', 'SConstruct'])
