@@ -69,4 +69,10 @@ class SlurmEnvironment(SConsEnvironment):
         assert 'srun' not in action
         assert 'salloc' not in action
         assert 'ncores' not in kw, "The 'ncores' argument has no effect in `SlurmEnvironment.Command()`."
-        return self._SlurmCommand(target, source, action)
+        return self._SlurmCommand(target, source, action, **kw)
+
+    def Local(self, target, source, action, **kw):
+        """
+        Run a command locally, without SLURM
+        """
+        return self.Command(target, source, action, use_cluster=False, **kw)
