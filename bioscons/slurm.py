@@ -1,6 +1,9 @@
 """
 Functions for dispatching to SLURM (https://computing.llnl.gov/linux/slurm/)
 from scons.
+
+:environment variables
+ * SLURM_PARTITION - Slurm queue to use
 """
 
 from SCons.Script.SConscript import SConsEnvironment
@@ -13,19 +16,17 @@ class SlurmEnvironment(SConsEnvironment):
     The SRun and SAlloc methods can be used to use multiple cores for
     multithreaded and MPI jobs, respectively.
     """
-    def __init__(self, use_cluster=True, slurm_queue='pubnorm', **kwargs):
+    def __init__(self, use_cluster=True, **kwargs):
         super(SlurmEnvironment, self).__init__(**kwargs)
         self.use_cluster = use_cluster
-        self.slurm_queue = slurm_queue
 
     def _SlurmCommand(self, target, source, action, slurm_command='srun', core_flag='-c', **kw):
         ncores = kw.pop('ncores', 1)
-        queue = kw.pop('slurm_queue', self.slurm_queue)
         slurm_args = kw.pop('slurm_args', '')
         if self.use_cluster:
-            action = '{cmd} -p {queue} {flag} {ncores} {slurm_args}'.format(
+            action = '{cmd} {flag} {ncores} {slurm_args}'.format(
                     cmd=slurm_command,
-                    queue=queue or self.slurm_queue, flag=core_flag,
+                    flag=core_flag,
                     ncores=ncores, slurm_args=slurm_args) + action
         return super(SlurmEnvironment, self).Command(target, source, action,
                 **kw)
@@ -39,7 +40,6 @@ class SlurmEnvironment(SConsEnvironment):
         automatically.
 
         Optional arguments:
-        ``slurm_queue``: To override the default
         ``slurm_args``: Additional arguments to pass to salloc
         """
         return self._SlurmCommand(target, source, action, 'salloc', '-n',
@@ -58,7 +58,6 @@ class SlurmEnvironment(SConsEnvironment):
         automatically.
 
         Optional arguments:
-        ``slurm_queue``: To override the default
         ``slurm_args``: Additional arguments to pass to salloc
         """
         return self._SlurmCommand(target, source, action, ncores=ncores, **kw)

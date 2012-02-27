@@ -10,7 +10,7 @@ from bioscons.slurm import SlurmEnvironment
 
 vars = Variables()
 env = SlurmEnvironment(ENV=os.environ, variables=vars,
-                       use_cluster = True, slurm_queus = 'pubnorm')
+                       use_cluster = True)
 
 stdout1 = env.SRun(
     target = 'stdout1.txt',
