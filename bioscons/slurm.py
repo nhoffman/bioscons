@@ -63,7 +63,7 @@ class SlurmEnvironment(SConsEnvironment):
         return self._SlurmCommand(target, source, action, ncores=ncores, **kw)
 
     def Command(self, target, source, action, use_cluster=True, **kw):
-        if not use_cluster:
+        if not use_cluster or not self.use_cluster:
             return super(SlurmEnvironment, self).Command(target, source, action, **kw)
         assert 'srun' not in action
         assert 'salloc' not in action
