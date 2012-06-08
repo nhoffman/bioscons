@@ -3,7 +3,8 @@ Functions for dispatching to SLURM (https://computing.llnl.gov/linux/slurm/)
 from scons.
 
 :environment variables
- * SLURM_PARTITION - Slurm queue to use
+ * SLURM_PARTITION - Slurm queue to use for `srun`
+ * SALLOC_PARTITION - Slurm queue to use for `salloc` calls
 """
 
 from SCons.Script.SConscript import SConsEnvironment
@@ -75,3 +76,10 @@ class SlurmEnvironment(SConsEnvironment):
         Run a command locally, without SLURM
         """
         return self.Command(target, source, action, use_cluster=False, **kw)
+
+    def SetPartition(self, partition):
+        """
+        Set the partition to be used. Subsequent calls to SRun and SAlloc will use this partition.
+        """
+        for var in ('SLURM_PARTITION', 'SALLOC_PARTITION'):
+            self['ENV'][var] = partition
