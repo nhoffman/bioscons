@@ -21,14 +21,12 @@ class SlurmEnvironment(SConsEnvironment):
         super(SlurmEnvironment, self).__init__(**kwargs)
         self.use_cluster = use_cluster
 
-    def _SlurmCommand(self, target, source, action, slurm_command='srun', core_flag='-c', **kw):
-        ncores = kw.pop('ncores', 1)
+    def _SlurmCommand(self, target, source, action, slurm_command='srun', **kw):
         slurm_args = kw.pop('slurm_args', '')
         if self.use_cluster:
-            action = '{cmd} {flag} {ncores} {slurm_args}'.format(
+            action = '{cmd} {slurm_args} '.format(
                     cmd=slurm_command,
-                    flag=core_flag,
-                    ncores=ncores, slurm_args=slurm_args) + action
+                    slurm_args=slurm_args) + action
         return super(SlurmEnvironment, self).Command(target, source, action,
                 **kw)
 
@@ -43,8 +41,9 @@ class SlurmEnvironment(SConsEnvironment):
         Optional arguments:
         ``slurm_args``: Additional arguments to pass to salloc
         """
-        return self._SlurmCommand(target, source, action, 'salloc', '-n',
-                ncores=ncores, **kw)
+        args = ' '.join(('-n {0}'.format(ncores), kw.pop('slurm_args', '')))
+        return self._SlurmCommand(target, source, action, 'salloc',
+                slurm_args=args, **kw)
 
     def SRun(self, target, source, action, ncores, **kw):
         """
@@ -61,7 +60,12 @@ class SlurmEnvironment(SConsEnvironment):
         Optional arguments:
         ``slurm_args``: Additional arguments to pass to salloc
         """
-        return self._SlurmCommand(target, source, action, ncores=ncores, **kw)
+        if ncores > 1:
+            clone = self.Clone()
+            clone['ENV']['SLURM_CPUS_PER_TASK'] = str(ncores)
+            return clone._SlurmCommand(target, source, action, **kw)
+        else:
+            return self._SlurmCommand(target, source, action, **kw)
 
     def Command(self, target, source, action, use_cluster=True, **kw):
         if not use_cluster or not self.use_cluster:
