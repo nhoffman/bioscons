@@ -45,27 +45,24 @@ class SlurmEnvironment(SConsEnvironment):
         return self._SlurmCommand(target, source, action, 'salloc',
                 slurm_args=args, **kw)
 
-    def SRun(self, target, source, action, ncores, **kw):
+    def SRun(self, target, source, action, ncores, timelimit=None, **kw):
         """
         Run ``action`` with srun.
 
-        This method should be used for multithreaded jobs only. By default,
-        calls to SlurmEnvironment.Command use srun.  If multiple cores
-        are required, supply an ncores argument.
-
-        This method should be used for MPI jobs only. Combining an salloc call
-        with ``mpirun`` (with no arguments) will use all nodes allocated
-        automatically.
+        This method should be used for multithreaded jobs on a single machine
+        only. By default, calls to SlurmEnvironment.Command use srun. Specify a
+        number of processors with ``ncores``.
 
         Optional arguments:
         ``slurm_args``: Additional arguments to pass to salloc
+        ``timelimit``: Value to use for environment variable SLURM_TIMELIMIT
         """
+        clone = self.Clone()
         if ncores > 1:
-            clone = self.Clone()
-            clone['ENV']['SLURM_CPUS_PER_TASK'] = str(ncores)
-            return clone._SlurmCommand(target, source, action, **kw)
-        else:
-            return self._SlurmCommand(target, source, action, **kw)
+            clone.SetCpusPerTask(ncores)
+        if timelimit is not None:
+            clone.SetTimeLimit(timelimit)
+        return clone._SlurmCommand(target, source, action, **kw)
 
     def Command(self, target, source, action, use_cluster=True, **kw):
         if not use_cluster or not self.use_cluster:
@@ -87,3 +84,24 @@ class SlurmEnvironment(SConsEnvironment):
         """
         for var in ('SLURM_PARTITION', 'SALLOC_PARTITION'):
             self['ENV'][var] = partition
+
+    def SetCpusPerTask(self, cpus_per_task):
+        """
+        Set number of CPUs used by tasks launched from this environment with
+        srun. Equivalent to ``srun -c``
+        """
+        self['ENV']['SLURM_CPUS_PER_TASK'] = str(cpus_per_task)
+
+    def SetTimeLimit(self, timelimit):
+        """
+        Set a limit on the total run time for jobs launched by this environment.
+
+        Formats:
+            minutes
+            minutes:seconds
+            hours:minutes:seconds
+            days-hours
+            days-hours:minutes
+            days-hours:minutes:seconds
+        """
+        self['ENV']['SLURM_TIMELIMIT'] = timelimit
