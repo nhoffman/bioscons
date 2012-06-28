@@ -33,4 +33,13 @@ stdout3 = env.Command(
     use_cluster=False
     )
 
+stdout4 = env.SAlloc(
+    target='stdout4.txt',
+    source=None,
+    action='./test.sh >> $TARGET',
+    use_cluster=False,
+    timelimit='3',
+    ncores=2
+    )
+
 Depends([stdout1, stdout2, stdout3], ['./test.sh', 'SConstruct'])

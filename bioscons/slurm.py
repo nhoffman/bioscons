@@ -30,7 +30,7 @@ class SlurmEnvironment(SConsEnvironment):
         return super(SlurmEnvironment, self).Command(target, source, action,
                 **kw)
 
-    def SAlloc(self, target, source, action, ncores, **kw):
+    def SAlloc(self, target, source, action, ncores, timelimit=None, **kw):
         """
         Run ``action`` with salloc.
 
@@ -40,9 +40,17 @@ class SlurmEnvironment(SConsEnvironment):
 
         Optional arguments:
         ``slurm_args``: Additional arguments to pass to salloc
+        ``timelimit``: value to use for environment variable SALLOC_TIMELIMIT
         """
         args = ' '.join(('-n {0}'.format(ncores), kw.pop('slurm_args', '')))
-        return self._SlurmCommand(target, source, action, 'salloc',
+        e = self
+
+        if timelimit is not None:
+            clone = self.Clone()
+            clone.SetTimeLimit(timelimit)
+            e = clone
+
+        return e._SlurmCommand(target, source, action, 'salloc',
                 slurm_args=args, **kw)
 
     def SRun(self, target, source, action, ncores, timelimit=None, **kw):
@@ -105,3 +113,4 @@ class SlurmEnvironment(SConsEnvironment):
             days-hours:minutes:seconds
         """
         self['ENV']['SLURM_TIMELIMIT'] = timelimit
+        self['ENV']['SALLOC_TIMELIMIT'] = timelimit
