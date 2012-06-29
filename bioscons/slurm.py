@@ -53,7 +53,7 @@ class SlurmEnvironment(SConsEnvironment):
         return e._SlurmCommand(target, source, action, 'salloc',
                 slurm_args=args, **kw)
 
-    def SRun(self, target, source, action, ncores, timelimit=None, **kw):
+    def SRun(self, target, source, action, ncores=1, timelimit=None, **kw):
         """
         Run ``action`` with srun.
 
