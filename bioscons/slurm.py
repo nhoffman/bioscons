@@ -17,9 +17,11 @@ class SlurmEnvironment(SConsEnvironment):
     The SRun and SAlloc methods can be used to use multiple cores for
     multithreaded and MPI jobs, respectively.
     """
-    def __init__(self, use_cluster=True, **kwargs):
+    def __init__(self, use_cluster=True, slurm_queue=None, **kwargs):
         super(SlurmEnvironment, self).__init__(**kwargs)
         self.use_cluster = use_cluster
+        if slurm_queue:
+            self.SetPartition(slurm_queue)
 
     def _SlurmCommand(self, target, source, action, slurm_command='srun', **kw):
         slurm_args = kw.pop('slurm_args', '')
