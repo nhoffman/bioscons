@@ -1,18 +1,14 @@
 """
 Functions for dispatching to SLURM (https://computing.llnl.gov/linux/slurm/)
 from scons.
-
-:environment variables
- * SLURM_PARTITION - Slurm queue to use for `srun`
- * SALLOC_PARTITION - Slurm queue to use for `salloc` calls
 """
 
 from SCons.Script.SConscript import SConsEnvironment
 
 class SlurmEnvironment(SConsEnvironment):
     """
-    Subclass of environment, where all calls to Command are by default run
-    using srun on the cluster using a single core.
+    Mostly drop-in replacement for an SCons Environment, where all calls to
+    Command are by executed via srun using a single core.
 
     The SRun and SAlloc methods can be used to use multiple cores for
     multithreaded and MPI jobs, respectively.
