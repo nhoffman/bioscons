@@ -42,4 +42,9 @@ stdout4 = env.SAlloc(
     ncores=2
     )
 
-Depends([stdout1, stdout2, stdout3], ['./test.sh', 'SConstruct'])
+# Test quoting
+stdout5 = env.Command(target='stdout5.txt',
+        source=None,
+        action='echo "hostname: `hostname`" && env > $TARGET')
+
+Depends([stdout1, stdout2, stdout3, stdout5, stdout4], ['./test.sh', 'SConstruct'])

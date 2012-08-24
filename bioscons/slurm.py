@@ -2,8 +2,27 @@
 Functions for dispatching to SLURM (https://computing.llnl.gov/linux/slurm/)
 from scons.
 """
+import re
+import shlex
 
 from SCons.Script.SConscript import SConsEnvironment
+
+# From py3.3 argparse
+_find_unsafe = re.compile(r'[^\w@%+=:,./-]').search
+
+def _quote(s):
+    """Return a shell-escaped version of the string *s*."""
+    if not s:
+        return "''"
+    if _find_unsafe(s) is None:
+        return s
+
+    # use single quotes, and put single quotes into double quotes
+    # the string $'b is then quoted as '$'"'"'b'
+    return "'" + s.replace("'", "'\"'\"'") + "'"
+
+def _action_name(action):
+    return shlex.split(action)[0]
 
 class SlurmEnvironment(SConsEnvironment):
     """
@@ -13,18 +32,25 @@ class SlurmEnvironment(SConsEnvironment):
     The SRun and SAlloc methods can be used to use multiple cores for
     multithreaded and MPI jobs, respectively.
     """
-    def __init__(self, use_cluster=True, slurm_queue=None, **kwargs):
+    def __init__(self, use_cluster=True, slurm_queue=None, shell='sh', **kwargs):
         super(SlurmEnvironment, self).__init__(**kwargs)
         self.use_cluster = use_cluster
         if slurm_queue:
             self.SetPartition(slurm_queue)
+        self.shell = shell
+
+    def _quote_action(self, action):
+        return '{shell} -c {action}'.format(shell=self.shell,
+                action=_quote(action))
 
     def _SlurmCommand(self, target, source, action, slurm_command='srun', **kw):
         slurm_args = kw.pop('slurm_args', '')
         if self.use_cluster:
-            action = '{cmd} {slurm_args} '.format(
+            action = '{cmd} {slurm_args} -J "{name}" {action}'.format(
                     cmd=slurm_command,
-                    slurm_args=slurm_args) + action
+                    slurm_args=slurm_args,
+                    name=_action_name(action),
+                    action=self._quote_action(action))
         return super(SlurmEnvironment, self).Command(target, source, action,
                 **kw)
 
