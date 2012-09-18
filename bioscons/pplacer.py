@@ -13,7 +13,7 @@ Public functions and variables
 
 # we expect this to fail unless imported from within SConstruct
 try:
-    from SCons.Script import *
+    from SCons.Script import Clean, Dir, Flatten
 except ImportError:
     pass
 
@@ -106,7 +106,7 @@ def align_and_place(env, refpkg, qseqs, outdir = None,
 
     cmalign_options = cmalign_options or CMALIGN_FLAGS
 
-    pkg = Refpkg(refpkg)
+    pkg = Refpkg(refpkg, create=False)
     profile = pkg.file_abspath('profile')
     ref_sto = pkg.file_abspath('aln_sto')
 
