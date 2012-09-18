@@ -305,9 +305,9 @@ def cmalign_method(env, profile, fasta, outname = None, outdir = None, nproc = 1
          from bioscons.infernal import cmalign_method
          env.AddMethod(cmalign_method, 'cmalign')
          sto, scores = env.cmalign(profile, fasta,
-             options = '--hbanded --sub --dna -1')    
+             options = '--hbanded --sub --dna -1')
      """
-    
+
     if outname:
         fasta = outname + '.fasta'
 
@@ -356,12 +356,12 @@ def cmmerge_method(env, profile, fasta1, fasta2, outname = 'merged.sto', outdir 
         source = Flatten([profile, fasta1, fasta2]),
         action = ' '.join(cmd)
         )
-    
+
 def align_and_merge(env, refpkg, qseqs, outdir = None,
                     options = None, nproc = 1):
 
     """
-    Align sequences in ``qseqs`` and merge with the reference alignment. 
+    Align sequences in ``qseqs`` and merge with the reference alignment.
 
      * env - Environment instance.
      * refpkg - path to a reference package directory.
