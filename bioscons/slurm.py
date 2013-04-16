@@ -97,7 +97,7 @@ class SlurmEnvironment(SConsEnvironment):
         return clone._SlurmCommand(target, source, action, **kw)
 
     def Command(self, target, source, action, use_cluster=True, **kw):
-        if not use_cluster or not self.use_cluster:
+        if not isinstance(action, basestring) or not use_cluster or not self.use_cluster:
             return super(SlurmEnvironment, self).Command(target, source, action, **kw)
         return self.SRun(target, source, action, **kw)
 
