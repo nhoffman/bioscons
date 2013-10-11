@@ -10,26 +10,41 @@ from bioscons.slurm import SlurmEnvironment
 
 vars = Variables()
 env = SlurmEnvironment(ENV=os.environ, variables=vars,
-                       use_cluster = True)
+                       use_cluster=True)
 
 stdout1 = env.SRun(
-    target = 'stdout1.txt',
-    source = None,
-    action = './test.sh >> $TARGET',
-    ncores = 2
+    target='stdout1.txt',
+    source=None,
+    action='./test.sh >> $TARGET',
+    ncores=2,
+    timelimit='2',
     )
 
 stdout2 = env.Command(
-    target = 'stdout2.txt',
-    source = None,
-    action = './test.sh >> $TARGET'
+    target='stdout2.txt',
+    source=None,
+    action='./test.sh >> $TARGET'
     )
 
 stdout3 = env.Command(
-    target = 'stdout3.txt',
-    source = None,
-    action = './test.sh >> $TARGET',
-    use_cluster = False
+    target='stdout3.txt',
+    source=None,
+    action='./test.sh >> $TARGET',
+    use_cluster=False
     )
 
-Depends([stdout1, stdout2, stdout3], ['./test.sh', 'SConstruct'])
+stdout4 = env.SAlloc(
+    target='stdout4.txt',
+    source=None,
+    action='./test.sh >> $TARGET',
+    use_cluster=False,
+    timelimit='3',
+    ncores=2
+    )
+
+# Test quoting
+stdout5 = env.Command(target='stdout5.txt',
+        source=None,
+        action='echo "hostname: `hostname`" && env > $TARGET')
+
+Depends([stdout1, stdout2, stdout3, stdout5, stdout4], ['./test.sh', 'SConstruct'])

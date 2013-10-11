@@ -22,14 +22,14 @@ def rename(fname, ext=None, pth=None):
           )
 
     """
-    
+
     dirname, base, suffix = split_path(fname, split_ext = True)
     pth = pth or dirname
     ext = ext or suffix
-    
-    newname = os.path.join(pth, base) + ext    
+
+    newname = os.path.join(pth, base) + ext
     return newname
-    
+
 def split_path(fname, split_ext=False):
     """
     Returns file name elements given an absolute or relative path
@@ -39,13 +39,13 @@ def split_path(fname, split_ext=False):
     and the file suffix, ie, (dir, base, suffix), and (dir, filename)
     otherwise.
     """
-    
+
     if isinstance(fname, list) or isinstance(fname, tuple) or hasattr(fname, 'pop'):
         fname = fname[0]
-                
+
     fname = str(fname)
     # fname = path.abspath(str(fname))
-        
+
     directory, filename = path.split(fname)
 
     if split_ext:
@@ -53,6 +53,52 @@ def split_path(fname, split_ext=False):
         return (directory, base, suffix)
     else:
         return (directory, filename)
+
+class Targets(object):
+    """
+    Provides an object with methods for identifying objects in the
+    local namespace representing build targets and to compare this
+    list to the contents of a directory to idenify extraneous files.
+
+    Example usage::
+
+        targs = Targets(locals().values())
+        targs.show_extras("outdir")
+    """
+
+    def __init__(self, objs = None):
+        self.targets = self.update(objs) if objs else set()
+
+    def update(self, objs):
+        """
+        Given a list of objects (eg, the output of locals().values()),
+        update self.targets with the set containing the relative path
+        to each target (ie, those objects with a "NodeInfo"
+        attribute).
+        """
+
+        self.targets.update(
+            set(str(obj) for obj in Flatten(objs) if hasattr(obj, 'NodeInfo')))
+
+    def show_extras(self, directory, one_line = True):
+        """
+        Given a relative path `directory` search for files recursively
+        and print a list of those not found among
+        `self.targets`. Print one path per line if `one_line` is
+        False.
+        """
+
+        outfiles = set(
+            Flatten([[path.join(d, f) for f in ff] for d, _, ff in os.walk(directory)]))
+
+        extras = outfiles - self.targets
+        if extras:
+            print '\nextraneous files in %s:' % directory
+            if one_line:
+                print '  ' + ' '.join(sorted(extras))
+            else:
+                print '\n'.join(sorted(extras))
+            print
 
 def list_targets(environment):
     """
@@ -74,8 +120,10 @@ def list_targets(environment):
       set(ifilter(lambda fn: fn.startswith('output/'), chain.from_iterable(targets.values())))
     """
 
+    raise DeprecationWarning('use the Targets class instead')
+
     targets = {}
-    for objname, obj in environment.items():    
+    for objname, obj in environment.items():
         if hasattr(obj, 'NodeInfo'):
             targets[objname] = [str(obj)]
             continue
@@ -89,7 +137,7 @@ def list_targets(environment):
                 targets[objname] = [str(x) for x in obj]
 
     return targets
-        
+
 # def sub_ext(pth, ext=''):
 #     """
 #     Replace the file extension in `pth` with `sub`. `pth` may be a
@@ -99,10 +147,10 @@ def list_targets(environment):
 
 #     if isinstance(pth, list) or isinstance(pth, tuple) or hasattr(pth, 'pop'):
 #         pth = pth[0]
-                        
+
 #     base, suffix = path.splitext(str(pth))
 #     return base + ext
-    
+
 # copyfile
 def _copyfile_emitter(target, source, env):
     """
@@ -131,7 +179,7 @@ def _bunzip2_emitter(target, source, env):
     target - name of source with .bz2 suffix removed
     source - file compressed using bzip2
     """
-        
+
     (sname,) = map(str, source)
     return sname.replace('.bz2',''), source
 
@@ -139,4 +187,3 @@ bunzip2 = Builder(
     emitter = _bunzip2_emitter,
     action = 'bunzip2 --keep $SOURCE'
     )
-

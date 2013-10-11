@@ -50,7 +50,6 @@ Public functions and variables
 ------------------------------
 """
 
-from os.path import join,split,splitext
 import os
 import subprocess
 import logging
@@ -60,7 +59,7 @@ log = logging
 
 # we expect this to fail unless imported from within SConstruct
 try:
-    from SCons.Script import *
+    from SCons.Script import Builder, Dir, Clean, Flatten
 except ImportError:
     pass
 
@@ -228,8 +227,7 @@ def _cmmerge_action(target, source, env):
 
     print ' '.join(cmd)
 
-    p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
-    # print p.communicate()[0]
+    subprocess.check_call(cmd, stdout=subprocess.PIPE)
 
     # cmmerge seems to need a moment to complete writing files to disk
     # after returning
@@ -305,9 +303,9 @@ def cmalign_method(env, profile, fasta, outname = None, outdir = None, nproc = 1
          from bioscons.infernal import cmalign_method
          env.AddMethod(cmalign_method, 'cmalign')
          sto, scores = env.cmalign(profile, fasta,
-             options = '--hbanded --sub --dna -1')    
+             options = '--hbanded --sub --dna -1')
      """
-    
+
     if outname:
         fasta = outname + '.fasta'
 
@@ -356,12 +354,12 @@ def cmmerge_method(env, profile, fasta1, fasta2, outname = 'merged.sto', outdir 
         source = Flatten([profile, fasta1, fasta2]),
         action = ' '.join(cmd)
         )
-    
+
 def align_and_merge(env, refpkg, qseqs, outdir = None,
                     options = None, nproc = 1):
 
     """
-    Align sequences in ``qseqs`` and merge with the reference alignment. 
+    Align sequences in ``qseqs`` and merge with the reference alignment.
 
      * env - Environment instance.
      * refpkg - path to a reference package directory.
@@ -388,7 +386,7 @@ def align_and_merge(env, refpkg, qseqs, outdir = None,
     if not hasattr(env, 'cmmerge_method'):
         env.AddMethod(cmmerge_method, 'cmmerge_method')
 
-    pkg = Refpkg(refpkg)
+    pkg = Refpkg(refpkg, create=False)
     profile = pkg.file_abspath('profile')
     ref_sto = pkg.file_abspath('aln_sto')
 

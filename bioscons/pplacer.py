@@ -13,7 +13,7 @@ Public functions and variables
 
 # we expect this to fail unless imported from within SConstruct
 try:
-    from SCons.Script import *
+    from SCons.Script import Clean, Dir, Flatten
 except ImportError:
     pass
 
@@ -47,7 +47,7 @@ def pplacer(env, refpkg, alignment, outdir = None, options = None, nproc = 2, pp
             alignment = 'merged.sto',
             outdir = 'output',
             nproc = 4
-        )        
+        )
     """
 
     cmd = [pplacer_binary, '-j %i' % int(nproc)]
@@ -59,13 +59,13 @@ def pplacer(env, refpkg, alignment, outdir = None, options = None, nproc = 2, pp
         cmd.append(options)
 
     cmd.extend(['-c', '$SOURCES'])
-    
+
     return env.Command(
         target = rename(alignment, '.jplace'),
         source = Flatten([refpkg, alignment]),
         action = ' '.join(cmd)
         )
-    
+
 def align_and_place(env, refpkg, qseqs, outdir = None,
                     pplacer_options = None, cmalign_options = None, nproc = 1):
 
@@ -88,13 +88,13 @@ def align_and_place(env, refpkg, qseqs, outdir = None,
     Example::
 
         from bioscons.pplacer import align_and_place
-        env.AddMethod(align_and_place, "align_and_place")    
+        env.AddMethod(align_and_place, "align_and_place")
         sto, scores, merged, placefile = env.AlignAndPlace(
             refpkg = 'my.refpkg', qseqs = 'myseqs.fasta',
             pplacer_options = '-p --inform-prior --map-identity'
         )
     """
-    
+
     if not hasattr(env, 'cmalign_method'):
         env.AddMethod(cmalign_method, 'cmalign_method')
 
@@ -105,11 +105,11 @@ def align_and_place(env, refpkg, qseqs, outdir = None,
         env.AddMethod(pplacer, 'pplacer_method')
 
     cmalign_options = cmalign_options or CMALIGN_FLAGS
-        
-    pkg = Refpkg(refpkg)        
+
+    pkg = Refpkg(refpkg, create=False)
     profile = pkg.file_abspath('profile')
     ref_sto = pkg.file_abspath('aln_sto')
-    
+
     # align sequences
     sto, scores = env.cmalign_method(
         profile = profile,
@@ -118,7 +118,7 @@ def align_and_place(env, refpkg, qseqs, outdir = None,
         options = cmalign_options,
         outdir = outdir
         )
-    
+
     # merge with reference set
     merged = env.cmmerge_method(
         profile, ref_sto, sto,
@@ -127,7 +127,7 @@ def align_and_place(env, refpkg, qseqs, outdir = None,
         outdir = outdir
         )
 
-    # pplacer!    
+    # pplacer!
     placefile = env.pplacer_method(
         refpkg = refpkg,
         alignment = merged,
@@ -138,6 +138,6 @@ def align_and_place(env, refpkg, qseqs, outdir = None,
 
     if outdir and not outdir == '.':
         Clean(placefile, Dir(outdir))
-    
+
     return Flatten([sto, scores, merged, placefile])
 
