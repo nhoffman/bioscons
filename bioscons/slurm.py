@@ -51,8 +51,10 @@ class SlurmEnvironment(SConsEnvironment):
                     slurm_args=slurm_args,
                     name=_action_name(action),
                     action=self._quote_action(action))
-        return super(SlurmEnvironment, self).Command(target, source, action,
+        result = super(SlurmEnvironment, self).Command(target, source, action,
                 **kw)
+        self.Precious(result)
+        return result
 
     def SAlloc(self, target, source, action, ncores, timelimit=None, **kw):
         """
