@@ -2,6 +2,12 @@
  Changes for bioscons
 ======================
 
+0.6
+===
+
+ * added fileutils.write_digest and fileutils.check_digest
+ * avoid ImportError when importing fileutils outside of an SConstruct
+
 0.5
 ===
 
