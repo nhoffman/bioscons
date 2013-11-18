@@ -2,6 +2,11 @@
  Changes for bioscons
 ======================
 
+0.7-dev
+=======
+
+ * added option to identify targets as Precious in SlurmEnvironment
+
 0.6
 ===
 
