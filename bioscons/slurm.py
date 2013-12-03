@@ -44,8 +44,9 @@ class SlurmEnvironment(SConsEnvironment):
         return '{shell} -c {action}'.format(shell=self.shell,
                 action=_quote(action))
 
-    def _SlurmCommand(self, target, source, action, slurm_command='srun', precious=False, **kw):
+    def _SlurmCommand(self, target, source, action, slurm_command='srun', **kw):
         slurm_args = kw.pop('slurm_args', '')
+        precious = kw.pop('precious', self.all_precious)
         if self.use_cluster:
             action = '{cmd} {slurm_args} -J "{name}" {action}'.format(
                     cmd=slurm_command,
@@ -54,7 +55,7 @@ class SlurmEnvironment(SConsEnvironment):
                     action=self._quote_action(action))
         result = super(SlurmEnvironment, self).Command(target, source, action,
                 **kw)
-        if self.all_precious or precious:
+        if precious:
             self.Precious(result)
         return result
 
