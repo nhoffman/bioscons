@@ -1,5 +1,7 @@
 .sconsign.dblite
 *.pyc
 build/
+dist/
 doctrees/
 bioscons.egg-info/
+MANIFEST
