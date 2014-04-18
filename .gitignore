@@ -1,4 +1,6 @@
 .sconsign.dblite
 *.pyc
 build/
+dist/
 doctrees/
+MANIFEST
