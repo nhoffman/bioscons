@@ -10,6 +10,9 @@ from SCons.Script.SConscript import SConsEnvironment
 # From py3.3 argparse
 _find_unsafe = re.compile(r'[^\w@%+=:,./-]').search
 
+# system path to the time function
+_time = '/usr/bin/time --verbose --output ${TARGETS[0]}.time '
+
 def _quote(s):
     """Return a shell-escaped version of the string *s*."""
     if not s:
@@ -22,7 +25,7 @@ def _quote(s):
     return "'" + s.replace("'", "'\"'\"'") + "'"
 
 def _action_name(action):
-    return shlex.split(action)[0]
+    return shlex.split(action)[0] if action else None
 
 class SlurmEnvironment(SConsEnvironment):
     """
@@ -32,10 +35,12 @@ class SlurmEnvironment(SConsEnvironment):
     The SRun and SAlloc methods can be used to use multiple cores for
     multithreaded and MPI jobs, respectively.
     """
-    def __init__(self, use_cluster=True, slurm_queue=None, shell='sh', all_precious=False, **kwargs):
+    def __init__(self, use_cluster=True, slurm_queue=None, shell='sh',
+                 all_precious=False, time=False, **kwargs):
         super(SlurmEnvironment, self).__init__(**kwargs)
         self.use_cluster = use_cluster
         self.all_precious = all_precious
+        self.time = time
         if slurm_queue:
             self.SetPartition(slurm_queue)
         self.shell = shell
@@ -44,9 +49,13 @@ class SlurmEnvironment(SConsEnvironment):
         return '{shell} -c {action}'.format(shell=self.shell,
                 action=_quote(action))
 
-    def _SlurmCommand(self, target, source, action, slurm_command='srun', **kw):
+    def _SlurmCommand(self, target, source, action, slurm_command='srun', name='', time=True, **kw):
         slurm_args = kw.pop('slurm_args', '')
         precious = kw.pop('precious', self.all_precious)
+
+        if time and self.time:
+            action = _time + action
+
         if self.use_cluster:
             action = '{cmd} {slurm_args} -J "{name}" {action}'.format(
                     cmd=slurm_command,
@@ -59,7 +68,7 @@ class SlurmEnvironment(SConsEnvironment):
             self.Precious(result)
         return result
 
-    def SAlloc(self, target, source, action, ncores, timelimit=None, **kw):
+    def SAlloc(self, target, source, action, ncores, timelimit=None, time=True, **kw):
         """
         Run ``action`` with salloc.
 
@@ -101,10 +110,13 @@ class SlurmEnvironment(SConsEnvironment):
             clone.SetTimeLimit(timelimit)
         return clone._SlurmCommand(target, source, action, **kw)
 
-    def Command(self, target, source, action, use_cluster=True, **kw):
+    def Command(self, target, source, action, use_cluster=True, time=True, **kw):
         if not isinstance(action, basestring) or not use_cluster or not self.use_cluster:
+            if time and self.time:
+                action = _time + action
             return super(SlurmEnvironment, self).Command(target, source, action, **kw)
-        return self.SRun(target, source, action, **kw)
+        else:
+            return self.SRun(target, source, action, time=time, **kw)
 
     def Local(self, target, source, action, **kw):
         """
