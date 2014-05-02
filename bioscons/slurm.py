@@ -68,7 +68,7 @@ class SlurmEnvironment(SConsEnvironment):
             self.Precious(result)
         return result
 
-    def SAlloc(self, target, source, action, ncores, timelimit=None, time=True, **kw):
+    def SAlloc(self, target, source, action, ncores, timelimit=None, **kw):
         """
         Run ``action`` with salloc.
 
@@ -111,12 +111,13 @@ class SlurmEnvironment(SConsEnvironment):
         return clone._SlurmCommand(target, source, action, **kw)
 
     def Command(self, target, source, action, use_cluster=True, time=True, **kw):
-        if not isinstance(action, basestring) or not use_cluster or not self.use_cluster:
-            if time and self.time:
-                action = _time + action
+        if isinstance(action, basestring) and use_cluster and self.use_cluster:
+            return self.SRun(target, source, action, time=time, **kw)
+        elif isinstance(action, basestring) and time and self.time:
+            action = _time + action
             return super(SlurmEnvironment, self).Command(target, source, action, **kw)
         else:
-            return self.SRun(target, source, action, time=time, **kw)
+            return super(SlurmEnvironment, self).Command(target, source, action, **kw)
 
     def Local(self, target, source, action, **kw):
         """
