@@ -48,3 +48,21 @@ stdout5 = env.Command(target='stdout5.txt',
         action='echo "hostname: `hostname`" && env > $TARGET')
 
 Depends([stdout1, stdout2, stdout3, stdout5, stdout4], ['./test.sh', 'SConstruct'])
+
+env2 = SlurmEnvironment(ENV=os.environ, variables=vars,
+                        use_cluster=True, slurm_queue='full')
+
+stdout6, = env2.SRun(
+    target='stdout6.txt',
+    source=None,
+    action='./test.sh >> $TARGET',
+    ncores=12,
+    timelimit='1',
+    )
+
+check_stdout6, = env2.Local(
+    target='stdout6_check.txt',
+    source=stdout6,
+    action='grep --color=never "SLURM_PARTITION=full" $SOURCE > $TARGET'
+    )
+
