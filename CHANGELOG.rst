@@ -2,11 +2,16 @@
  Changes for bioscons
 ======================
 
-0.7-dev
+0.8-dev
 =======
 
  * added option to identify targets as Precious in SlurmEnvironment
  * added a SlurmEnvironment time option to output linux system time stats per Command
+
+0.7
+===
+
+ * can override default slurm_queue in each Command
 
 0.6
 ===

@@ -91,7 +91,7 @@ class SlurmEnvironment(SConsEnvironment):
         return e._SlurmCommand(target, source, action, 'salloc',
                 slurm_args=args, **kw)
 
-    def SRun(self, target, source, action, ncores=1, timelimit=None, **kw):
+    def SRun(self, target, source, action, ncores=1, timelimit=None, slurm_queue=None, **kw):
         """
         Run ``action`` with srun.
 
@@ -108,6 +108,9 @@ class SlurmEnvironment(SConsEnvironment):
             clone.SetCpusPerTask(ncores)
         if timelimit is not None:
             clone.SetTimeLimit(timelimit)
+        if slurm_queue is not None:
+            clone.SetPartition(slurm_queue)
+
         return clone._SlurmCommand(target, source, action, **kw)
 
     def Command(self, target, source, action, use_cluster=True, time=True, **kw):
