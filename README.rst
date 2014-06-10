@@ -50,6 +50,13 @@ Documentation is available on github: http://nhoffman.github.com/bioscons/
 Installation
 ============
 
+PyPi
+============
+::
+  python setup.py clean
+  python setup.py sdist bdist_wheel
+  twine upload dist/*
+
 dependencies
 ------------
 
