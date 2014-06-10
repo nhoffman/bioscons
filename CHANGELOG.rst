@@ -8,6 +8,7 @@
  * added option to identify targets as Precious in SlurmEnvironment
  * added a SlurmEnvironment time option to output linux system time stats per Command
  * added option to output linux system time information per Command with .time appended to the Target name
+ * moved to setuptools and added a distribute_setup.py bootstrap script
 
 0.6
 ===
