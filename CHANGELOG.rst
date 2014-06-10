@@ -2,6 +2,10 @@
  Changes for bioscons
 ======================
 
+0.8-dev
+=======
+ * updated README.rst about PyPi submissions
+
 0.7
 =======
 
