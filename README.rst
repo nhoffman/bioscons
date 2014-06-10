@@ -55,7 +55,7 @@ PyPi
 
 Make sure to update the __version__ variable in the bioscons/__init__.py file.
 
-If you have not done create a ~/.pypirc file::
+If you have not done so create a ~/.pypirc file::
 
   python setup.py register
 
