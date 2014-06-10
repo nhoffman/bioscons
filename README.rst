@@ -52,7 +52,15 @@ Installation
 
 PyPi
 ============
-::
+
+Make sure to update the __version__ variable in the bioscons/__init__.py file.
+
+If you have not done create a ~/.pypirc file::
+
+  python setup.py register
+
+Proceed to build and upload::
+
   python setup.py clean
   python setup.py sdist bdist_wheel
   twine upload dist/*
