@@ -50,21 +50,6 @@ Documentation is available on github: http://nhoffman.github.com/bioscons/
 Installation
 ============
 
-PyPi
-============
-
-Make sure to update the __version__ variable in the bioscons/__init__.py file.
-
-If you have not done so create a ~/.pypirc file::
-
-  python setup.py register
-
-Proceed to build and upload::
-
-  python setup.py clean
-  python setup.py sdist bdist_wheel
-  twine upload dist/*
-
 dependencies
 ------------
 
@@ -90,6 +75,22 @@ Then install::
 
  cd bioscons
  python setup.py install
+
+PyPi 
+------
+
+Make sure to update the __version__ variable in the bioscons/__init__.py file.
+
+If you have not done so create a ~/.pypirc file::
+
+  python setup.py register
+
+Proceed to build and upload::
+
+  python setup.py clean
+  python setup.py sdist bdist_wheel
+  twine upload dist/*
+
 
 .. Targets ..
 .. _ruffus : http://wwwfgu.anat.ox.ac.uk/~lg/oss/ruffus/index.html
