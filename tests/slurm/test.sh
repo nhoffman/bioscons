@@ -7,7 +7,7 @@ case $SLURM_NODEID in
         echo "is where I am running" ;;
 esac
 
-env | grep -s SLURM || echo "Not using slurm"
+env | sort | grep --color=never -s SLURM || echo "Not using slurm"
 
 if [ ! -z $SLURM_JOBID ]; then
   scontrol show job $SLURM_JOBID

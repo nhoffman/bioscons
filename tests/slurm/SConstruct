@@ -2,6 +2,7 @@ import os
 from os import path
 import sys
 import pprint
+import subprocess
 
 # use local (not system) version of the package
 sys.path.insert(0, '../..')
@@ -47,4 +48,51 @@ stdout5 = env.Command(target='stdout5.txt',
         source=None,
         action='echo "hostname: `hostname`" && env > $TARGET')
 
-Depends([stdout1, stdout2, stdout3, stdout5, stdout4], ['./test.sh', 'SConstruct'])
+Depends([stdout1, stdout2, stdout3, stdout4, stdout5], './test.sh')
+
+# at_hutch = subprocess.call(
+#     ['grep', '-s', 'PartitionName=full', '/etc/slurm-llnl/slurm.conf'],
+#     stdout=open(os.devnull, 'w')) == 0
+
+# these tests will only work at the hutch using the gizmo cluster
+# because they refer to specific slurm partitions.
+slurm_conf = '/etc/slurm-llnl/slurm.conf'
+at_hutch = os.path.exists(slurm_conf) and 'PartitionName=full' in open(slurm_conf).read()
+
+if at_hutch:
+    env2 = SlurmEnvironment(ENV=os.environ, variables=vars,
+                            use_cluster=True, slurm_queue='full')
+
+    stdout6, = env2.SRun(
+        target='stdout6.txt',
+        source=None,
+        action='./test.sh >> $TARGET',
+        ncores=12,
+        timelimit='1',
+    )
+
+    check_stdout6, = env2.Local(
+        target='stdout6_check.txt',
+        source=stdout6,
+        action=(r'grep --color=never "SLURM_PARTITION=full" $SOURCE > $TARGET && '
+                r'grep -E --color=never "NumCPUs=12\b" $SOURCE >> $TARGET')
+    )
+
+    stdout7, = env2.SRun(
+        target='stdout7.txt',
+        source=None,
+        action='./test.sh >> $TARGET',
+        ncores=1,
+        timelimit='1',
+        slurm_queue='campus'
+    )
+
+    check_stdout7, = env2.Local(
+        target='stdout7_check.txt',
+        source=stdout7,
+        action=(r'grep --color=never "SLURM_PARTITION=campus" $SOURCE > $TARGET && '
+                r'grep -E --color=never "NumCPUs=1\b" $SOURCE >> $TARGET')
+    )
+
+    Depends([stdout6, stdout7], './test.sh')
+
