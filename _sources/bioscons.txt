@@ -8,6 +8,14 @@ Subpackages
 
 .. toctree::
 
+The :mod:`fast` Module
+--------------------------
+
+.. automodule:: bioscons.fast
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 The :mod:`fileutils` Module
 ---------------------------
 
@@ -16,45 +24,23 @@ The :mod:`fileutils` Module
     :undoc-members:
     :show-inheritance:
 
-The :mod:`infernal` Module
+The :mod:`slurm` Module
 --------------------------
 
-.. automodule:: bioscons.infernal
+.. automodule:: bioscons.slurm
     :members:
     :undoc-members:
     :show-inheritance:
 
-The :mod:`pplacer` Module
+The :mod:`utils` Module
 --------------------------
 
-.. automodule:: bioscons.pplacer
+.. automodule:: bioscons.utils
     :members:
     :undoc-members:
     :show-inheritance:
 
-The :mod:`r_lang` Module
---------------------------
 
-.. automodule:: bioscons.r_lang
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-The :mod:`raxml` Module
---------------------------
-
-.. automodule:: bioscons.raxml
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-The :mod:`refpkg` Module
---------------------------
-
-.. automodule:: bioscons.refpkg
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 
 

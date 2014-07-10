@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -8,15 +6,15 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>bioscons Documentation &mdash; bioscons 0.3 documentation</title>
+    <title>bioscons Documentation &mdash; bioscons 0.6 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '',
-        VERSION:     '0.3',
+        URL_ROOT:    './',
+        VERSION:     '0.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,8 +23,8 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="bioscons 0.3 documentation" href="index.html" />
-    <link rel="prev" title="Welcome to bioscons’s documentation!" href="index.html" /> 
+    <link rel="top" title="bioscons 0.6 documentation" href="index.html" />
+    <link rel="prev" title="bioscons" href="index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -39,9 +37,9 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="index.html" title="Welcome to bioscons’s documentation!"
+          <a href="index.html" title="bioscons"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">bioscons 0.3 documentation</a> &raquo;</li> 
+        <li><a href="index.html">bioscons 0.6 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -60,8 +58,63 @@
 </ul>
 </div>
 </div>
+<div class="section" id="module-bioscons.fast">
+<span id="the-fast-module"></span><h2>The <tt class="xref py py-mod docutils literal"><span class="pre">fast</span></tt> Module<a class="headerlink" href="#module-bioscons.fast" title="Permalink to this headline">¶</a></h2>
+<p>Some tips from <a class="reference external" href="http://www.scons.org/wiki/GoFastButton">http://www.scons.org/wiki/GoFastButton</a></p>
+<dl class="function">
+<dt id="bioscons.fast.fast">
+<tt class="descclassname">bioscons.fast.</tt><tt class="descname">fast</tt><big>(</big><em>env</em><big>)</big><a class="reference internal" href="_modules/bioscons/fast.html#fast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.fast.fast" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given an <tt class="xref py py-class docutils literal"><span class="pre">SCons.Script.Environment</span></tt>, set some flags for faster builds:</p>
+<ul class="simple">
+<li>Caching of implicit dependencies</li>
+<li>Use MD5-timestamp decider (if timestamp unchanged, don&#8217;t checksum)</li>
+<li>Clear the default environment. Requires use of <tt class="docutils literal"><span class="pre">env.Command(...)</span></tt>, rather than bare <tt class="docutils literal"><span class="pre">Command(...)</span></tt></li>
+</ul>
+</dd></dl>
+
+</div>
 <div class="section" id="module-bioscons.fileutils">
 <span id="the-fileutils-module"></span><h2>The <tt class="xref py py-mod docutils literal"><span class="pre">fileutils</span></tt> Module<a class="headerlink" href="#module-bioscons.fileutils" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="bioscons.fileutils.Targets">
+<em class="property">class </em><tt class="descclassname">bioscons.fileutils.</tt><tt class="descname">Targets</tt><big>(</big><em>objs=None</em><big>)</big><a class="reference internal" href="_modules/bioscons/fileutils.html#Targets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.fileutils.Targets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Provides an object with methods for identifying objects in the
+local namespace representing build targets and to compare this
+list to the contents of a directory to idenify extraneous files.</p>
+<p>Example usage:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">targs</span> <span class="o">=</span> <span class="n">Targets</span><span class="p">(</span><span class="nb">locals</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+<span class="n">targs</span><span class="o">.</span><span class="n">show_extras</span><span class="p">(</span><span class="s">&quot;outdir&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="bioscons.fileutils.Targets.show_extras">
+<tt class="descname">show_extras</tt><big>(</big><em>directory</em>, <em>one_line=True</em><big>)</big><a class="reference internal" href="_modules/bioscons/fileutils.html#Targets.show_extras"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.fileutils.Targets.show_extras" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a relative path <cite>directory</cite> search for files recursively
+and print a list of those not found among
+<cite>self.targets</cite>. Print one path per line if <cite>one_line</cite> is
+False.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bioscons.fileutils.Targets.update">
+<tt class="descname">update</tt><big>(</big><em>objs</em><big>)</big><a class="reference internal" href="_modules/bioscons/fileutils.html#Targets.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.fileutils.Targets.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a list of objects (eg, the output of locals().values()),
+update self.targets with the set containing the relative path
+to each target (ie, those objects with a &#8220;NodeInfo&#8221;
+attribute).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="bioscons.fileutils.check_digest">
+<tt class="descclassname">bioscons.fileutils.</tt><tt class="descname">check_digest</tt><big>(</big><em>fname</em>, <em>dirname=None</em><big>)</big><a class="reference internal" href="_modules/bioscons/fileutils.html#check_digest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.fileutils.check_digest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True if the stored hash exists and is identical to the
+signature of the file <cite>fname</cite>. Hash is saved to a file named
+fname.md5 in either the same directory or in dirname if provided.</p>
+</dd></dl>
+
 <dl class="function">
 <dt id="bioscons.fileutils.list_targets">
 <tt class="descclassname">bioscons.fileutils.</tt><tt class="descname">list_targets</tt><big>(</big><em>environment</em><big>)</big><a class="reference internal" href="_modules/bioscons/fileutils.html#list_targets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.fileutils.list_targets" title="Permalink to this definition">¶</a></dt>
@@ -113,420 +166,118 @@ and the file suffix, ie, (dir, base, suffix), and (dir, filename)
 otherwise.</p>
 </dd></dl>
 
-</div>
-<div class="section" id="module-bioscons.infernal">
-<span id="the-infernal-module"></span><h2>The <tt class="xref py py-mod docutils literal"><span class="pre">infernal</span></tt> Module<a class="headerlink" href="#module-bioscons.infernal" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="builders">
-<h3>Builders<a class="headerlink" href="#builders" title="Permalink to this headline">¶</a></h3>
-<div class="section" id="cmalign">
-<h4>cmalign<a class="headerlink" href="#cmalign" title="Permalink to this headline">¶</a></h4>
-<p>Aligns sequences in the source fasta-file given
-alignment-profile. Returns the Stockholm-format alignment and a file
-containing the alignment statistics for each sequence.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">source:</th><td class="field-body"><p class="first">[alignment-profile, fasta-file]</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">target:</th><td class="field-body"><p class="first">[file in stockholm format, file containing align scores]</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name" colspan="2">environment variables (module globals define defaults):</th></tr>
-<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><ul class="first last simple">
-<li>env[&#8216;CMALIGN&#8217;], env[&#8216;CMALIGN_FLAGS&#8217;]</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section" id="cmalign-mpi">
-<h4>cmalign_mpi<a class="headerlink" href="#cmalign-mpi" title="Permalink to this headline">¶</a></h4>
-<p>Aligns sequences in the source fasta-file given
-alignment-profile. Returns the Stockholm-format alignment and a file
-containing the alignment statistics for each sequence. cmalign is run
-using <tt class="docutils literal"><span class="pre">mpirun</span> <span class="pre">-np</span> <span class="pre">N</span> <span class="pre">cmalign</span> <span class="pre">--mpi</span></tt>; note that &#8216;cmalign &#8211;mpi&#8217; is
-only available if cmalign is compiled with the &#8216;&#8211;enable-mpi&#8217; flag.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">source:</th><td class="field-body"><p class="first">[alignment-profile, fasta-file]</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">target:</th><td class="field-body"><p class="first">[file in stockholm format, file containing align scores]</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name" colspan="2">environment variables (module globals define defaults):</th></tr>
-<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><ul class="first last simple">
-<li>env[&#8216;CMALIGN&#8217;], env[&#8216;CMALIGN_FLAGS&#8217;], env[&#8216;CMALIGN_NPROC&#8217;]</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section" id="cmmerge">
-<h4>cmmerge<a class="headerlink" href="#cmmerge" title="Permalink to this headline">¶</a></h4>
-<p>Merges two sequence alignments in Stockholm format given
-alignment-profile using <tt class="docutils literal"><span class="pre">cmalign</span> <span class="pre">--merge</span></tt>. Returns the Stockholm-format alignment.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">source:</th><td class="field-body"><p class="first">[alignment-profile, stockholm-file1, stockholm-file2]</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">target:</th><td class="field-body"><p class="first">[alignment in stockholm format]</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name" colspan="2">environment variables (module globals define defaults):</th></tr>
-<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><ul class="first last simple">
-<li>env[&#8216;CMALIGN&#8217;], env[&#8216;CMALIGN_FLAGS&#8217;]</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="section" id="public-functions-and-variables">
-<h3>Public functions and variables<a class="headerlink" href="#public-functions-and-variables" title="Permalink to this headline">¶</a></h3>
-<dl class="data">
-<dt id="bioscons.infernal.CMALIGN">
-<tt class="descclassname">bioscons.infernal.</tt><tt class="descname">CMALIGN</tt><em class="property"> = 'cmalign'</em><a class="headerlink" href="#bioscons.infernal.CMALIGN" title="Permalink to this definition">¶</a></dt>
-<dd><p>Defines the absolute path of the cmalign executable. [&#8216;cmalign&#8217;]</p>
-</dd></dl>
-
-<dl class="data">
-<dt id="bioscons.infernal.CMALIGN_FLAGS">
-<tt class="descclassname">bioscons.infernal.</tt><tt class="descname">CMALIGN_FLAGS</tt><em class="property"> = '--hbanded --sub --dna -1'</em><a class="headerlink" href="#bioscons.infernal.CMALIGN_FLAGS" title="Permalink to this definition">¶</a></dt>
-<dd><p>String containing optional command line parameters. [&#8216;&#8211;hbanded &#8211;sub &#8211;dna -1&#8217;]</p>
-</dd></dl>
-
-<dl class="data">
-<dt id="bioscons.infernal.CMALIGN_NPROC">
-<tt class="descclassname">bioscons.infernal.</tt><tt class="descname">CMALIGN_NPROC</tt><em class="property"> = 2</em><a class="headerlink" href="#bioscons.infernal.CMALIGN_NPROC" title="Permalink to this definition">¶</a></dt>
-<dd><p>Number of processors used by cmalign_mpi. [2]</p>
-</dd></dl>
-
 <dl class="function">
-<dt id="bioscons.infernal.align_and_merge">
-<tt class="descclassname">bioscons.infernal.</tt><tt class="descname">align_and_merge</tt><big>(</big><em>env</em>, <em>refpkg</em>, <em>qseqs</em>, <em>outdir=None</em>, <em>options=None</em>, <em>nproc=1</em><big>)</big><a class="reference internal" href="_modules/bioscons/infernal.html#align_and_merge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.infernal.align_and_merge" title="Permalink to this definition">¶</a></dt>
-<dd><p>Align sequences in <tt class="docutils literal"><span class="pre">qseqs</span></tt> and merge with the reference alignment.</p>
-<blockquote>
-<div><ul class="simple">
-<li>env - Environment instance.</li>
-<li>refpkg - path to a reference package directory.</li>
-<li>qseqs - unaligned query sequenecs in fasta format.</li>
-<li>outdir - optional output directory; saves files to same
-directory as qseqs if unspecified.</li>
-<li>options - flags for cmalign [default infernal.CMALIGN_FLAGS]</li>
-<li>nproc - number of processors to use for <tt class="docutils literal"><span class="pre">cmalign</span></tt>.</li>
-</ul>
-</div></blockquote>
-<p>Returns (sto, scores, merged)</p>
-<p>Example:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">bioscons.pplacer</span> <span class="kn">import</span> <span class="n">align_and_merge</span>
-<span class="n">env</span><span class="o">.</span><span class="n">AddMethod</span><span class="p">(</span><span class="n">align_and_merge</span><span class="p">,</span> <span class="s">&quot;align_and_merge&quot;</span><span class="p">)</span>    
-<span class="n">sto</span><span class="p">,</span> <span class="n">scores</span><span class="p">,</span> <span class="n">merged</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">align_and_merge</span><span class="p">(</span>
-    <span class="n">refpkg</span> <span class="o">=</span> <span class="s">&#39;my.refpkg&#39;</span><span class="p">,</span> <span class="n">qseqs</span> <span class="o">=</span> <span class="s">&#39;myseqs.fasta&#39;</span>
-<span class="p">)</span>
-</pre></div>
+<dt id="bioscons.fileutils.write_digest">
+<tt class="descclassname">bioscons.fileutils.</tt><tt class="descname">write_digest</tt><big>(</big><em>fname</em>, <em>dirname=None</em><big>)</big><a class="reference internal" href="_modules/bioscons/fileutils.html#write_digest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.fileutils.write_digest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the md5 checksum of fname as fname.md5 in either the same
+directory as fname or in dirname if provided.</p>
+</dd></dl>
+
 </div>
-</dd></dl>
-
-<dl class="function">
-<dt id="bioscons.infernal.check_cmalign">
-<tt class="descclassname">bioscons.infernal.</tt><tt class="descname">check_cmalign</tt><big>(</big><em>env</em>, <em>cmd=None</em><big>)</big><a class="reference internal" href="_modules/bioscons/infernal.html#check_cmalign"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.infernal.check_cmalign" title="Permalink to this definition">¶</a></dt>
-<dd><p>Determines whether the cmalign executable can be used to generate
-a version string. Uses either env[&#8216;CMALIGN&#8217;] if defined or
-infernal.CMALIGN otherwise. If successful, returns
-(path-to-executable, version-string). Raises SystemError on
-failure.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="bioscons.infernal.check_mpirun">
-<tt class="descclassname">bioscons.infernal.</tt><tt class="descname">check_mpirun</tt><big>(</big><em>env</em>, <em>cmd=None</em><big>)</big><a class="reference internal" href="_modules/bioscons/infernal.html#check_mpirun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.infernal.check_mpirun" title="Permalink to this definition">¶</a></dt>
-<dd><p>Determines whether the mpirun executable can be used to generate a
-version string. Uses either env[&#8216;MPIRUN&#8217;] if defined or
-infernal.MPIRUN otherwise. If successful, returns
-(path-to-executable, version-string). Raises SystemError on
-failure.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="bioscons.infernal.cmalign_method">
-<tt class="descclassname">bioscons.infernal.</tt><tt class="descname">cmalign_method</tt><big>(</big><em>env</em>, <em>profile</em>, <em>fasta</em>, <em>outname=None</em>, <em>outdir=None</em>, <em>nproc=1</em>, <em>options=None</em><big>)</big><a class="reference internal" href="_modules/bioscons/infernal.html#cmalign_method"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.infernal.cmalign_method" title="Permalink to this definition">¶</a></dt>
-<dd><p>Align sequences using <tt class="docutils literal"><span class="pre">cmalign</span></tt></p>
-<ul class="simple">
-<li>profile - path to file containing the structural model</li>
-<li>fasta - path to file containing unaligned sequences</li>
-<li>outname - optional label for constructing the output file names.
-If provided, files will be named &#8216;%(label)s.sto&#8217; and &#8216;%(label)s.cmscores&#8217;;
-otherwise, file will be named using basename of <tt class="docutils literal"><span class="pre">fasta</span></tt>.</li>
-<li>outdir - optional output directory; if None, uses same directory as <tt class="docutils literal"><span class="pre">fasta</span></tt>.</li>
-<li>nproc - number of processors (uses <tt class="docutils literal"><span class="pre">mpirun</span></tt>).</li>
-<li>options - an optional string defining arguments to <tt class="docutils literal"><span class="pre">cmalign</span></tt></li>
-</ul>
-<p>Returns <tt class="docutils literal"><span class="pre">(stockholm_file,</span> <span class="pre">scores_file)</span></tt></p>
-<p>Example:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">bioscons.infernal</span> <span class="kn">import</span> <span class="n">cmalign_method</span>
-<span class="n">env</span><span class="o">.</span><span class="n">AddMethod</span><span class="p">(</span><span class="n">cmalign_method</span><span class="p">,</span> <span class="s">&#39;cmalign&#39;</span><span class="p">)</span>
-<span class="n">sto</span><span class="p">,</span> <span class="n">scores</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">cmalign</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">fasta</span><span class="p">,</span>
-    <span class="n">options</span> <span class="o">=</span> <span class="s">&#39;--hbanded --sub --dna -1&#39;</span><span class="p">)</span>    
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="function">
-<dt id="bioscons.infernal.cmmerge_method">
-<tt class="descclassname">bioscons.infernal.</tt><tt class="descname">cmmerge_method</tt><big>(</big><em>env</em>, <em>profile</em>, <em>fasta1</em>, <em>fasta2</em>, <em>outname='merged.sto'</em>, <em>outdir=None</em>, <em>options=None</em><big>)</big><a class="reference internal" href="_modules/bioscons/infernal.html#cmmerge_method"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.infernal.cmmerge_method" title="Permalink to this definition">¶</a></dt>
+<div class="section" id="module-bioscons.slurm">
+<span id="the-slurm-module"></span><h2>The <tt class="xref py py-mod docutils literal"><span class="pre">slurm</span></tt> Module<a class="headerlink" href="#module-bioscons.slurm" title="Permalink to this headline">¶</a></h2>
+<p>Functions for dispatching to SLURM (<a class="reference external" href="https://computing.llnl.gov/linux/slurm/">https://computing.llnl.gov/linux/slurm/</a>)
+from scons.</p>
+<dl class="class">
+<dt id="bioscons.slurm.SlurmEnvironment">
+<em class="property">class </em><tt class="descclassname">bioscons.slurm.</tt><tt class="descname">SlurmEnvironment</tt><big>(</big><em>use_cluster=True</em>, <em>slurm_queue=None</em>, <em>shell='sh'</em>, <em>all_precious=False</em>, <em>time=False</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/bioscons/slurm.html#SlurmEnvironment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.slurm.SlurmEnvironment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">SCons.Script.SConscript.SConsEnvironment</span></tt></p>
+<p>Mostly drop-in replacement for an SCons Environment, where all calls to
+Command are by executed via srun using a single core.</p>
+<p>The SRun and SAlloc methods can be used to use multiple cores for
+multithreaded and MPI jobs, respectively.</p>
+<dl class="method">
+<dt id="bioscons.slurm.SlurmEnvironment.Command">
+<tt class="descname">Command</tt><big>(</big><em>target</em>, <em>source</em>, <em>action</em>, <em>use_cluster=True</em>, <em>time=True</em>, <em>**kw</em><big>)</big><a class="reference internal" href="_modules/bioscons/slurm.html#SlurmEnvironment.Command"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.slurm.SlurmEnvironment.Command" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="method">
+<dt id="bioscons.slurm.SlurmEnvironment.Local">
+<tt class="descname">Local</tt><big>(</big><em>target</em>, <em>source</em>, <em>action</em>, <em>**kw</em><big>)</big><a class="reference internal" href="_modules/bioscons/slurm.html#SlurmEnvironment.Local"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.slurm.SlurmEnvironment.Local" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a command locally, without SLURM</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bioscons.slurm.SlurmEnvironment.SAlloc">
+<tt class="descname">SAlloc</tt><big>(</big><em>target</em>, <em>source</em>, <em>action</em>, <em>ncores</em>, <em>timelimit=None</em>, <em>**kw</em><big>)</big><a class="reference internal" href="_modules/bioscons/slurm.html#SlurmEnvironment.SAlloc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.slurm.SlurmEnvironment.SAlloc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run <tt class="docutils literal"><span class="pre">action</span></tt> with salloc.</p>
+<p>This method should be used for MPI jobs only. Combining an salloc call
+with <tt class="docutils literal"><span class="pre">mpirun</span></tt> (with no arguments) will use all nodes allocated
+automatically.</p>
+<p>Optional arguments:
+<tt class="docutils literal"><span class="pre">slurm_args</span></tt>: Additional arguments to pass to salloc
+<tt class="docutils literal"><span class="pre">timelimit</span></tt>: value to use for environment variable SALLOC_TIMELIMIT</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bioscons.slurm.SlurmEnvironment.SRun">
+<tt class="descname">SRun</tt><big>(</big><em>target</em>, <em>source</em>, <em>action</em>, <em>ncores=1</em>, <em>timelimit=None</em>, <em>slurm_queue=None</em>, <em>**kw</em><big>)</big><a class="reference internal" href="_modules/bioscons/slurm.html#SlurmEnvironment.SRun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.slurm.SlurmEnvironment.SRun" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run <tt class="docutils literal"><span class="pre">action</span></tt> with srun.</p>
+<p>This method should be used for multithreaded jobs on a single machine
+only. By default, calls to SlurmEnvironment.Command use srun. Specify a
+number of processors with <tt class="docutils literal"><span class="pre">ncores</span></tt>.</p>
+<p>Optional arguments:
+<tt class="docutils literal"><span class="pre">slurm_args</span></tt>: Additional arguments to pass to salloc
+<tt class="docutils literal"><span class="pre">timelimit</span></tt>: Value to use for environment variable SLURM_TIMELIMIT</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bioscons.slurm.SlurmEnvironment.SetCpusPerTask">
+<tt class="descname">SetCpusPerTask</tt><big>(</big><em>cpus_per_task</em><big>)</big><a class="reference internal" href="_modules/bioscons/slurm.html#SlurmEnvironment.SetCpusPerTask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.slurm.SlurmEnvironment.SetCpusPerTask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set number of CPUs used by tasks launched from this environment with
+srun. Equivalent to <tt class="docutils literal"><span class="pre">srun</span> <span class="pre">-c</span></tt></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bioscons.slurm.SlurmEnvironment.SetPartition">
+<tt class="descname">SetPartition</tt><big>(</big><em>partition</em><big>)</big><a class="reference internal" href="_modules/bioscons/slurm.html#SlurmEnvironment.SetPartition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.slurm.SlurmEnvironment.SetPartition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the partition to be used. Subsequent calls to SRun and SAlloc will use this partition.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bioscons.slurm.SlurmEnvironment.SetTimeLimit">
+<tt class="descname">SetTimeLimit</tt><big>(</big><em>timelimit</em><big>)</big><a class="reference internal" href="_modules/bioscons/slurm.html#SlurmEnvironment.SetTimeLimit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.slurm.SlurmEnvironment.SetTimeLimit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set a limit on the total run time for jobs launched by this environment.</p>
+<dl class="docutils">
+<dt>Formats:</dt>
+<dd>minutes
+minutes:seconds
+hours:minutes:seconds
+days-hours
+days-hours:minutes
+days-hours:minutes:seconds</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </div>
-</div>
-<div class="section" id="module-bioscons.pplacer">
-<span id="the-pplacer-module"></span><h2>The <tt class="xref py py-mod docutils literal"><span class="pre">pplacer</span></tt> Module<a class="headerlink" href="#module-bioscons.pplacer" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id1">
-<h3>Builders<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
-<p>None: note that <tt class="docutils literal"><span class="pre">pplacer</span></tt> related functionality is exposed within an
-SCons script via <tt class="docutils literal"><span class="pre">AddMethod</span></tt> - see below for examples.</p>
-</div>
-<div class="section" id="id2">
-<h3>Public functions and variables<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="module-bioscons.utils">
+<span id="the-utils-module"></span><h2>The <tt class="xref py py-mod docutils literal"><span class="pre">utils</span></tt> Module<a class="headerlink" href="#module-bioscons.utils" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
-<dt id="bioscons.pplacer.align_and_place">
-<tt class="descclassname">bioscons.pplacer.</tt><tt class="descname">align_and_place</tt><big>(</big><em>env</em>, <em>refpkg</em>, <em>qseqs</em>, <em>outdir=None</em>, <em>pplacer_options=None</em>, <em>cmalign_options=None</em>, <em>nproc=1</em><big>)</big><a class="reference internal" href="_modules/bioscons/pplacer.html#align_and_place"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.pplacer.align_and_place" title="Permalink to this definition">¶</a></dt>
-<dd><p>Align sequences in <tt class="docutils literal"><span class="pre">qseqs</span></tt>, merge with the reference alignment,
-and run pplacer.</p>
-<blockquote>
-<div><ul class="simple">
-<li>env - Environment instance.</li>
-<li>refpkg - path to a reference package directory.</li>
-<li>qseqs - unaligned query sequenecs in fasta format.</li>
-<li>options - command line options to be provided to
-pplacer. Note that substitution of variables defined within the
-current environment will occur.</li>
-<li>outdir - optional output directory; saves files to same
-directory as qseqs if unspecified.</li>
-<li>nproc - number of processors to use for <tt class="docutils literal"><span class="pre">cmalign</span></tt> and <tt class="docutils literal"><span class="pre">pplacer</span></tt>.</li>
+<dt id="bioscons.utils.getvars">
+<tt class="descclassname">bioscons.utils.</tt><tt class="descname">getvars</tt><big>(</big><em>config</em>, <em>secnames</em>, <em>indir=None</em>, <em>outdir=None</em>, <em>fmt_in='%(sec)s-infiles'</em>, <em>fmt_out='%(sec)s-outfiles'</em>, <em>fmt_params='%(sec)s-params'</em><big>)</big><a class="reference internal" href="_modules/bioscons/utils.html#getvars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.utils.getvars" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a tuple of configuration variables that may be passed to
+vars.AddVariables().</p>
+<ul class="simple">
+<li>config - an instance of ConfigParser.SafeConfigParser()</li>
+<li>secnames - a list of section names from which to import variables</li>
+<li>indir - path to a directory to prepend to filenames if not found in cwd</li>
+<li>outdir - path to a directory to prepend to output files.</li>
+<li>fmt_* - formatting string defining sections corresponding to infiles,
+outfiles, and params for each section</li>
 </ul>
-</div></blockquote>
-<p>Returns (sto, scores, merged, placefile)</p>
-<p>Example:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">bioscons.pplacer</span> <span class="kn">import</span> <span class="n">align_and_place</span>
-<span class="n">env</span><span class="o">.</span><span class="n">AddMethod</span><span class="p">(</span><span class="n">align_and_place</span><span class="p">,</span> <span class="s">&quot;align_and_place&quot;</span><span class="p">)</span>    
-<span class="n">sto</span><span class="p">,</span> <span class="n">scores</span><span class="p">,</span> <span class="n">merged</span><span class="p">,</span> <span class="n">placefile</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">AlignAndPlace</span><span class="p">(</span>
-    <span class="n">refpkg</span> <span class="o">=</span> <span class="s">&#39;my.refpkg&#39;</span><span class="p">,</span> <span class="n">qseqs</span> <span class="o">=</span> <span class="s">&#39;myseqs.fasta&#39;</span><span class="p">,</span>
-    <span class="n">pplacer_options</span> <span class="o">=</span> <span class="s">&#39;-p --inform-prior --map-identity&#39;</span>
-<span class="p">)</span>
-</pre></div>
-</div>
+<p>Example:
+vars = Variables()
+varlist = utils.getvars(config, [&#8216;ncbi&#8217;,&#8217;placefiles&#8217;], indir=output, outdir=output)
+vars.AddVariables(<a href="#id1"><span class="problematic" id="id2">*</span></a>varlist)</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="bioscons.pplacer.pplacer">
-<tt class="descclassname">bioscons.pplacer.</tt><tt class="descname">pplacer</tt><big>(</big><em>env</em>, <em>refpkg</em>, <em>alignment</em>, <em>outdir=None</em>, <em>options=None</em>, <em>nproc=2</em><big>)</big><a class="reference internal" href="_modules/bioscons/pplacer.html#pplacer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.pplacer.pplacer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run pplacer.</p>
-<blockquote>
-<div><ul class="simple">
-<li>env - Environment instance.</li>
-<li>refpkg - path to a reference package directory.</li>
-<li>aligned - aligned query sequenecs merged with reference
-sequences in fasta or stockholm formats.</li>
-<li>options - command line options to be provided to
-pplacer. Note that substitution of variables defined within the
-current environment will occur.</li>
-<li>outdir - optional output directory; saves files to same
-directory as alignment if unspecified.</li>
-<li>nproc - number of processes (<tt class="docutils literal"><span class="pre">pplacer</span> <span class="pre">-j</span></tt>)</li>
-</ul>
-</div></blockquote>
-<p>Returns [placefile] (where the file extension of <tt class="docutils literal"><span class="pre">alignment</span></tt> is replaced with &#8216;.jplace&#8217;)</p>
-<p>Example:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">bioscons.pplacer</span> <span class="kn">import</span> <span class="n">pplacer</span>
-<span class="n">placefile</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">pplacer</span><span class="p">(</span>
-    <span class="n">refpkg</span> <span class="o">=</span> <span class="s">&#39;my.refpkg&#39;</span><span class="p">,</span>
-    <span class="n">alignment</span> <span class="o">=</span> <span class="s">&#39;merged.sto&#39;</span><span class="p">,</span>
-    <span class="n">outdir</span> <span class="o">=</span> <span class="s">&#39;output&#39;</span><span class="p">,</span>
-    <span class="n">nproc</span> <span class="o">=</span> <span class="mi">4</span>
-<span class="p">)</span>        
-</pre></div>
-</div>
-</dd></dl>
-
-</div>
-</div>
-<div class="section" id="module-bioscons.r_lang">
-<span id="the-r-lang-module"></span><h2>The <tt class="xref py py-mod docutils literal"><span class="pre">r_lang</span></tt> Module<a class="headerlink" href="#module-bioscons.r_lang" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id3">
-<h3>Builders<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
-<div class="section" id="fa-to-seqlist">
-<h4>fa_to_seqlist<a class="headerlink" href="#fa-to-seqlist" title="Permalink to this headline">¶</a></h4>
-<p>Save the sequence alignment as a list-like object of class DNAbin, for example:</p>
-<div class="highlight-python"><pre>&gt; library(ape)
-&gt; seqlist &lt;- read.dna(source, format="fasta", as.matrix=FALSE)
-&gt; save(seqlist, file=target)</pre>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">source:</th><td class="field-body">[fasta-file]</td>
-</tr>
-<tr class="field-even field"><th class="field-name">target:</th><td class="field-body">[R data file]</td>
-</tr>
-<tr class="field-odd field"><th class="field-name" colspan="2">environment variables (module globals define defaults):</th></tr>
-<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section" id="fa-to-seqmat">
-<h4>fa_to_seqmat<a class="headerlink" href="#fa-to-seqmat" title="Permalink to this headline">¶</a></h4>
-<p>Save the sequence alignment as a matrix-like object of class DNAbin, for example:</p>
-<div class="highlight-python"><pre>&gt; library(ape)
-&gt; seqlist &lt;- read.dna(source, format="fasta", as.matrix=TRUE)
-&gt; save(seqlist, file=target)</pre>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">source:</th><td class="field-body">[fasta-file]</td>
-</tr>
-<tr class="field-even field"><th class="field-name">target:</th><td class="field-body">[R data file]</td>
-</tr>
-<tr class="field-odd field"><th class="field-name" colspan="2">environment variables (module globals define defaults):</th></tr>
-<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section" id="rscript">
-<h4>RScript<a class="headerlink" href="#rscript" title="Permalink to this headline">¶</a></h4>
-</div>
-<div class="section" id="runr">
-<h4>runR<a class="headerlink" href="#runr" title="Permalink to this headline">¶</a></h4>
-</div>
-<div class="section" id="sweave">
-<h4>sweave<a class="headerlink" href="#sweave" title="Permalink to this headline">¶</a></h4>
-</div>
-<div class="section" id="stangle">
-<h4>stangle<a class="headerlink" href="#stangle" title="Permalink to this headline">¶</a></h4>
-</div>
-</div>
-<div class="section" id="id4">
-<h3>Public functions and variables<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
-</div>
-</div>
-<div class="section" id="module-bioscons.raxml">
-<span id="the-raxml-module"></span><h2>The <tt class="xref py py-mod docutils literal"><span class="pre">raxml</span></tt> Module<a class="headerlink" href="#module-bioscons.raxml" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id5">
-<h3>Builders<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
-<div class="section" id="raxml">
-<h4>raxml<a class="headerlink" href="#raxml" title="Permalink to this headline">¶</a></h4>
-<p>Calculates a maximum likelihood phylogenetic tree using RAxML. Will
-attempt to execute a multithreaded version if RAXML_PTHREADS &gt; 1. The
-output will be written to the same directory as the input file, with
-filenames matching the pattern [RAxML_info.foo, RAxML_result.foo]
-given an alignment named <cite>foo.phy</cite>. Other files not returned as
-targets may also be generated.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">source:</th><td class="field-body"><p class="first">[input alignment (relaxed phylip format)]</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">target:</th><td class="field-body"><p class="first">[info_file, result_file]</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name" colspan="2">environment variables (module globals define defaults):</th></tr>
-<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><ul class="first last simple">
-<li>env[&#8216;RAXML&#8217;]</li>
-<li>env[&#8216;RAXML_FLAGS&#8217;]</li>
-<li>env[&#8216;RAXML_NTHREADS&#8217;]</li>
-<li>env[&#8216;RAXML_PTHREADS&#8217;]</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="section" id="example">
-<h3>example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">bioscons.raxml</span> <span class="kn">import</span> <span class="n">raxml</span>
-<span class="n">env</span><span class="p">[</span><span class="s">&#39;BUILDERS&#39;</span><span class="p">][</span><span class="s">&#39;raxml&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">raxml</span>
-
-<span class="n">info_file</span><span class="p">,</span> <span class="n">result_file</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">raxml</span><span class="p">(</span><span class="s">&#39;alignment.phy&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="id6">
-<h3>Public functions and variables<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
-<dl class="data">
-<dt id="bioscons.raxml.RAXML">
-<tt class="descclassname">bioscons.raxml.</tt><tt class="descname">RAXML</tt><em class="property"> = 'raxmlHPC-SSE3'</em><a class="headerlink" href="#bioscons.raxml.RAXML" title="Permalink to this definition">¶</a></dt>
-<dd><p>Name of the RAxML executable if
-RAXML_NTHREADS == 1. [&#8216;raxmlHPC-SSE3&#8217;]</p>
-</dd></dl>
-
-<dl class="data">
-<dt id="bioscons.raxml.RAXML_FLAGS">
-<tt class="descclassname">bioscons.raxml.</tt><tt class="descname">RAXML_FLAGS</tt><em class="property"> = '-m GTRGAMMA'</em><a class="headerlink" href="#bioscons.raxml.RAXML_FLAGS" title="Permalink to this definition">¶</a></dt>
-<dd><p>String containing optional command line parameters. []</p>
-</dd></dl>
-
-<dl class="data">
-<dt id="bioscons.raxml.RAXML_NTHREADS">
-<tt class="descclassname">bioscons.raxml.</tt><tt class="descname">RAXML_NTHREADS</tt><em class="property"> = 1</em><a class="headerlink" href="#bioscons.raxml.RAXML_NTHREADS" title="Permalink to this definition">¶</a></dt>
-<dd><p>Number of threads used by RAxML. [1]</p>
-</dd></dl>
-
-<dl class="data">
-<dt id="bioscons.raxml.RAXML_PTHREADS">
-<tt class="descclassname">bioscons.raxml.</tt><tt class="descname">RAXML_PTHREADS</tt><em class="property"> = 'raxmlHPC-PTHREADS-SSE3'</em><a class="headerlink" href="#bioscons.raxml.RAXML_PTHREADS" title="Permalink to this definition">¶</a></dt>
-<dd><p>Name of the RAxML executable if
-RAXML_NTHREADS &gt; 1. [&#8216;raxmlHPC-PTHREADS-SSE3&#8217;]</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="bioscons.raxml.check_raxml">
-<tt class="descclassname">bioscons.raxml.</tt><tt class="descname">check_raxml</tt><big>(</big><em>env</em><big>)</big><a class="reference internal" href="_modules/bioscons/raxml.html#check_raxml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.raxml.check_raxml" title="Permalink to this definition">¶</a></dt>
-<dd><p>Determines whether the raxml executable can be executed, and if
-so, generates a version string. Returns environment-defined or
-default values of either RAXML or RAXML_PTHREADS as
-appropriate. If successful, returns (path-to-executable,
-version-string). Raises SystemError on failure.</p>
-</dd></dl>
-
-</div>
-</div>
-<div class="section" id="module-bioscons.refpkg">
-<span id="the-refpkg-module"></span><h2>The <tt class="xref py py-mod docutils literal"><span class="pre">refpkg</span></tt> Module<a class="headerlink" href="#module-bioscons.refpkg" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="bioscons.refpkg.get_varlist">
-<tt class="descclassname">bioscons.refpkg.</tt><tt class="descname">get_varlist</tt><big>(</big><em>pth</em><big>)</big><a class="reference internal" href="_modules/bioscons/refpkg.html#get_varlist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.refpkg.get_varlist" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a list of tuples describing refpkg contents. The output can
-be used to define environment variables, where files within the
-refpkg are identified by keys in the &#8216;files&#8217; dictionary (each
-value is a PathVariable object), and &#8216;refpkg&#8217; provides the path to
-the reference package itself as an instance of
-PathVariable.PathIsDir. For example:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">bioscons.refpkg</span> <span class="kn">import</span> <span class="n">get_vars</span> 
-<span class="nb">vars</span> <span class="o">=</span> <span class="n">Variables</span><span class="p">()</span>
-<span class="nb">vars</span><span class="o">.</span><span class="n">AddVariables</span><span class="p">(</span><span class="o">*</span><span class="n">get_vars</span><span class="p">(</span><span class="s">&#39;/path/to/refpkg&#39;</span><span class="p">))</span>
-<span class="n">env</span> <span class="o">=</span> <span class="n">Environment</span><span class="p">(</span><span class="n">ENV</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="nb">vars</span><span class="p">)</span>
-<span class="n">path_to_refpkg</span> <span class="o">=</span> <span class="n">env</span><span class="p">[</span><span class="s">&#39;refpkg&#39;</span><span class="p">]</span>
-<span class="n">path_to_profile</span> <span class="o">=</span> <span class="n">env</span><span class="p">[</span><span class="s">&#39;refpkg_profile&#39;</span><span class="p">]</span>
-</pre></div>
-</div>
+<dl class="class">
+<dt id="bioscons.utils.verbose">
+<em class="property">class </em><tt class="descclassname">bioscons.utils.</tt><tt class="descname">verbose</tt><big>(</big><em>f</em><big>)</big><a class="reference internal" href="_modules/bioscons/utils.html#verbose"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.utils.verbose" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Decorator class to provide more verbose progress messages.</p>
 </dd></dl>
 
 </div>
@@ -541,55 +292,18 @@ PathVariable.PathIsDir. For example:</p>
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#"><tt class="docutils literal"><span class="pre">bioscons</span></tt> Documentation</a><ul>
-<li><a class="reference internal" href="#subpackages">Subpackages</a><ul>
-</ul>
-</li>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li><a class="reference internal" href="#module-bioscons.fast">The <tt class="docutils literal"><span class="pre">fast</span></tt> Module</a></li>
 <li><a class="reference internal" href="#module-bioscons.fileutils">The <tt class="docutils literal"><span class="pre">fileutils</span></tt> Module</a></li>
-<li><a class="reference internal" href="#module-bioscons.infernal">The <tt class="docutils literal"><span class="pre">infernal</span></tt> Module</a><ul>
-<li><a class="reference internal" href="#builders">Builders</a><ul>
-<li><a class="reference internal" href="#cmalign">cmalign</a></li>
-<li><a class="reference internal" href="#cmalign-mpi">cmalign_mpi</a></li>
-<li><a class="reference internal" href="#cmmerge">cmmerge</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#public-functions-and-variables">Public functions and variables</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#module-bioscons.pplacer">The <tt class="docutils literal"><span class="pre">pplacer</span></tt> Module</a><ul>
-<li><a class="reference internal" href="#id1">Builders</a></li>
-<li><a class="reference internal" href="#id2">Public functions and variables</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#module-bioscons.r_lang">The <tt class="docutils literal"><span class="pre">r_lang</span></tt> Module</a><ul>
-<li><a class="reference internal" href="#id3">Builders</a><ul>
-<li><a class="reference internal" href="#fa-to-seqlist">fa_to_seqlist</a></li>
-<li><a class="reference internal" href="#fa-to-seqmat">fa_to_seqmat</a></li>
-<li><a class="reference internal" href="#rscript">RScript</a></li>
-<li><a class="reference internal" href="#runr">runR</a></li>
-<li><a class="reference internal" href="#sweave">sweave</a></li>
-<li><a class="reference internal" href="#stangle">stangle</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#id4">Public functions and variables</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#module-bioscons.raxml">The <tt class="docutils literal"><span class="pre">raxml</span></tt> Module</a><ul>
-<li><a class="reference internal" href="#id5">Builders</a><ul>
-<li><a class="reference internal" href="#raxml">raxml</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#example">example</a></li>
-<li><a class="reference internal" href="#id6">Public functions and variables</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#module-bioscons.refpkg">The <tt class="docutils literal"><span class="pre">refpkg</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-bioscons.slurm">The <tt class="docutils literal"><span class="pre">slurm</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-bioscons.utils">The <tt class="docutils literal"><span class="pre">utils</span></tt> Module</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
   <p class="topless"><a href="index.html"
-                        title="previous chapter">Welcome to bioscons&#8217;s documentation!</a></p>
+                        title="previous chapter">bioscons</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/bioscons.txt"
@@ -622,15 +336,15 @@ PathVariable.PathIsDir. For example:</p>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="index.html" title="Welcome to bioscons’s documentation!"
+          <a href="index.html" title="bioscons"
              >previous</a> |</li>
-        <li><a href="index.html">bioscons 0.3 documentation</a> &raquo;</li> 
+        <li><a href="index.html">bioscons 0.6 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2011, Noah Hoffman.
-      Last updated on Oct 27, 2011.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.
+        &copy; Copyright 2014, Noah Hoffman.
+      Last updated on Jul 09, 2014.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

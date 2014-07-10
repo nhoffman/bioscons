@@ -3,8 +3,12 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to bioscons's documentation!
-====================================
+bioscons
+========
+
+A package extending the scons build tool for the construction of
+reproducible workflows in bioinformatics and other data analysis
+pipelines.
 
 Contents:
 
