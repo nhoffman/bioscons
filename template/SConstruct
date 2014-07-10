@@ -1,13 +1,6 @@
 import os
-import sys
-from os.path import join,split,splitext
 import ConfigParser
-import re
-import itertools
-import glob
-import collections
 
-import sconstools.builders as builders
 import sconstools.utils as utils
 
 #### define variables
