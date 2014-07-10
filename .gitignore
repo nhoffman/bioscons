@@ -6,3 +6,5 @@ doctrees/
 bioscons.egg-info/
 MANIFEST
 bioscons.egg-info/
+*-env
+src
