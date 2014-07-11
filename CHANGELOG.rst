@@ -2,6 +2,12 @@
  Changes for bioscons
 ======================
 
+planned for 0.8
+===============
+
+ * removed deprecated modules
+ * updated Sphinx docs
+
 0.7.1
 =====
 

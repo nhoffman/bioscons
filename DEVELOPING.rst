@@ -42,3 +42,17 @@ is easy using `ghp-import`::
 
   ghp-import -p html
 
+
+creating a release
+==================
+
+1. run tests!
+1. update the version number in bioscons/__init__.py
+1. update CHANGELOG.rst
+1. git commit
+1. update the git tag: `dev/set_tag.sh`
+1. `git push origin master`
+1. `git push --tags`
+1. update the docs: `(cd docs && make html)`
+1. publish the updated docs: `ghp-import -p html`
+1. update PyPi (see above)

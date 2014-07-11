@@ -87,3 +87,6 @@ if [ ! -f $VENV/bin/scons ]; then
 else
     echo "scons is already installed in $(which scons)"
 fi
+
+# install bioscons
+pip install -U -e .
