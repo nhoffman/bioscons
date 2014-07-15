@@ -5,7 +5,8 @@
 planned for 0.8
 ===============
 
- * removed deprecated modules
+ * removed deprecated modules providing builders for various programs
+ * remove fileutils.list_targets
  * updated Sphinx docs
 
 0.7.1

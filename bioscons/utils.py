@@ -1,14 +1,8 @@
-import itertools
-import subprocess
-import ConfigParser
-import tempfile
-import shutil
-import random
-from os.path import join,split,splitext
+from os.path import join
 import os.path
 
 try:
-    from SCons.Script import *
+    from SCons.Script import PathVariable
 except ImportError:
     # we expect this to fail unless imported from within SConstruct
     pass
@@ -40,10 +34,12 @@ def getvars(config, secnames, indir=None, outdir=None,
     * fmt_* - formatting string defining sections corresponding to infiles,
       outfiles, and params for each section
 
-    Example:
-    vars = Variables()
-    varlist = utils.getvars(config, ['ncbi','placefiles'], indir=output, outdir=output)
-    vars.AddVariables(*varlist)
+    Example::
+
+      vars = Variables()
+      varlist = utils.getvars(config, ['ncbi','placefiles'],
+                              indir=output, outdir=output)
+      vars.AddVariables(*varlist)
     """
 
     vars = []
@@ -52,9 +48,12 @@ def getvars(config, secnames, indir=None, outdir=None,
     defaults = [k for k,v in config.items('DEFAULT')]
     for varname, val in config.items('DEFAULT'):
         if os.path.isdir(val):
-            vars.append(PathVariable(varname, '%s (DEFAULT)'%varname, val, PathVariable.PathIsDir))
+            vars.append(PathVariable(
+                varname, '%s (DEFAULT)' % varname, val, PathVariable.PathIsDir))
         if os.path.isfile(val):
-            vars.append(PathVariable(varname, '%s (DEFAULT)'%varname, val, PathVariable.PathIsFile))
+            vars.append(
+                PathVariable(varname, '%s (DEFAULT)' % varname, val,
+                             PathVariable.PathIsFile))
         else:
             vars.append((varname, val, val))
 
@@ -65,7 +64,7 @@ def getvars(config, secnames, indir=None, outdir=None,
                 continue
             elif os.path.exists(pth):
                 pth = os.path.abspath(pth)
-            elif indir: 
+            elif indir:
                 pth = join(indir, pth)
             else:
                 raise OSError(
@@ -88,7 +87,7 @@ def getvars(config, secnames, indir=None, outdir=None,
                 pvar = PathVariable.PathIsDirCreate
             else:
                 pvar = PathVariable.PathAccept
-            
+
             vars.append(PathVariable(varname, '', pth, pvar))
 
         # ordinary variables; no path checking or directory creation

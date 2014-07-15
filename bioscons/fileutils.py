@@ -50,8 +50,15 @@ else:
 
         Example usage::
 
-            targs = Targets(locals().values())
-            targs.show_extras("outdir")
+          from bioscons.fileutils import Targets
+          targets = Targets()
+          # build some targets
+          some_target = env.Command(
+              target='infile.txt', source='outfile.txt',
+              action='some_action $SOURCE $TARGET')
+
+          targets.update(locals().values())
+          targets.show_extras("outdir")
         """
 
         def __init__(self, objs = None):
@@ -59,7 +66,7 @@ else:
 
         def update(self, objs):
             """
-            Given a list of objects (eg, the output of locals().values()),
+            Given a list of objects (eg, the output of ``locals().values()``),
             update self.targets with the set containing the relative path
             to each target (ie, those objects with a "NodeInfo"
             attribute).
@@ -70,14 +77,15 @@ else:
 
         def show_extras(self, directory, one_line = True):
             """
-            Given a relative path `directory` search for files recursively
+            Given a relative path ``directory`` search for files recursively
             and print a list of those not found among
-            `self.targets`. Print one path per line if `one_line` is
+            ``self.targets``. Print one path per line if ``one_line`` is
             False.
             """
 
             outfiles = set(
-                Flatten([[path.join(d, f) for f in ff] for d, _, ff in os.walk(directory)]))
+                Flatten([[path.join(d, f) for f in ff]
+                         for d, _, ff in os.walk(directory)]))
 
             extras = outfiles - self.targets
             if extras:
@@ -91,8 +99,8 @@ else:
 
 def rename(fname, ext=None, pth=None):
     """
-    Replace the directory or file extension in `fname` with `pth`
-    and `ext`, respectively. `fname` may be a string, an object
+    Replace the directory or file extension in ``fname`` with ``pth``
+    and ``ext``, respectively. ``fname`` may be a string, an object
     coercible to a string using str(), or a single-element list of
     either.
 
@@ -119,8 +127,8 @@ def rename(fname, ext=None, pth=None):
 def split_path(fname, split_ext=False):
     """
     Returns file name elements given an absolute or relative path
-    `fname`, which may be a string, an object coercible to a string
-    using str(), or a single-element list of either. If `split_ext` is
+    ``fname``, which may be a string, an object coercible to a string
+    using str(), or a single-element list of either. If ``split_ext`` is
     True, the name of the file is further split into a base component
     and the file suffix, ie, (dir, base, suffix), and (dir, filename)
     otherwise.
@@ -139,45 +147,6 @@ def split_path(fname, split_ext=False):
         return (directory, base, suffix)
     else:
         return (directory, filename)
-
-
-def list_targets(environment):
-    """
-    Given a dict containing {name:object} pairs (eg, the output of
-    locals()), return a dict providing {varname:path} for each object
-    that has a `NodeInfo` attribute. Lists of objects are flattened.
-
-    An example use case for this function is to generate a set of all
-    target paths to compare against the contents of an output
-    directory to identify extraneous files::
-
-      import pprint
-      from itertools import chain, ifilter
-      from bioscons import list_targets
-      targets = list_targets(locals())
-      pprint.pprint(targets)
-      print 'extraneous files in ./output:'
-      print set(glob.glob('output/*')) - \\
-      set(ifilter(lambda fn: fn.startswith('output/'), chain.from_iterable(targets.values())))
-    """
-
-    raise DeprecationWarning('use the Targets class instead')
-
-    targets = {}
-    for objname, obj in environment.items():
-        if hasattr(obj, 'NodeInfo'):
-            targets[objname] = [str(obj)]
-            continue
-
-        try:
-            is_node_obj = hasattr(obj[0], 'NodeInfo')
-        except (TypeError, KeyError, IndexError, AttributeError):
-            pass
-        else:
-            if is_node_obj:
-                targets[objname] = [str(x) for x in obj]
-
-    return targets
 
 
 def write_digest(fname, dirname=None):
@@ -200,7 +169,7 @@ def write_digest(fname, dirname=None):
 
 def check_digest(fname, dirname=None):
     """Return True if the stored hash exists and is identical to the
-    signature of the file `fname`. Hash is saved to a file named
+    signature of the file ``fname``. Hash is saved to a file named
     fname.md5 in either the same directory or in dirname if provided.
 
     """
