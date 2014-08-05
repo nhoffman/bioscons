@@ -46,13 +46,14 @@ is easy using `ghp-import`::
 creating a release
 ==================
 
-1. run tests!
-1. update the version number in bioscons/__init__.py
-1. update CHANGELOG.rst
-1. git commit
-1. update the git tag: `dev/set_tag.sh`
-1. `git push origin master`
-1. `git push --tags`
-1. update the docs: `(cd docs && make html)`
-1. publish the updated docs: `ghp-import -p html`
-1. update PyPi (see above)
+- run tests!
+- update the version number in bioscons/__init__.py
+- update CHANGELOG.rst
+- git commit
+- update the git tag: `dev/set_tag.sh`
+- `git push origin master`
+- `git push --tags`
+- update the docs: `(cd docs && make html)`
+- publish the updated docs: `ghp-import -p html`
+- update PyPi (see above)
+
