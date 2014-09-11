@@ -2,12 +2,17 @@
  Changes for bioscons
 ======================
 
-planned for 0.8
-===============
+planned for 0.8.1
+=================
+
+0.8
+===
 
  * removed deprecated modules providing builders for various programs
  * remove fileutils.list_targets
  * updated Sphinx docs
+ * setting the env shell var works for running commands locally
+ * enforcing boolean types for use_cluster, all_precious, and time vars
 
 0.7.1
 =====
