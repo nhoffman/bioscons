@@ -50,7 +50,7 @@ class SlurmEnvironment(SConsEnvironment):
     multithreaded and MPI jobs, respectively.
     """
 
-    def __init__(self, use_cluster=True, slurm_queue=None, shell='sh',
+    def __init__(self, use_cluster=True, slurm_queue=None,
                  all_precious=False, time=False, **kwargs):
         super(SlurmEnvironment, self).__init__(**kwargs)
 
@@ -64,8 +64,7 @@ class SlurmEnvironment(SConsEnvironment):
         self.time = time
         if slurm_queue:
             self.SetPartition(slurm_queue)
-        self.shell = shell
-        self['SHELL'] = shell
+        self.shell = kwargs.get('SHELL', 'sh')
 
     def _quote_action(self, action):
         return '{shell} -c {action}'.format(shell=self.shell,
