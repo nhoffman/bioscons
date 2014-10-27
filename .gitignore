@@ -1,11 +1,11 @@
-.sconsign.dblite
+ .sconsign.dblite
+*-env
 *.pyc
+MANIFEST
+bioscons.egg-info/
+bioscons/data/ver
 build/
 dist/
 doctrees/
-bioscons.egg-info/
-MANIFEST
-bioscons.egg-info/
-*-env
-src
-html
+html/
+src/

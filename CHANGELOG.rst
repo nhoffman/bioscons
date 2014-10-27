@@ -2,8 +2,15 @@
  Changes for bioscons
 ======================
 
-planned for 0.8.1
-=================
+0.8.2-planned
+=============
+
+ * version numbers are set using git tag
+
+0.8.1
+=====
+
+ * fix a bug when specifying a shell in the Environment
 
 0.8
 ===

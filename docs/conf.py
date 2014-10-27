@@ -33,20 +33,9 @@ import bioscons
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('..'))
 
-# use the git tag for the release number
-RELEASE = subprocess.check_output(
-    ['git', 'describe', '--tags']).strip().lstrip('v')
-
 # get the version number from the package itself
 VERSION = bioscons.__version__
-
-# this seems like as good a time as any to make sure that the git tag
-# and bioscons.__version__ are in sync.
-print 'release: {}  version: {}'.format(RELEASE, VERSION)
-assert RELEASE.startswith(VERSION), \
-    'version and release numbers do not match'
-
-# GIT_TAG = subprocess.check_output(['git', 'tag']).split()[-1].lstrip('v')
+RELEASE = VERSION
 
 # -- General configuration -----------------------------------------------------
 
