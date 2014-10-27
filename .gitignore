@@ -8,3 +8,4 @@ MANIFEST
 bioscons.egg-info/
 *-env
 src
+html
