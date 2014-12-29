@@ -2,8 +2,13 @@
 Functions for dispatching to SLURM (https://computing.llnl.gov/linux/slurm/)
 from scons.
 """
+
 import re
 import shlex
+import subprocess
+
+from bioscons import add_scons_lib
+add_scons_lib()
 
 from SCons.Script.SConscript import SConsEnvironment
 
@@ -12,6 +17,19 @@ _find_unsafe = re.compile(r'[^\w@%+=:,./-]').search
 
 # system path to the time function
 _time = '/usr/bin/time --verbose --output ${TARGETS[0]}.time '
+
+
+def check_srun():
+    """
+    Return the absolute path to the `srun` executable.
+    """
+
+    try:
+        srun = subprocess.check_output(['which', 'srun']).strip()
+    except subprocess.CalledProcessError:
+        srun = None
+
+    return srun
 
 
 def _quote(s):

@@ -1,0 +1,68 @@
+import os
+from os import path
+import sys
+import pprint
+import subprocess
+
+from bioscons.slurm import SlurmEnvironment, check_srun
+
+print path.join(path.split(path.abspath('.'))[-1],
+                str(call_stack[-1].sconscript))
+
+if not check_srun():
+    print '--> srun not found; skipping tests requiring slurm'
+    Return([])
+
+vars = Variables()
+vars.Add('out', 'output files', 'outdir')
+vars.Add('test_script', None, path.abspath('test.sh'))
+env = SlurmEnvironment(ENV=os.environ,
+                       variables=vars,
+                       use_cluster=True)
+
+# these tests will only work at the hutch using the gizmo cluster
+# because they refer to specific slurm partitions.
+slurm_conf = '/etc/slurm-llnl/slurm.conf'
+at_hutch = os.path.exists(slurm_conf) and \
+           'PartitionName=full' in open(slurm_conf).read()
+
+if not at_hutch:
+    print '--> skipping hutch-specific tests'
+    Return([])
+
+env = SlurmEnvironment(ENV=os.environ, variables=vars,
+                        use_cluster=True, slurm_queue='full')
+
+stdout6, = env.SRun(
+    target='$out/stdout6.txt',
+    source=None,
+    action='$test_script > $TARGET',
+    ncores=12,
+    timelimit='1',
+)
+
+check_stdout6, = env.Local(
+    target='$out/stdout6_check.txt',
+    source=stdout6,
+    action=(r'grep --color=never "SLURM_PARTITION=full" $SOURCE > $TARGET && '
+            r'grep -E --color=never "NumCPUs=12\b" $SOURCE > $TARGET')
+)
+
+stdout7, = env.SRun(
+    target='$out/stdout7.txt',
+    source=None,
+    action='$test_script > $TARGET',
+    ncores=1,
+    timelimit='1',
+    slurm_queue='campus'
+)
+
+check_stdout7, = env.Local(
+    target='$out/stdout7_check.txt',
+    source=stdout7,
+    action=(r'grep --color=never "SLURM_PARTITION=campus" $SOURCE > $TARGET && '
+            r'grep -E --color=never "NumCPUs=1\b" $SOURCE > $TARGET')
+)
+
+Depends([stdout6, stdout7], env['test_script'])
+Return('stdout6', 'stdout7')

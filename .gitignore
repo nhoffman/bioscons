@@ -1,4 +1,4 @@
- .sconsign.dblite
+.sconsign.dblite
 *-env
 *.pyc
 MANIFEST
@@ -9,3 +9,4 @@ dist/
 doctrees/
 html/
 src/
+tests/*/outdir/

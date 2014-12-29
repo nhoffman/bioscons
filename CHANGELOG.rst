@@ -5,7 +5,8 @@
 0.8.2-planned
 =============
 
- * version numbers are set using git tag
+ * version numbers are set using git tag (#2)
+ * Top-level SConstruct can run tests, perform other development tasks (#19)
 
 0.8.1
 =====

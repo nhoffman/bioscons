@@ -4,95 +4,56 @@ import sys
 import pprint
 import subprocess
 
-# use local (not system) version of the package
-sys.path.insert(0, '../..')
+from bioscons.slurm import SlurmEnvironment, check_srun
 
-from bioscons.slurm import SlurmEnvironment
+print path.join(path.split(path.abspath('.'))[-1],
+                str(call_stack[-1].sconscript))
+
+if not check_srun():
+    print '--> srun not found; skipping tests requiring slurm'
+    Return([])
 
 vars = Variables()
-env = SlurmEnvironment(ENV=os.environ, variables=vars,
+vars.Add('out', 'output files', 'outdir')
+vars.Add('test_script', None, path.abspath('test.sh'))
+env = SlurmEnvironment(ENV=os.environ,
+                       variables=vars,
                        use_cluster=True)
 
 stdout1 = env.SRun(
-    target='stdout1.txt',
+    target='$out/stdout1.txt',
     source=None,
-    action='./test.sh >> $TARGET',
+    action='$test_script > $TARGET',
     ncores=2,
     timelimit='2',
     )
 
 stdout2 = env.Command(
-    target='stdout2.txt',
+    target='$out/stdout2.txt',
     source=None,
-    action='./test.sh >> $TARGET'
+    action='$test_script > $TARGET'
     )
 
 stdout3 = env.Command(
-    target='stdout3.txt',
+    target='$out/stdout3.txt',
     source=None,
-    action='./test.sh >> $TARGET',
+    action='$test_script > $TARGET',
     use_cluster=False
     )
 
 stdout4 = env.SAlloc(
-    target='stdout4.txt',
+    target='$out/stdout4.txt',
     source=None,
-    action='./test.sh >> $TARGET',
+    action='$test_script > $TARGET',
     use_cluster=False,
     timelimit='3',
     ncores=2
     )
 
 # Test quoting
-stdout5 = env.Command(target='stdout5.txt',
+stdout5 = env.Command(target='$out/stdout5.txt',
         source=None,
         action='echo "hostname: `hostname`" && env > $TARGET')
 
-Depends([stdout1, stdout2, stdout3, stdout4, stdout5], './test.sh')
-
-# at_hutch = subprocess.call(
-#     ['grep', '-s', 'PartitionName=full', '/etc/slurm-llnl/slurm.conf'],
-#     stdout=open(os.devnull, 'w')) == 0
-
-# these tests will only work at the hutch using the gizmo cluster
-# because they refer to specific slurm partitions.
-slurm_conf = '/etc/slurm-llnl/slurm.conf'
-at_hutch = os.path.exists(slurm_conf) and 'PartitionName=full' in open(slurm_conf).read()
-
-if at_hutch:
-    env2 = SlurmEnvironment(ENV=os.environ, variables=vars,
-                            use_cluster=True, slurm_queue='full')
-
-    stdout6, = env2.SRun(
-        target='stdout6.txt',
-        source=None,
-        action='./test.sh >> $TARGET',
-        ncores=12,
-        timelimit='1',
-    )
-
-    check_stdout6, = env2.Local(
-        target='stdout6_check.txt',
-        source=stdout6,
-        action=(r'grep --color=never "SLURM_PARTITION=full" $SOURCE > $TARGET && '
-                r'grep -E --color=never "NumCPUs=12\b" $SOURCE >> $TARGET')
-    )
-
-    stdout7, = env2.SRun(
-        target='stdout7.txt',
-        source=None,
-        action='./test.sh >> $TARGET',
-        ncores=1,
-        timelimit='1',
-        slurm_queue='campus'
-    )
-
-    check_stdout7, = env2.Local(
-        target='stdout7_check.txt',
-        source=stdout7,
-        action=(r'grep --color=never "SLURM_PARTITION=campus" $SOURCE > $TARGET && '
-                r'grep -E --color=never "NumCPUs=1\b" $SOURCE >> $TARGET')
-    )
-
-    Depends([stdout6, stdout7], './test.sh')
-
+Depends([stdout1, stdout2, stdout3, stdout4, stdout5], env['test_script'])
+Return('stdout1', 'stdout2', 'stdout3', 'stdout4', 'stdout5')
