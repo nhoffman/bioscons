@@ -7,6 +7,7 @@
 
  * version numbers are set using git tag (#2)
  * Top-level SConstruct can run tests, perform other development tasks (#19)
+ * Set up automated tests using Travis-CI (#20)
 
 0.8.1
 =====

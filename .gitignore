@@ -10,3 +10,4 @@ doctrees/
 html/
 src/
 tests/*/outdir/
+tests.log
