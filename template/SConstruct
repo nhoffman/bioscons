@@ -1,28 +1,59 @@
 import os
-import ConfigParser
+import sys
 
-import sconstools.utils as utils
+# Ensure that a virtualenv is active before importing non-stdlib dependencies.
+venv = os.environ.get('VIRTUAL_ENV')
+if not venv:
+    sys.exit('--> an active virtualenv is required'.format(venv))
 
-#### define variables
-config = ConfigParser.SafeConfigParser()
-config.optionxform = str # preserve case of options
+# Explicit imports keep linters happy.
+from SCons.Script import (SConscript, Environment, Variables, PathVariable, Alias)
 
-setupfile = 'setup.ini'
-print 'reading configuration from %s' % setupfile
-config.read(setupfile)
+from bioscons.utils import helpsetup
 
-basedir = os.path.abspath(config.get('DEFAULT','basedir'))
-indir = config.get('DEFAULT','datadir')
-outdir= config.get('DEFAULT','outdir')
+# Define the execution PATH. Replace `os.environ['PATH']` with a list
+# of directories for a more reproducible environment.
+PATH = ':'.join([
+    'bin',
+    os.path.join(venv, 'bin'),
+    os.environ['PATH']
+])
 
 vars = Variables()
-varlist = utils.getvars(config, ['example'], indir=indir, outdir=outdir)
-vars.AddVariables(*varlist)
+# Place all output files in $out
+vars.Add(PathVariable('out', 'output directory', 'output',
+                      PathVariable.PathIsDirCreate))
 
-env = Environment(ENV=os.environ, variables=vars)
+# SHELLOPTS sets shell options to fail (including piped commands) with
+# nonzero exit status; this requires bash.
+env = Environment(
+    ENV=dict(os.environ, PATH=PATH, SHELLOPTS='errexit:pipefail'),
+    variables=vars,
+    SHELL='bash'
+)
 
-### builders
-env['BUILDERS']['copyfile'] = builders.copyfile
+# `scons -h` prints help text.
+helpsetup(vars, env)
 
-## the example below copies a file from one directory to another
-nothing_out = env.copyfile(target='$nothing_out', source='$nothing_in')
+# Commands go here.
+foo = env.Command(
+    target='$out/foo.txt',
+    source=None,
+    action='echo foo > $TARGET'
+)
+env.Clean(foo, '$out')  # `scons --clean` removes env['out']
+Alias('foo', foo)
+
+for i in range(1, 5):
+    # Use a copy of the Environment object when iterating.
+    e = env.Clone(out='$out/subdir_{}'.format(i), i=i)
+    file_i = e.Command(
+        target='$out/count.txt',
+        source=foo,
+        action='for i in {1..$i}; do echo $i; done > $TARGET'
+    )
+    e.Clean(file_i, '$out')  # `scons --clean` removes e['out']
+
+# Run a subsidiary SConscript using the same environment; see
+# http://www.scons.org/doc/production/HTML/scons-user.html#chap-hierarchical
+returned = SConscript('SConscript', ['env', 'foo'])

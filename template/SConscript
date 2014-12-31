@@ -1,0 +1,11 @@
+# Import variables provided by the parent SConstruct file.
+Import('env', 'foo')
+
+bar = env.Command(
+    target='$out/bar.txt',
+    source=foo,
+    action='echo bar > $TARGET'
+)
+
+# Return reference to Command output to parent SConstruct.
+Return('bar')

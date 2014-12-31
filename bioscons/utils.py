@@ -2,10 +2,12 @@ from os.path import join
 import os.path
 
 try:
-    from SCons.Script import PathVariable
+    import SCons
+    from SCons.Script import (PathVariable, Help, GetOption)
 except ImportError:
     # we expect this to fail unless imported from within SConstruct
     pass
+
 
 class verbose(object):
     """
@@ -45,7 +47,7 @@ def getvars(config, secnames, indir=None, outdir=None,
     vars = []
 
     # values from defaults section
-    defaults = [k for k,v in config.items('DEFAULT')]
+    defaults = [k for k, v in config.items('DEFAULT')]
     for varname, val in config.items('DEFAULT'):
         if os.path.isdir(val):
             vars.append(PathVariable(
@@ -59,7 +61,7 @@ def getvars(config, secnames, indir=None, outdir=None,
 
     for sec in secnames:
         # input files and directories
-        for varname,pth in config.items(fmt_in % locals()):
+        for varname, pth in config.items(fmt_in % locals()):
             if varname in defaults:
                 continue
             elif os.path.exists(pth):
@@ -68,13 +70,14 @@ def getvars(config, secnames, indir=None, outdir=None,
                 pth = join(indir, pth)
             else:
                 raise OSError(
-                    'Error in [%(sec)s] %(varname)s = %(pth)s: specify either an existing path or provide a default input directory using `indir`' % \
-                        locals())
+                    'Error in [%(sec)s] %(varname)s = %(pth)s: '
+                    'specify either an existing path or provide '
+                    'a default input directory using `indir`' % locals())
 
             vars.append(PathVariable(varname, '', pth))
 
         # output files and directories
-        for varname,pth in config.items(fmt_out % locals()):
+        for varname, pth in config.items(fmt_out % locals()):
             if varname in defaults:
                 continue
             elif outdir and not (pth.startswith(outdir) or pth.startswith('.')):
@@ -82,7 +85,8 @@ def getvars(config, secnames, indir=None, outdir=None,
             else:
                 pth = os.path.abspath(pth)
 
-            # TODO: document this behavior (assume var is a directory if ends with 'dir')
+            # TODO: document this behavior (assume var is a directory
+            # if ends with 'dir')
             if varname.endswith('dir') or os.path.isdir(pth):
                 pvar = PathVariable.PathIsDirCreate
             else:
@@ -100,3 +104,14 @@ def getvars(config, secnames, indir=None, outdir=None,
 
     return tuple(vars)
 
+
+def helpsetup(vars, env):
+    """Makes `scons -h` print help text.
+
+    """
+
+    Help(vars.GenerateHelpText(env))
+    if GetOption('help') and SCons.Node.Alias.default_ans.keys():
+        print 'Build Aliases:'
+        for alias in sorted(SCons.Node.Alias.default_ans.keys()):
+            print ' ', alias
