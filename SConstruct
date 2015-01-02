@@ -27,15 +27,13 @@ vars = Variables()
 # SHELLOPTS sets shell options to fail (including piped commands) with
 # nonzero exit status; this requires bash.
 env = Environment(
-    ENV=dict(os.environ, PATH=PATH, SHELLOPTS='errexit:pipefail'
-         ),
+    ENV=dict(os.environ, PATH=PATH, SHELLOPTS='errexit:pipefail'),
     variables=vars,
-    SHELL='bash'
+    SHELL='bash',
+    version=bioscons.__version__
 )
 
 Help(vars.GenerateHelpText(env))
-
-env['version'] = bioscons.__version__
 
 # Run all subsidiary SConstruct scripts in the tests directory; see
 # http://www.scons.org/doc/production/HTML/scons-user.html#chap-hierarchical
