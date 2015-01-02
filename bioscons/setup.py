@@ -20,8 +20,6 @@ def envsetup(vars=None, environ=None, PATH=None, bash=True, **kwargs):
     if bash:
         use_bash(env)
 
-    helpsetup(vars, env)
-
     return env
 
 

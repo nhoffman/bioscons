@@ -9,7 +9,7 @@ if not venv:
 # Explicit imports keep linters happy.
 from SCons.Script import (SConscript, Environment, Variables, PathVariable, Alias)
 
-from bioscons.utils import helpsetup
+from bioscons.setup import envsetup, helpsetup
 
 # Define the execution PATH. Replace `os.environ['PATH']` with a list
 # of directories for a more reproducible environment.
@@ -24,16 +24,7 @@ vars = Variables()
 vars.Add(PathVariable('out', 'output directory', 'output',
                       PathVariable.PathIsDirCreate))
 
-# SHELLOPTS sets shell options to fail (including piped commands) with
-# nonzero exit status; this requires bash.
-env = Environment(
-    ENV=dict(os.environ, PATH=PATH, SHELLOPTS='errexit:pipefail'),
-    variables=vars,
-    SHELL='bash'
-)
-
-# `scons -h` prints help text.
-helpsetup(vars, env)
+env = envsetup(vars=vars, PATH=PATH)
 
 # Commands go here.
 foo = env.Command(
@@ -57,3 +48,5 @@ for i in range(1, 5):
 # Run a subsidiary SConscript using the same environment; see
 # http://www.scons.org/doc/production/HTML/scons-user.html#chap-hierarchical
 returned = SConscript('SConscript', ['env', 'foo'])
+
+helpsetup(vars, env)
