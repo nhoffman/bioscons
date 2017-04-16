@@ -1,5 +1,6 @@
 import hashlib
 import os
+import glob
 from os import path
 
 try:
@@ -88,6 +89,16 @@ else:
                          for d, _, ff in os.walk(directory)]))
 
             extras = outfiles - self.targets
+
+            ignores = open(glob.glob('.gitignore')[0]).readlines()
+            ignores = [glob.glob(i.strip()) for i in ignores] # get all ignores
+            ignores = [j for i in ignores for j in i] # flatten
+            ignores = [i for i in ignores if not path.dirname(i)] # remove files in folders
+            ignores = [i for i in ignores if path.isfile(i)] # take just files
+            ignores = set(ignores)
+
+            extras = [e for e in extras if path.basename(e) not in ignores]
+
             if extras:
                 print '\nextraneous files in %s:' % directory
                 if one_line:
@@ -95,7 +106,6 @@ else:
                 else:
                     print '\n'.join(sorted(extras))
                 print
-
 
 def rename(fname, ext=None, pth=None):
     """
