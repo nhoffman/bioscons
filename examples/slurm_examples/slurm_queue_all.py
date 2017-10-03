@@ -12,7 +12,7 @@ BIG_SLEEP = 10 * 60 ## 10 minutes
 n_inner_loop = 1 ## used to be 3, but exclude is working better now?
 
 if len(argv) not in [ 5, 6]:
-    print '\nUsage:\n\n%s   <job-tag>   <executable>   <args-file>    "submit-log-message" {nloop}\n\n'%(argv[0])
+    print('\nUsage:\n\n%s   <job-tag>   <executable>   <args-file>    "submit-log-message" {nloop}\n\n'%(argv[0]))
     exit(0)
 
 tag = argv[1]
@@ -26,7 +26,7 @@ else:
 
 first_infofile = 'slurm_queue/%s.1.info'%tag
 if exists( first_infofile ):
-    print 'nonunique tagbase?',tag,first_infofile,'already exists!'
+    print('nonunique tagbase?',tag,first_infofile,'already exists!')
     exit()
 
 partitions = [ 'br2norm', 'br3norm', 'br1norm', 'publow', 'csquid1base', 'qgelow', 'upbase', 'emlow', 'edrnlow',
@@ -49,21 +49,21 @@ for loop in range( nloop ):
                 under_partitions = slurm_util.get_partitions_with_underutilized_nodes()
                 if partition in under_partitions:
                     cmd = '/home/pbradley/slurm_queue.py %s %s %s %s under "%s"'%( mytag, executable, args_file, partition, msg )
-                    print cmd
+                    print(cmd)
                     system(cmd)
 
             else:
                 cmd = '/home/pbradley/slurm_queue.py %s %s %s %s idle "%s"'%( mytag, executable, args_file, partition, msg )
-                print cmd
+                print(cmd)
                 system(cmd)
 
-            print 'sleeping',SMALL_SLEEP,'seconds'
+            print('sleeping',SMALL_SLEEP,'seconds')
             time.sleep( SMALL_SLEEP )
-        print 'sleeping',SLEEP,'seconds'
+        print('sleeping',SLEEP,'seconds')
         time.sleep( SLEEP )
 
 
 
 
-    print 'sleeping',BIG_SLEEP,'seconds'
+    print('sleeping',BIG_SLEEP,'seconds')
     time.sleep( BIG_SLEEP )

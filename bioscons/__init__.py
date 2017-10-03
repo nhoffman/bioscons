@@ -76,7 +76,7 @@ def package_data(fname, pattern=None):
 try:
     with open(package_data('ver')) as v:
         ver = v.read().strip()
-except Exception, e:
+except Exception as e:
     sys.stderr.write('Error: cannot read {}/ver\n'.format(_data))
     ver = 'v0.0.0.unknown'
 

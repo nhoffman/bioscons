@@ -15,9 +15,9 @@ class verbose(object):
         self.f = f
 
     def __call__(self, *args, **kwargs):
-        print "entering", self.f.__name__, 'called with arguments', args, kwargs
+        print("entering", self.f.__name__, 'called with arguments', args, kwargs)
         self.f(*args, **kwargs)
-        print "exiting", self.f.__name__
+        print("exiting", self.f.__name__)
 
 
 def getvars(config, secnames, indir=None, outdir=None,

@@ -1,14 +1,14 @@
 import os
-import ConfigParser
+import configparser
 
 import sconstools.utils as utils
 
 #### define variables
-config = ConfigParser.SafeConfigParser()
+config = configparser.SafeConfigParser()
 config.optionxform = str # preserve case of options
 
 setupfile = 'setup.ini'
-print 'reading configuration from %s' % setupfile
+print('reading configuration from %s' % setupfile)
 config.read(setupfile)
 
 basedir = os.path.abspath(config.get('DEFAULT','basedir'))

@@ -103,7 +103,7 @@ publish_log = env.Command(
 Alias('publish-docs', publish_log)
 
 if GetOption('help'):
-    print 'Available Build Aliases:'
-    print '-----'
+    print('Available Build Aliases:')
+    print('-----')
     for alias in sorted(SCons.Node.Alias.default_ans.keys()):
-        print alias
+        print(alias)

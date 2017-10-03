@@ -6,11 +6,11 @@ import subprocess
 
 from bioscons.slurm import SlurmEnvironment, check_srun
 
-print path.join(path.split(path.abspath('.'))[-1],
-                str(call_stack[-1].sconscript))
+print(path.join(path.split(path.abspath('.'))[-1],
+                str(call_stack[-1].sconscript)))
 
 if not check_srun():
-    print '--> srun not found; skipping tests requiring slurm'
+    print('--> srun not found; skipping tests requiring slurm')
     Return([])
 
 vars = Variables()

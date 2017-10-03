@@ -3,6 +3,7 @@
 from phil import *
 import os
 import slurm_util
+from functools import reduce
 
 
 
@@ -11,8 +12,8 @@ import slurm_util
 
 
 if len(argv) != 7:
-    print '\nUsage:\n\n%s   <job-tag>   <executable>   <args-file>   <partition>   <number OF NODES to submit>   "submit-log-message"\n\n'\
-        %(argv[0])
+    print('\nUsage:\n\n%s   <job-tag>   <executable>   <args-file>   <partition>   <number OF NODES to submit>   "submit-log-message"\n\n'\
+        %(argv[0]))
     exit(0)
 
 tag = argv[1]
@@ -49,7 +50,7 @@ SLEEP = 2
 idle_nodes = slurm_util.get_idle_nodes( partition )
 active_nodes = slurm_util.get_active_nodes( partition )
 
-print 'found',len(idle_nodes),'idle nodes on partition',partition,'total active_nodes:',len(active_nodes)
+print('found',len(idle_nodes),'idle nodes on partition',partition,'total active_nodes:',len(active_nodes))
 
 #print idle_nodes
 #exit(1)
@@ -58,22 +59,22 @@ print 'found',len(idle_nodes),'idle nodes on partition',partition,'total active_
 if use_all_idle_nodes:
     n_nodes = len( idle_nodes )
     if n_nodes == 0:
-        print 'no idle nodes!'
+        print('no idle nodes!')
         exit()
 
 
 underutilized_nodes = []
 if use_all_under_nodes:
     free_cores = slurm_util.get_free_cores_for_yhuang_nodes_on_partition( partition )
-    print 'free_cores:',partition,free_cores
+    print('free_cores:',partition,free_cores)
     #free_cores = slurm_util.get_free_cores_for_partition( partition )
-    underutilized_nodes = free_cores.keys()[:] ## copy
+    underutilized_nodes = list(free_cores.keys())[:] ## copy
     n_nodes = len( free_cores )
     if n_nodes == 0:
-        print 'no underutilized_nodes!',partition
+        print('no underutilized_nodes!',partition)
         exit()
-    total_free = reduce( add, free_cores.values() )
-    print 'running on under-utilized nodes: #nodes: %d ncpus: %d'%( n_nodes, total_free )
+    total_free = reduce( add, list(free_cores.values()) )
+    print('running on under-utilized nodes: #nodes: %d ncpus: %d'%( n_nodes, total_free ))
 
 
 global_exclude_file = '/home/pbradley/exclude_nodes.txt'
@@ -86,7 +87,7 @@ data.close()
 tasks_per_node = slurm_util.get_cores_per_node( partition )
 
 
-print 'Running',n_nodes * tasks_per_node,'tasks!!!!!!!!!!!!!!!'
+print('Running',n_nodes * tasks_per_node,'tasks!!!!!!!!!!!!!!!')
 
 assert exists( executable ) and exists( args_file )
 
@@ -95,7 +96,7 @@ mkdir( 'slurm_queue_info' )
 
 infofile = 'slurm_queue_info/'+tag+'.info'
 if exists( infofile ):
-    print 'nonunique tag??',infofile,'already exists!'
+    print('nonunique tag??',infofile,'already exists!')
     exit()
 
 out = open(infofile,'w')
@@ -133,7 +134,7 @@ for i in range(n_nodes):
     id = '%s_%03d'%(tag,i)
     dir = id+"_"+partition
     if exists( dir ):
-        print 'output dir already exists -- nonunique job name?',dir
+        print('output dir already exists -- nonunique job name?',dir)
         exit()
     mkdir( dir )
     chdir( dir )
@@ -157,17 +158,17 @@ for i in range(n_nodes):
         tasks_for_this_node = free_cores[ node ]
 
         if tasks_for_this_node < tasks_per_node -1:
-            print 'skipping, more than 1 job already running?',node
+            print('skipping, more than 1 job already running?',node)
             continue
 
         if tasks_for_this_node == tasks_per_node: tasks_for_this_node = tasks_per_node - 1
 
         if node in global_exclude_nodes:
-            print 'skipping node in global_exclude_nodes:',node
+            print('skipping node in global_exclude_nodes:',node)
             continue
 
     cmd = 'ln -s ../../input ./'
-    print cmd
+    print(cmd)
     system(cmd)
 
     assert exists('./input')
@@ -206,7 +207,7 @@ for i in range(n_nodes):
 
     cmd = 'nice srun -i none -p %s %s %s -K -o %s_%%t.log -e %s_%%t.err -n %d --multi-prog %s > srun_output 2> srun_error &'\
         %( partition, exclusive_command, exclude_command, id, id, tasks_for_this_node, conf )
-    print cmd
+    print(cmd)
     system(cmd)
 
     sleep(SLEEP)
