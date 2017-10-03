@@ -6,11 +6,11 @@ import subprocess
 
 from bioscons.slurm import SlurmEnvironment, check_srun
 
-print path.join(path.split(path.abspath('.'))[-1],
-                str(call_stack[-1].sconscript))
+print(path.join(path.split(path.abspath('.'))[-1],
+                str(call_stack[-1].sconscript)))
 
 if not check_srun():
-    print '--> srun not found; skipping tests requiring slurm'
+    print('--> srun not found; skipping tests requiring slurm')
     Return([])
 
 vars = Variables()
@@ -27,7 +27,7 @@ at_hutch = os.path.exists(slurm_conf) and \
            'PartitionName=full' in open(slurm_conf).read()
 
 if not at_hutch:
-    print '--> skipping hutch-specific tests'
+    print('--> skipping hutch-specific tests')
     Return([])
 
 env = SlurmEnvironment(ENV=os.environ, variables=vars,

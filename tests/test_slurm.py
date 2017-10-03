@@ -10,7 +10,7 @@ class TestSlurmFunctions(unittest.TestCase):
 
     def test_check_slurm(self):
         srun = slurm.check_srun()
-        print srun
+        print(srun)
         if srun:
             self.assertTrue(srun.endswith('srun'))
 

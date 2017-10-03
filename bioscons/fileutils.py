@@ -13,8 +13,8 @@ else:
         source - filename
         """
 
-        (sname,) = map(str, source)
-        (tname,) = map(str, target)
+        (sname,) = list(map(str, source))
+        (tname,) = list(map(str, target))
 
         if os.path.isdir(tname):
             target = path.join(tname, path.split(sname)[1])
@@ -34,7 +34,7 @@ else:
         source - file compressed using bzip2
         """
 
-        (sname,) = map(str, source)
+        (sname,) = list(map(str, source))
         return sname.replace('.bz2', ''), source
 
     bunzip2 = Builder(
@@ -89,12 +89,12 @@ else:
 
             extras = outfiles - self.targets
             if extras:
-                print '\nextraneous files in %s:' % directory
+                print('\nextraneous files in %s:' % directory)
                 if one_line:
-                    print '  ' + ' '.join(sorted(extras))
+                    print('  ' + ' '.join(sorted(extras)))
                 else:
-                    print '\n'.join(sorted(extras))
-                print
+                    print('\n'.join(sorted(extras)))
+                print()
 
 
 def rename(fname, ext=None, pth=None):

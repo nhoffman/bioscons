@@ -25,7 +25,7 @@ def check_srun():
     """
 
     try:
-        srun = subprocess.check_output(['which', 'srun']).strip()
+        srun = subprocess.check_output(['which', 'srun']).strip().decode("utf-8") 
     except subprocess.CalledProcessError:
         srun = None
 
@@ -157,9 +157,9 @@ class SlurmEnvironment(SConsEnvironment):
 
     def Command(self, target, source, action,
                 use_cluster=True, time=True, **kw):
-        if isinstance(action, basestring) and use_cluster and self.use_cluster:
+        if isinstance(action, str) and use_cluster and self.use_cluster:
             return self.SRun(target, source, action, time=time, **kw)
-        elif isinstance(action, basestring) and time and self.time:
+        elif isinstance(action, str) and time and self.time:
             action = _time + action
             return super(SlurmEnvironment, self).Command(
                 target, source, action, **kw)
