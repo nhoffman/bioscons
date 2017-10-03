@@ -73,11 +73,10 @@ def package_data(fname, pattern=None):
 
     return pth
 
-try:
-    with open(package_data('ver')) as v:
-        ver = v.read().strip()
-except Exception as e:
-    sys.stderr.write('Error: cannot read {}/ver\n'.format(_data))
-    ver = 'v0.0.0.unknown'
 
-__version__ = ver.lstrip('v')
+try:
+    with open(package_data('ver')) as f:
+        __version__ = (
+            f.read().strip().replace('-', '+', 1).replace('-', '.').lstrip('v'))
+except Exception as e:
+    __version__ = ''

@@ -30,10 +30,12 @@ else:
             sys.exit(errno)
 
 subprocess.call(
-    ('git describe --tags --dirty > bioscons/data/ver.tmp'
-     '&& mv bioscons/data/ver.tmp bioscons/data/ver '
-     '|| rm -f bioscons/data/ver.tmp'),
+    ('mkdir -p {pkg}/data && '
+     'git describe --tags --dirty > {pkg}/data/ver.tmp '
+     '&& mv {pkg}/data/ver.tmp {pkg}/data/ver '
+     '|| rm -f {pkg}/data/ver.tmp').format(pkg='bioscons'),
     shell=True, stderr=open(os.devnull, "w"))
+
 
 from bioscons import __version__, __doc__, MIN_SCONS_VERSION
 
