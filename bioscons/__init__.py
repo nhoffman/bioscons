@@ -6,7 +6,6 @@ import glob
 import sys
 import imp
 import subprocess
-import site
 from os import path
 from distutils.version import LooseVersion
 
@@ -36,8 +35,9 @@ def add_scons_lib(min_scons_version=MIN_SCONS_VERSION):
             'scons version >= {} is required'.format(min_scons_version))
 
     root = path.split(path.split(scons_path)[0])[0]
-    libpath = path.join(root, 'lib', site.USER_SITE.split('/lib/')[-1],
-                        scons_mod.scons_version)
+    libpath = path.join(root, 'lib',
+                        'python{}.{}'.format(*sys.version_info[:2]),
+                        'site-packages', scons_mod.scons_version)
     if not path.exists(libpath):
         raise ImportError('The path "{}" cound not be found'.format(libpath))
 
