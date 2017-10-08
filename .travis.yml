@@ -8,6 +8,7 @@ python:
 install:
   - pip install -U pip wheel
   - pip install scons
+  - pip install -r requirements.txt
 
 script:
   - scons
