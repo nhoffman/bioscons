@@ -9,7 +9,7 @@ import subprocess
 from os import path
 from distutils.version import LooseVersion
 
-MIN_SCONS_VERSION = '2.5.0'
+MIN_SCONS_VERSION = '2.4.0'
 _data = path.join(path.dirname(__file__), 'data')
 
 

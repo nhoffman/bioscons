@@ -6,7 +6,7 @@ import subprocess
 # Ensure that a virtualenv is active before importing non-stdlib dependencies.
 venv = os.environ.get('VIRTUAL_ENV')
 if not venv:
-    sys.exit('--> an active virtualenv is required'.format(venv))
+    sys.exit('--> an active virtualenv is required')
 
 import SCons
 from SCons.Script import (SConscript, Environment, Variables,
