@@ -36,20 +36,19 @@ subprocess.call(
      '|| rm -f {pkg}/data/ver.tmp').format(pkg='bioscons'),
     shell=True, stderr=open(os.devnull, "w"))
 
-
 from bioscons import __version__, __doc__, MIN_SCONS_VERSION
 
-params = {'author': 'Noah Hoffman',
-          'author_email': 'noah.hoffman@gmail.com',
-          'description': __doc__.strip(),
-          'name': 'bioscons',
-          'packages': find_packages(exclude=['tests']),
-          'package_data': {'bioscons': ['data/ver']},
-          'url': 'http://github.com/nhoffman/bioscons',
-          'download_url': 'http://pypi.python.org/pypi/bioscons',
-          'version': __version__,
-          'requires': ['python (>= 2.7)',
-                       'scons (>= {})'.format(MIN_SCONS_VERSION)],
+params = {
+    'author': 'Noah Hoffman',
+    'author_email': 'noah.hoffman@gmail.com',
+    'description': __doc__.strip(),
+    'name': 'bioscons',
+    'packages': find_packages(exclude=['tests']),
+    'package_data': {'bioscons': ['data/ver']},
+    'url': 'http://github.com/nhoffman/bioscons',
+    'download_url': 'http://pypi.python.org/pypi/bioscons',
+    'version': __version__,
+    'install_requires': ['scons>={}'.format(MIN_SCONS_VERSION)],
 }
 
 # add 'test' command if setuptools is available

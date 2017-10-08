@@ -6,53 +6,43 @@ import glob
 import sys
 import imp
 import subprocess
+import site
 from os import path
 from distutils.version import LooseVersion
 
-MIN_SCONS_VERSION = '2.1.0'
+MIN_SCONS_VERSION = '2.5.0'
 _data = path.join(path.dirname(__file__), 'data')
 
 
-def add_scons_lib(scons='scons', min_scons_version=MIN_SCONS_VERSION):
+def add_scons_lib(min_scons_version=MIN_SCONS_VERSION):
     """If `SCons` is not importable, update sys.path (side effect
-    warning!), and then return False. Return True without modifying
-    sys.path if importing `SCons` succeeds.
+    warning!).
 
     The scons library is identified using the location and version of
     the `scons` executable,
 
-    Raises `ImportError` if `scons` cannot be found or executed, if
-    the library is not in the expected location relative to the scons
-    executable, or if the version of the SCons package is at least
-    `min_scons_version`.
-
     """
 
     try:
-        import SCons
-    except ImportError:
-        try:
-            scons_path = subprocess.check_output(['which', scons]).strip()
-        except subprocess.CalledProcessError:
-            raise ImportError('"{}" could not be found or executed'.format(scons))
+        scons_path = subprocess.check_output(
+            ['which', 'scons'], universal_newlines=True).strip()
+    except subprocess.CalledProcessError:
+        raise ImportError('"{}" could not be found or executed'.format('scons'))
 
-        scons_mod = imp.load_source('scons', scons_path)
-        root = path.split(path.split(scons_path)[0])[0]
-        libpath = path.join(root, 'lib', scons_mod.scons_version)
-        if not path.exists(libpath):
-            raise ImportError('The path "{}" cound not be found'.format(libpath))
+    scons_mod = imp.load_source('scons', scons_path)
 
-        sys.path.insert(0, libpath)
-        retval = False
-    else:
-        retval = True
+    if not LooseVersion(scons_mod.__version__) >= LooseVersion(min_scons_version):
+        raise ImportError(
+            'scons version >= {} is required'.format(min_scons_version))
 
-    import SCons
+    root = path.split(path.split(scons_path)[0])[0]
+    libpath = path.join(root, 'lib', site.USER_SITE.split('/lib/')[-1],
+                        scons_mod.scons_version)
+    if not path.exists(libpath):
+        raise ImportError('The path "{}" cound not be found'.format(libpath))
 
-    if not LooseVersion(SCons.__version__) >= LooseVersion(min_scons_version):
-        raise ImportError('The version of scons is not at least {}'.format(min_scons_version))
-
-    return retval
+    sys.path.insert(0, libpath)
+    return libpath
 
 
 def package_data(fname, pattern=None):

@@ -8,7 +8,11 @@ import shlex
 import subprocess
 
 from bioscons import add_scons_lib
-add_scons_lib()
+
+try:
+    import SCons
+except ImportError:
+    add_scons_lib()
 
 from SCons.Script.SConscript import SConsEnvironment
 
@@ -25,7 +29,7 @@ def check_srun():
     """
 
     try:
-        srun = subprocess.check_output(['which', 'srun']).strip().decode("utf-8") 
+        srun = subprocess.check_output(['which', 'srun']).strip().decode("utf-8")
     except subprocess.CalledProcessError:
         srun = None
 
