@@ -41,8 +41,7 @@ env['version'] = bioscons.__version__
 # http://www.scons.org/doc/production/HTML/scons-user.html#chap-hierarchical
 bioscons_source = glob.glob('bioscons/*.py')
 
-scons_tests = SConscript(glob.glob('tests/*/SConstruct*'),
-                         ['env', 'PATH'])
+scons_tests = SConscript(glob.glob('tests/*/SConstruct*'), ['env', 'PATH'])
 Depends(scons_tests, bioscons_source)
 
 py_tests = env.Command(
@@ -59,10 +58,12 @@ Alias('test', tests)
 # with underscores)
 build = env.Command(
     target=[
-        'dist/bioscons-{}-py2-none-any.whl'.format(env['version'].replace('-', '_')),
+        'dist/bioscons-{}-py{}-none-any.whl'.format(
+            env['version'].replace('-', '_'), sys.version_info.major),
         'dist/bioscons-${version}.tar.gz'],
     source=bioscons_source,
-    action=['python setup.py clean',
+    action=['rm -rf build dist',
+            'python setup.py clean',
             'python setup.py sdist bdist_wheel']
 )
 Alias('build', build)
