@@ -3,3 +3,4 @@ wheel
 sphinx
 ghp-import
 pytest
+scons
