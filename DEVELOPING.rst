@@ -78,8 +78,9 @@ Building docs with Sphinx
 It's best to create and activate a virtualenv first to provide all of
 the requirements for building and publishing the documentation::
 
-  bin/mkvenv.sh
+  python3 -m venv bioscons-env
   source bioscons-env/bin/activate
+  pip install -r requirements.txt
 
 The Sphinx configuration uses git tags to define the version, so make
 sure that this is up to date. Then enter the `docs` directory and

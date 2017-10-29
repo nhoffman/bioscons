@@ -2,69 +2,70 @@
  Changes for bioscons
 ======================
 
-0.8.2-planned
-=============
+0.9.0
+=====
 
- * version numbers are set using git tag (#2)
- * Top-level SConstruct can run tests, perform other development tasks (#19)
- * Set up automated tests using Travis-CI (#20)
- * min scons version is 2.5.0
+* Python 3.5+ compatibility (scons 3+ only)
+* version numbers are set using git tag (#2)
+* Top-level SConstruct can run tests, perform other development tasks (#19)
+* Set up automated tests using Travis-CI (#20)
+* min scons version is 2.4.0
 
 0.8.1
 =====
 
- * fix a bug when specifying a shell in the Environment
+* fix a bug when specifying a shell in the Environment
 
 0.8
 ===
 
- * removed deprecated modules providing builders for various programs
- * remove fileutils.list_targets
- * updated Sphinx docs
- * setting the env shell var works for running commands locally
- * enforcing boolean types for use_cluster, all_precious, and time vars
+* removed deprecated modules providing builders for various programs
+* remove fileutils.list_targets
+* updated Sphinx docs
+* setting the env shell var works for running commands locally
+* enforcing boolean types for use_cluster, all_precious, and time vars
 
 0.7.1
 =====
 
- * can define slurm_queue locally
- * updated README.rst about PyPi submissions
+* can define slurm_queue locally
+* updated README.rst about PyPi submissions
 
 0.7
 ===
 
- * added option to identify targets as Precious in SlurmEnvironment
- * added a SlurmEnvironment time option to output linux system time stats per Command
- * added option to output linux system time information per Command with .time appended to the Target name
- * moved to setuptools and added a distribute_setup.py bootstrap script
- * can override default slurm_queue in each Command
+* added option to identify targets as Precious in SlurmEnvironment
+* added a SlurmEnvironment time option to output linux system time stats per Command
+* added option to output linux system time information per Command with .time appended to the Target name
+* moved to setuptools and added a distribute_setup.py bootstrap script
+* can override default slurm_queue in each Command
 
 0.6
 ===
 
- * added fileutils.write_digest and fileutils.check_digest
- * avoid ImportError when importing fileutils outside of an SConstruct
+* added fileutils.write_digest and fileutils.check_digest
+* avoid ImportError when importing fileutils outside of an SConstruct
 
 0.5
 ===
 
- * commands submitted to SLURM are wrapped in sh -c "..."
- * be more careful about running Commands locally unless use_culster is True
+* commands submitted to SLURM are wrapped in sh -c "..."
+* be more careful about running Commands locally unless use_culster is True
 
 0.4
 ===
 
- * added ``bioscons.slurm``
+* added ``bioscons.slurm``
 
 0.3
 ===
 
- * added ``infernal.align_and_merge``
+* added ``infernal.align_and_merge``
 
 0.2
 ===
 
- * added ``pplacer.pplacer`` and ``pplacer.align_and_place``
- * added ``infernal.cmalign_method`` and ``infernal.cmmerge_method`` (these will replace other builders in this module)
- * renamed ``refpkg.get_vars`` to ``refpkg.get_varlist``
- * environment variables defined by ``refpkg.get_varlist`` are prepended by 'refpkg_'
+* added ``pplacer.pplacer`` and ``pplacer.align_and_place``
+* added ``infernal.cmalign_method`` and ``infernal.cmmerge_method`` (these will replace other builders in this module)
+* renamed ``refpkg.get_vars`` to ``refpkg.get_varlist``
+* environment variables defined by ``refpkg.get_varlist`` are prepended by 'refpkg_'
