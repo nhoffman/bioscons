@@ -5,9 +5,8 @@
 This package extends the scons build tool for the construction of
 reproducible workflows in bioinformatics.
 
-This project is in fairly early stages of development, although it is
-being used fairly heavily by the developers to support both research
-and clinical computational pipelines.
+.. image:: https://travis-ci.org/nhoffman/bioscons.svg?branch=master
+    :target: https://travis-ci.org/nhoffman/bioscons
 
 Documentation is available on github: http://nhoffman.github.io/bioscons/
 
