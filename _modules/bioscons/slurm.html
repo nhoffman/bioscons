@@ -1,33 +1,31 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>bioscons.slurm &mdash; bioscons 0.7.1-1-g2c24480 documentation</title>
-    
-    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <title>bioscons.slurm &#8212; bioscons 0.8.1+19.gd951698 documentation</title>
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.7.1-1-g2c24480',
+        VERSION:     '0.8.1+19.gd951698',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="bioscons 0.7.1-1-g2c24480 documentation" href="../../index.html" />
-    <link rel="up" title="Module code" href="../index.html" /> 
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
   </head>
   <body>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -36,47 +34,83 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">bioscons 0.7.1-1-g2c24480 documentation</a> &raquo;</li>
-          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">bioscons 0.8.1+19.gd951698 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <h1>Source code for bioscons.slurm</h1><div class="highlight"><pre>
-<span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Functions for dispatching to SLURM (https://computing.llnl.gov/linux/slurm/)</span>
 <span class="sd">from scons.</span>
 <span class="sd">&quot;&quot;&quot;</span>
+
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">shlex</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
 
-<span class="kn">from</span> <span class="nn">SCons.Script.SConscript</span> <span class="kn">import</span> <span class="n">SConsEnvironment</span>
+<span class="kn">from</span> <span class="nn">bioscons</span> <span class="k">import</span> <span class="n">add_scons_lib</span>
 
-<span class="c"># From py3.3 argparse</span>
-<span class="n">_find_unsafe</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">r&#39;[^\w@%+=:,./-]&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">search</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">SCons</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">add_scons_lib</span><span class="p">()</span>
 
-<span class="c"># system path to the time function</span>
-<span class="n">_time</span> <span class="o">=</span> <span class="s">&#39;/usr/bin/time --verbose --output ${TARGETS[0]}.time &#39;</span>
+<span class="kn">from</span> <span class="nn">SCons.Script.SConscript</span> <span class="k">import</span> <span class="n">SConsEnvironment</span>
+
+<span class="c1"># From py3.3 argparse</span>
+<span class="n">_find_unsafe</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[^\w@%+=:,./-]&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">search</span>
+
+<span class="c1"># system path to the time function</span>
+<span class="n">_time</span> <span class="o">=</span> <span class="s1">&#39;/usr/bin/time --verbose --output $</span><span class="si">{TARGETS[0]}</span><span class="s1">.time &#39;</span>
+
+
+<div class="viewcode-block" id="check_srun"><a class="viewcode-back" href="../../bioscons.html#bioscons.slurm.check_srun">[docs]</a><span class="k">def</span> <span class="nf">check_srun</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the absolute path to the `srun` executable.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">srun</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">([</span><span class="s1">&#39;which&#39;</span><span class="p">,</span> <span class="s1">&#39;srun&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">:</span>
+        <span class="n">srun</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">return</span> <span class="n">srun</span></div>
+
 
 <span class="k">def</span> <span class="nf">_quote</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Return a shell-escaped version of the string *s*.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">s</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s">&quot;&#39;&#39;&quot;</span>
-    <span class="k">if</span> <span class="n">_find_unsafe</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;&#39;&#39;&quot;</span>
+    <span class="k">if</span> <span class="n">_find_unsafe</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">s</span>
 
-    <span class="c"># use single quotes, and put single quotes into double quotes</span>
-    <span class="c"># the string $&#39;b is then quoted as &#39;$&#39;&quot;&#39;&quot;&#39;b&#39;</span>
-    <span class="k">return</span> <span class="s">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s">&quot;&#39;</span><span class="se">\&quot;</span><span class="s">&#39;</span><span class="se">\&quot;</span><span class="s">&#39;&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;&#39;&quot;</span>
+    <span class="c1"># use single quotes, and put single quotes into double quotes</span>
+    <span class="c1"># the string $&#39;b is then quoted as &#39;$&#39;&quot;&#39;&quot;&#39;b&#39;</span>
+    <span class="k">return</span> <span class="s2">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&#39;</span><span class="se">\&quot;</span><span class="s2">&#39;</span><span class="se">\&quot;</span><span class="s2">&#39;&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span>
+
 
 <span class="k">def</span> <span class="nf">_action_name</span><span class="p">(</span><span class="n">action</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">shlex</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">action</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">action</span> <span class="k">else</span> <span class="bp">None</span>
+    <span class="k">return</span> <span class="n">shlex</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">action</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">action</span> <span class="k">else</span> <span class="kc">None</span>
+
+
+<span class="k">def</span> <span class="nf">_check_type</span><span class="p">(</span><span class="n">bool_vars</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;list((var, varname, type)) checking variable types</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">tp</span> <span class="ow">in</span> <span class="n">bool_vars</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">tp</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> argument expected, got </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">name</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">var</span><span class="p">)))</span>
+
 
 <div class="viewcode-block" id="SlurmEnvironment"><a class="viewcode-back" href="../../bioscons.html#bioscons.slurm.SlurmEnvironment">[docs]</a><span class="k">class</span> <span class="nc">SlurmEnvironment</span><span class="p">(</span><span class="n">SConsEnvironment</span><span class="p">):</span>
+
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Mostly drop-in replacement for an SCons Environment, where all calls to</span>
 <span class="sd">    Command are by executed via srun using a single core.</span>
@@ -84,40 +118,49 @@
 <span class="sd">    The SRun and SAlloc methods can be used to use multiple cores for</span>
 <span class="sd">    multithreaded and MPI jobs, respectively.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_cluster</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">slurm_queue</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="s">&#39;sh&#39;</span><span class="p">,</span>
-                 <span class="n">all_precious</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">SlurmEnvironment</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_cluster</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">slurm_queue</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">all_precious</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SlurmEnvironment</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># check boolean types because so often these are accidentally strings</span>
+        <span class="n">_check_type</span><span class="p">([(</span><span class="n">use_cluster</span><span class="p">,</span> <span class="s1">&#39;use_cluster&#39;</span><span class="p">,</span> <span class="nb">bool</span><span class="p">),</span>
+                     <span class="p">(</span><span class="n">all_precious</span><span class="p">,</span> <span class="s1">&#39;all_precious&#39;</span><span class="p">,</span> <span class="nb">bool</span><span class="p">),</span>
+                     <span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)])</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">use_cluster</span> <span class="o">=</span> <span class="n">use_cluster</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">all_precious</span> <span class="o">=</span> <span class="n">all_precious</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="n">time</span>
         <span class="k">if</span> <span class="n">slurm_queue</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">SetPartition</span><span class="p">(</span><span class="n">slurm_queue</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">shell</span> <span class="o">=</span> <span class="n">shell</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shell</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;SHELL&#39;</span><span class="p">,</span> <span class="s1">&#39;sh&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_quote_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s">&#39;{shell} -c {action}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">shell</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="p">,</span>
-                <span class="n">action</span><span class="o">=</span><span class="n">_quote</span><span class="p">(</span><span class="n">action</span><span class="p">))</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{shell}</span><span class="s1"> -c </span><span class="si">{action}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">shell</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="p">,</span>
+                                            <span class="n">action</span><span class="o">=</span><span class="n">_quote</span><span class="p">(</span><span class="n">action</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">_SlurmCommand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">slurm_command</span><span class="o">=</span><span class="s">&#39;srun&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
-        <span class="n">slurm_args</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;slurm_args&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
-        <span class="n">precious</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;precious&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_precious</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_SlurmCommand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">slurm_command</span><span class="o">=</span><span class="s1">&#39;srun&#39;</span><span class="p">,</span>
+                      <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+
+        <span class="n">slurm_args</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;slurm_args&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">precious</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;precious&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_precious</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">time</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">:</span>
             <span class="n">action</span> <span class="o">=</span> <span class="n">_time</span> <span class="o">+</span> <span class="n">action</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_cluster</span><span class="p">:</span>
-            <span class="n">action</span> <span class="o">=</span> <span class="s">&#39;{cmd} {slurm_args} -J &quot;{name}&quot; {action}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="n">cmd</span><span class="o">=</span><span class="n">slurm_command</span><span class="p">,</span>
-                    <span class="n">slurm_args</span><span class="o">=</span><span class="n">slurm_args</span><span class="p">,</span>
-                    <span class="n">name</span><span class="o">=</span><span class="n">_action_name</span><span class="p">(</span><span class="n">action</span><span class="p">),</span>
-                    <span class="n">action</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_quote_action</span><span class="p">(</span><span class="n">action</span><span class="p">))</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">SlurmEnvironment</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">Command</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span>
-                <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{cmd}</span><span class="s1"> </span><span class="si">{slurm_args}</span><span class="s1"> -J &quot;</span><span class="si">{name}</span><span class="s1">&quot; </span><span class="si">{action}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">cmd</span><span class="o">=</span><span class="n">slurm_command</span><span class="p">,</span>
+                <span class="n">slurm_args</span><span class="o">=</span><span class="n">slurm_args</span><span class="p">,</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">_action_name</span><span class="p">(</span><span class="n">action</span><span class="p">),</span>
+                <span class="n">action</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_quote_action</span><span class="p">(</span><span class="n">action</span><span class="p">))</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">SlurmEnvironment</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">Command</span><span class="p">(</span>
+            <span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">precious</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">Precious</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span>
 
-<div class="viewcode-block" id="SlurmEnvironment.SAlloc"><a class="viewcode-back" href="../../bioscons.html#bioscons.slurm.SlurmEnvironment.SAlloc">[docs]</a>    <span class="k">def</span> <span class="nf">SAlloc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">ncores</span><span class="p">,</span> <span class="n">timelimit</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+<div class="viewcode-block" id="SlurmEnvironment.SAlloc"><a class="viewcode-back" href="../../bioscons.html#bioscons.slurm.SlurmEnvironment.SAlloc">[docs]</a>    <span class="k">def</span> <span class="nf">SAlloc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">ncores</span><span class="p">,</span> <span class="n">timelimit</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Run ``action`` with salloc.</span>
 
@@ -129,24 +172,26 @@
 <span class="sd">        ``slurm_args``: Additional arguments to pass to salloc</span>
 <span class="sd">        ``timelimit``: value to use for environment variable SALLOC_TIMELIMIT</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">args</span> <span class="o">=</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="s">&#39;-n {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ncores</span><span class="p">),</span> <span class="n">kw</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;slurm_args&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)))</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="s1">&#39;-n </span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ncores</span><span class="p">),</span> <span class="n">kw</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;slurm_args&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)))</span>
         <span class="n">e</span> <span class="o">=</span> <span class="bp">self</span>
 
-        <span class="k">if</span> <span class="n">timelimit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">timelimit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">clone</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Clone</span><span class="p">()</span>
             <span class="n">clone</span><span class="o">.</span><span class="n">SetTimeLimit</span><span class="p">(</span><span class="n">timelimit</span><span class="p">)</span>
             <span class="n">e</span> <span class="o">=</span> <span class="n">clone</span>
 
-        <span class="k">return</span> <span class="n">e</span><span class="o">.</span><span class="n">_SlurmCommand</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="s">&#39;salloc&#39;</span><span class="p">,</span>
-                <span class="n">slurm_args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="SlurmEnvironment.SRun"><a class="viewcode-back" href="../../bioscons.html#bioscons.slurm.SlurmEnvironment.SRun">[docs]</a>    <span class="k">def</span> <span class="nf">SRun</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">ncores</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">timelimit</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">slurm_queue</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">e</span><span class="o">.</span><span class="n">_SlurmCommand</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="s1">&#39;salloc&#39;</span><span class="p">,</span>
+                               <span class="n">slurm_args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SlurmEnvironment.SRun"><a class="viewcode-back" href="../../bioscons.html#bioscons.slurm.SlurmEnvironment.SRun">[docs]</a>    <span class="k">def</span> <span class="nf">SRun</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">ncores</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+             <span class="n">timelimit</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">slurm_queue</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Run ``action`` with srun.</span>
 
-<span class="sd">        This method should be used for multithreaded jobs on a single machine</span>
-<span class="sd">        only. By default, calls to SlurmEnvironment.Command use srun. Specify a</span>
-<span class="sd">        number of processors with ``ncores``.</span>
+<span class="sd">        This method should be used for multithreaded jobs on a single</span>
+<span class="sd">        machine only. By default, calls to SlurmEnvironment.Command</span>
+<span class="sd">        use srun. Specify a number of processors with ``ncores``,</span>
+<span class="sd">        which provides a value for ``srun -c/--cpus-per-task``.</span>
 
 <span class="sd">        Optional arguments:</span>
 <span class="sd">        ``slurm_args``: Additional arguments to pass to salloc</span>
@@ -155,45 +200,54 @@
         <span class="n">clone</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Clone</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">ncores</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">clone</span><span class="o">.</span><span class="n">SetCpusPerTask</span><span class="p">(</span><span class="n">ncores</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">timelimit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">timelimit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">clone</span><span class="o">.</span><span class="n">SetTimeLimit</span><span class="p">(</span><span class="n">timelimit</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">slurm_queue</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">slurm_queue</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">clone</span><span class="o">.</span><span class="n">SetPartition</span><span class="p">(</span><span class="n">slurm_queue</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">clone</span><span class="o">.</span><span class="n">_SlurmCommand</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="SlurmEnvironment.Command"><a class="viewcode-back" href="../../bioscons.html#bioscons.slurm.SlurmEnvironment.Command">[docs]</a>    <span class="k">def</span> <span class="nf">Command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">use_cluster</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">)</span> <span class="ow">and</span> <span class="n">use_cluster</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_cluster</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">clone</span><span class="o">.</span><span class="n">_SlurmCommand</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SlurmEnvironment.Command"><a class="viewcode-back" href="../../bioscons.html#bioscons.slurm.SlurmEnvironment.Command">[docs]</a>    <span class="k">def</span> <span class="nf">Command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span>
+                <span class="n">use_cluster</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Dispatches ``action`` (and extra arguments) to ``SRun`` if</span>
+<span class="sd">        ``use_cluster`` is True.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">use_cluster</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_cluster</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">SRun</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">)</span> <span class="ow">and</span> <span class="n">time</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">time</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">:</span>
             <span class="n">action</span> <span class="o">=</span> <span class="n">_time</span> <span class="o">+</span> <span class="n">action</span>
-            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">SlurmEnvironment</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">Command</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">SlurmEnvironment</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">Command</span><span class="p">(</span>
+                <span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">SlurmEnvironment</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">Command</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
-</div>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">SlurmEnvironment</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">Command</span><span class="p">(</span>
+                <span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="SlurmEnvironment.Local"><a class="viewcode-back" href="../../bioscons.html#bioscons.slurm.SlurmEnvironment.Local">[docs]</a>    <span class="k">def</span> <span class="nf">Local</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Run a command locally, without SLURM</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Command</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">use_cluster</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
-</div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Command</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">use_cluster</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="SlurmEnvironment.SetPartition"><a class="viewcode-back" href="../../bioscons.html#bioscons.slurm.SlurmEnvironment.SetPartition">[docs]</a>    <span class="k">def</span> <span class="nf">SetPartition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">partition</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Set the partition to be used. Subsequent calls to SRun and SAlloc will use this partition.</span>
+<span class="sd">        Set the partition to be used. Subsequent calls</span>
+<span class="sd">        to SRun and SAlloc will use this partition.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&#39;SLURM_PARTITION&#39;</span><span class="p">,</span> <span class="s">&#39;SALLOC_PARTITION&#39;</span><span class="p">):</span>
-            <span class="bp">self</span><span class="p">[</span><span class="s">&#39;ENV&#39;</span><span class="p">][</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">partition</span>
-</div>
+        <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;SLURM_PARTITION&#39;</span><span class="p">,</span> <span class="s1">&#39;SALLOC_PARTITION&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;ENV&#39;</span><span class="p">][</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">partition</span></div>
+
 <div class="viewcode-block" id="SlurmEnvironment.SetCpusPerTask"><a class="viewcode-back" href="../../bioscons.html#bioscons.slurm.SlurmEnvironment.SetCpusPerTask">[docs]</a>    <span class="k">def</span> <span class="nf">SetCpusPerTask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cpus_per_task</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set number of CPUs used by tasks launched from this environment with</span>
 <span class="sd">        srun. Equivalent to ``srun -c``</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;ENV&#39;</span><span class="p">][</span><span class="s">&#39;SLURM_CPUS_PER_TASK&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">cpus_per_task</span><span class="p">)</span>
-</div>
+        <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;ENV&#39;</span><span class="p">][</span><span class="s1">&#39;SLURM_CPUS_PER_TASK&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">cpus_per_task</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="SlurmEnvironment.SetTimeLimit"><a class="viewcode-back" href="../../bioscons.html#bioscons.slurm.SlurmEnvironment.SetTimeLimit">[docs]</a>    <span class="k">def</span> <span class="nf">SetTimeLimit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timelimit</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Set a limit on the total run time for jobs launched by this environment.</span>
+<span class="sd">        Set a limit on the total run time</span>
+<span class="sd">        for jobs launched by this environment.</span>
 
 <span class="sd">        Formats:</span>
 <span class="sd">            minutes</span>
@@ -203,33 +257,30 @@
 <span class="sd">            days-hours:minutes</span>
 <span class="sd">            days-hours:minutes:seconds</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;ENV&#39;</span><span class="p">][</span><span class="s">&#39;SLURM_TIMELIMIT&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">timelimit</span>
-        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;ENV&#39;</span><span class="p">][</span><span class="s">&#39;SALLOC_TIMELIMIT&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">timelimit</span></div></div>
+        <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;ENV&#39;</span><span class="p">][</span><span class="s1">&#39;SLURM_TIMELIMIT&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">timelimit</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;ENV&#39;</span><span class="p">][</span><span class="s1">&#39;SALLOC_TIMELIMIT&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">timelimit</span></div></div>
 </pre></div>
 
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<div id="searchbox" style="display: none">
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -238,14 +289,14 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">bioscons 0.7.1-1-g2c24480 documentation</a> &raquo;</li>
-          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">bioscons 0.8.1+19.gd951698 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
-    <div class="footer">
-        &copy; Copyright 2014, Noah Hoffman.
-      Last updated on Jul 10, 2014.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2014, Noah Hoffman.
+      Last updated on Nov 29, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>

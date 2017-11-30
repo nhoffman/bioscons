@@ -1,33 +1,32 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>bioscons Documentation &mdash; bioscons 0.7.1-1-g2c24480 documentation</title>
-    
-    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <title>bioscons Documentation &#8212; bioscons 0.8.1+19.gd951698 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.7.1-1-g2c24480',
+        VERSION:     '0.8.1+19.gd951698',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="bioscons 0.7.1-1-g2c24480 documentation" href="index.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="bioscons" href="index.html" /> 
   </head>
   <body>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -39,69 +38,74 @@
         <li class="right" >
           <a href="index.html" title="bioscons"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">bioscons 0.7.1-1-g2c24480 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">bioscons 0.8.1+19.gd951698 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="bioscons-documentation">
-<h1><tt class="docutils literal"><span class="pre">bioscons</span></tt> Documentation<a class="headerlink" href="#bioscons-documentation" title="Permalink to this headline">¶</a></h1>
-<p>This page contains the <tt class="docutils literal"><span class="pre">bioscons</span></tt> Package documentation.</p>
+<h1><code class="docutils literal"><span class="pre">bioscons</span></code> Documentation<a class="headerlink" href="#bioscons-documentation" title="Permalink to this headline">¶</a></h1>
+<p>This page contains the <code class="docutils literal"><span class="pre">bioscons</span></code> Package documentation.</p>
 <div class="section" id="subpackages">
 <h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
-<ul class="simple">
-</ul>
 </div>
 </div>
 <div class="section" id="module-bioscons.fast">
-<span id="the-fast-module"></span><h2>The <tt class="xref py py-mod docutils literal"><span class="pre">fast</span></tt> Module<a class="headerlink" href="#module-bioscons.fast" title="Permalink to this headline">¶</a></h2>
+<span id="the-fast-module"></span><h2>The <code class="xref py py-mod docutils literal"><span class="pre">fast</span></code> Module<a class="headerlink" href="#module-bioscons.fast" title="Permalink to this headline">¶</a></h2>
 <p>Some tips from <a class="reference external" href="http://www.scons.org/wiki/GoFastButton">http://www.scons.org/wiki/GoFastButton</a></p>
 <dl class="function">
 <dt id="bioscons.fast.fast">
-<tt class="descclassname">bioscons.fast.</tt><tt class="descname">fast</tt><big>(</big><em>env</em><big>)</big><a class="reference internal" href="_modules/bioscons/fast.html#fast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.fast.fast" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given an <tt class="xref py py-class docutils literal"><span class="pre">SCons.Script.Environment</span></tt>, set some flags for faster builds:</p>
+<code class="descclassname">bioscons.fast.</code><code class="descname">fast</code><span class="sig-paren">(</span><em>env</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioscons/fast.html#fast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.fast.fast" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given an <code class="xref py py-class docutils literal"><span class="pre">SCons.Script.Environment</span></code>, set some flags for faster builds:</p>
 <ul class="simple">
 <li>Caching of implicit dependencies</li>
-<li>Use MD5-timestamp decider (if timestamp unchanged, don&#8217;t checksum)</li>
-<li>Clear the default environment. Requires use of <tt class="docutils literal"><span class="pre">env.Command(...)</span></tt>, rather than bare <tt class="docutils literal"><span class="pre">Command(...)</span></tt></li>
+<li>Use MD5-timestamp decider (if timestamp unchanged, don’t checksum)</li>
+<li>Clear the default environment. Requires use of <code class="docutils literal"><span class="pre">env.Command(...)</span></code>, rather than bare <code class="docutils literal"><span class="pre">Command(...)</span></code></li>
 </ul>
 </dd></dl>
 
 </div>
 <div class="section" id="module-bioscons.fileutils">
-<span id="the-fileutils-module"></span><h2>The <tt class="xref py py-mod docutils literal"><span class="pre">fileutils</span></tt> Module<a class="headerlink" href="#module-bioscons.fileutils" title="Permalink to this headline">¶</a></h2>
+<span id="the-fileutils-module"></span><h2>The <code class="xref py py-mod docutils literal"><span class="pre">fileutils</span></code> Module<a class="headerlink" href="#module-bioscons.fileutils" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="bioscons.fileutils.Targets">
-<em class="property">class </em><tt class="descclassname">bioscons.fileutils.</tt><tt class="descname">Targets</tt><big>(</big><em>objs=None</em><big>)</big><a class="reference internal" href="_modules/bioscons/fileutils.html#Targets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.fileutils.Targets" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<em class="property">class </em><code class="descclassname">bioscons.fileutils.</code><code class="descname">Targets</code><span class="sig-paren">(</span><em>objs=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioscons/fileutils.html#Targets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.fileutils.Targets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p>Provides an object with methods for identifying objects in the
 local namespace representing build targets and to compare this
 list to the contents of a directory to idenify extraneous files.</p>
 <p>Example usage:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">targs</span> <span class="o">=</span> <span class="n">Targets</span><span class="p">(</span><span class="nb">locals</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-<span class="n">targs</span><span class="o">.</span><span class="n">show_extras</span><span class="p">(</span><span class="s">&quot;outdir&quot;</span><span class="p">)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">bioscons.fileutils</span> <span class="k">import</span> <span class="n">Targets</span>
+<span class="n">targets</span> <span class="o">=</span> <span class="n">Targets</span><span class="p">()</span>
+<span class="c1"># build some targets</span>
+<span class="n">some_target</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">Command</span><span class="p">(</span>
+    <span class="n">target</span><span class="o">=</span><span class="s1">&#39;infile.txt&#39;</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s1">&#39;outfile.txt&#39;</span><span class="p">,</span>
+    <span class="n">action</span><span class="o">=</span><span class="s1">&#39;some_action $SOURCE $TARGET&#39;</span><span class="p">)</span>
+
+<span class="n">targets</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">locals</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+<span class="n">targets</span><span class="o">.</span><span class="n">show_extras</span><span class="p">(</span><span class="s2">&quot;outdir&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <dl class="method">
 <dt id="bioscons.fileutils.Targets.show_extras">
-<tt class="descname">show_extras</tt><big>(</big><em>directory</em>, <em>one_line=True</em><big>)</big><a class="reference internal" href="_modules/bioscons/fileutils.html#Targets.show_extras"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.fileutils.Targets.show_extras" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given a relative path <cite>directory</cite> search for files recursively
+<code class="descname">show_extras</code><span class="sig-paren">(</span><em>directory</em>, <em>one_line=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioscons/fileutils.html#Targets.show_extras"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.fileutils.Targets.show_extras" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a relative path <code class="docutils literal"><span class="pre">directory</span></code> search for files recursively
 and print a list of those not found among
-<cite>self.targets</cite>. Print one path per line if <cite>one_line</cite> is
+<code class="docutils literal"><span class="pre">self.targets</span></code>. Print one path per line if <code class="docutils literal"><span class="pre">one_line</span></code> is
 False.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="bioscons.fileutils.Targets.update">
-<tt class="descname">update</tt><big>(</big><em>objs</em><big>)</big><a class="reference internal" href="_modules/bioscons/fileutils.html#Targets.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.fileutils.Targets.update" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given a list of objects (eg, the output of locals().values()),
+<code class="descname">update</code><span class="sig-paren">(</span><em>objs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioscons/fileutils.html#Targets.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.fileutils.Targets.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a list of objects (eg, the output of <code class="docutils literal"><span class="pre">locals().values()</span></code>),
 update self.targets with the set containing the relative path
-to each target (ie, those objects with a &#8220;NodeInfo&#8221;
+to each target (ie, those objects with a “NodeInfo”
 attribute).</p>
 </dd></dl>
 
@@ -109,47 +113,26 @@ attribute).</p>
 
 <dl class="function">
 <dt id="bioscons.fileutils.check_digest">
-<tt class="descclassname">bioscons.fileutils.</tt><tt class="descname">check_digest</tt><big>(</big><em>fname</em>, <em>dirname=None</em><big>)</big><a class="reference internal" href="_modules/bioscons/fileutils.html#check_digest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.fileutils.check_digest" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">bioscons.fileutils.</code><code class="descname">check_digest</code><span class="sig-paren">(</span><em>fname</em>, <em>dirname=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioscons/fileutils.html#check_digest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.fileutils.check_digest" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return True if the stored hash exists and is identical to the
-signature of the file <cite>fname</cite>. Hash is saved to a file named
+signature of the file <code class="docutils literal"><span class="pre">fname</span></code>. Hash is saved to a file named
 fname.md5 in either the same directory or in dirname if provided.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="bioscons.fileutils.list_targets">
-<tt class="descclassname">bioscons.fileutils.</tt><tt class="descname">list_targets</tt><big>(</big><em>environment</em><big>)</big><a class="reference internal" href="_modules/bioscons/fileutils.html#list_targets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.fileutils.list_targets" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given a dict containing {name:object} pairs (eg, the output of
-locals()), return a dict providing {varname:path} for each object
-that has a <cite>NodeInfo</cite> attribute. Lists of objects are flattened.</p>
-<p>An example use case for this function is to generate a set of all
-target paths to compare against the contents of an output
-directory to identify extraneous files:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">pprint</span>
-<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span><span class="p">,</span> <span class="n">ifilter</span>
-<span class="kn">from</span> <span class="nn">bioscons</span> <span class="kn">import</span> <span class="n">list_targets</span>
-<span class="n">targets</span> <span class="o">=</span> <span class="n">list_targets</span><span class="p">(</span><span class="nb">locals</span><span class="p">())</span>
-<span class="n">pprint</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span>
-<span class="k">print</span> <span class="s">&#39;extraneous files in ./output:&#39;</span>
-<span class="k">print</span> <span class="nb">set</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s">&#39;output/*&#39;</span><span class="p">))</span> <span class="o">-</span> \
-<span class="nb">set</span><span class="p">(</span><span class="n">ifilter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">fn</span><span class="p">:</span> <span class="n">fn</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;output/&#39;</span><span class="p">),</span> <span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">targets</span><span class="o">.</span><span class="n">values</span><span class="p">())))</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="function">
 <dt id="bioscons.fileutils.rename">
-<tt class="descclassname">bioscons.fileutils.</tt><tt class="descname">rename</tt><big>(</big><em>fname</em>, <em>ext=None</em>, <em>pth=None</em><big>)</big><a class="reference internal" href="_modules/bioscons/fileutils.html#rename"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.fileutils.rename" title="Permalink to this definition">¶</a></dt>
-<dd><p>Replace the directory or file extension in <cite>fname</cite> with <cite>pth</cite>
-and <cite>ext</cite>, respectively. <cite>fname</cite> may be a string, an object
+<code class="descclassname">bioscons.fileutils.</code><code class="descname">rename</code><span class="sig-paren">(</span><em>fname</em>, <em>ext=None</em>, <em>pth=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioscons/fileutils.html#rename"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.fileutils.rename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replace the directory or file extension in <code class="docutils literal"><span class="pre">fname</span></code> with <code class="docutils literal"><span class="pre">pth</span></code>
+and <code class="docutils literal"><span class="pre">ext</span></code>, respectively. <code class="docutils literal"><span class="pre">fname</span></code> may be a string, an object
 coercible to a string using str(), or a single-element list of
 either.</p>
 <p>Example:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">bioscons</span> <span class="kn">import</span> <span class="n">rename</span>
-<span class="n">stofile</span> <span class="o">=</span> <span class="s">&#39;align.sto&#39;</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">bioscons</span> <span class="k">import</span> <span class="n">rename</span>
+<span class="n">stofile</span> <span class="o">=</span> <span class="s1">&#39;align.sto&#39;</span>
 <span class="n">fastafile</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">Command</span><span class="p">(</span>
-    <span class="n">target</span> <span class="o">=</span> <span class="n">rename</span><span class="p">(</span><span class="n">stofile</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s">&#39;.fasta&#39;</span><span class="p">),</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="n">rename</span><span class="p">(</span><span class="n">stofile</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s1">&#39;.fasta&#39;</span><span class="p">),</span>
     <span class="n">source</span> <span class="o">=</span> <span class="n">stofile</span><span class="p">,</span>
-    <span class="n">action</span> <span class="o">=</span> <span class="s">&#39;seqmagick convert $SOURCE $TARGET&#39;</span>
+    <span class="n">action</span> <span class="o">=</span> <span class="s1">&#39;seqmagick convert $SOURCE $TARGET&#39;</span>
     <span class="p">)</span>
 </pre></div>
 </div>
@@ -157,10 +140,10 @@ either.</p>
 
 <dl class="function">
 <dt id="bioscons.fileutils.split_path">
-<tt class="descclassname">bioscons.fileutils.</tt><tt class="descname">split_path</tt><big>(</big><em>fname</em>, <em>split_ext=False</em><big>)</big><a class="reference internal" href="_modules/bioscons/fileutils.html#split_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.fileutils.split_path" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">bioscons.fileutils.</code><code class="descname">split_path</code><span class="sig-paren">(</span><em>fname</em>, <em>split_ext=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioscons/fileutils.html#split_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.fileutils.split_path" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns file name elements given an absolute or relative path
-<cite>fname</cite>, which may be a string, an object coercible to a string
-using str(), or a single-element list of either. If <cite>split_ext</cite> is
+<code class="docutils literal"><span class="pre">fname</span></code>, which may be a string, an object coercible to a string
+using str(), or a single-element list of either. If <code class="docutils literal"><span class="pre">split_ext</span></code> is
 True, the name of the file is further split into a base component
 and the file suffix, ie, (dir, base, suffix), and (dir, filename)
 otherwise.</p>
@@ -168,76 +151,81 @@ otherwise.</p>
 
 <dl class="function">
 <dt id="bioscons.fileutils.write_digest">
-<tt class="descclassname">bioscons.fileutils.</tt><tt class="descname">write_digest</tt><big>(</big><em>fname</em>, <em>dirname=None</em><big>)</big><a class="reference internal" href="_modules/bioscons/fileutils.html#write_digest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.fileutils.write_digest" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">bioscons.fileutils.</code><code class="descname">write_digest</code><span class="sig-paren">(</span><em>fname</em>, <em>dirname=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioscons/fileutils.html#write_digest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.fileutils.write_digest" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save the md5 checksum of fname as fname.md5 in either the same
 directory as fname or in dirname if provided.</p>
 </dd></dl>
 
 </div>
 <div class="section" id="module-bioscons.slurm">
-<span id="the-slurm-module"></span><h2>The <tt class="xref py py-mod docutils literal"><span class="pre">slurm</span></tt> Module<a class="headerlink" href="#module-bioscons.slurm" title="Permalink to this headline">¶</a></h2>
+<span id="the-slurm-module"></span><h2>The <code class="xref py py-mod docutils literal"><span class="pre">slurm</span></code> Module<a class="headerlink" href="#module-bioscons.slurm" title="Permalink to this headline">¶</a></h2>
 <p>Functions for dispatching to SLURM (<a class="reference external" href="https://computing.llnl.gov/linux/slurm/">https://computing.llnl.gov/linux/slurm/</a>)
 from scons.</p>
 <dl class="class">
 <dt id="bioscons.slurm.SlurmEnvironment">
-<em class="property">class </em><tt class="descclassname">bioscons.slurm.</tt><tt class="descname">SlurmEnvironment</tt><big>(</big><em>use_cluster=True</em>, <em>slurm_queue=None</em>, <em>shell='sh'</em>, <em>all_precious=False</em>, <em>time=False</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/bioscons/slurm.html#SlurmEnvironment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.slurm.SlurmEnvironment" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">SCons.Script.SConscript.SConsEnvironment</span></tt></p>
+<em class="property">class </em><code class="descclassname">bioscons.slurm.</code><code class="descname">SlurmEnvironment</code><span class="sig-paren">(</span><em>use_cluster=True</em>, <em>slurm_queue=None</em>, <em>all_precious=False</em>, <em>time=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioscons/slurm.html#SlurmEnvironment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.slurm.SlurmEnvironment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">SCons.Script.SConscript.SConsEnvironment</span></code></p>
 <p>Mostly drop-in replacement for an SCons Environment, where all calls to
 Command are by executed via srun using a single core.</p>
 <p>The SRun and SAlloc methods can be used to use multiple cores for
 multithreaded and MPI jobs, respectively.</p>
 <dl class="method">
 <dt id="bioscons.slurm.SlurmEnvironment.Command">
-<tt class="descname">Command</tt><big>(</big><em>target</em>, <em>source</em>, <em>action</em>, <em>use_cluster=True</em>, <em>time=True</em>, <em>**kw</em><big>)</big><a class="reference internal" href="_modules/bioscons/slurm.html#SlurmEnvironment.Command"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.slurm.SlurmEnvironment.Command" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">Command</code><span class="sig-paren">(</span><em>target</em>, <em>source</em>, <em>action</em>, <em>use_cluster=True</em>, <em>time=True</em>, <em>**kw</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioscons/slurm.html#SlurmEnvironment.Command"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.slurm.SlurmEnvironment.Command" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dispatches <code class="docutils literal"><span class="pre">action</span></code> (and extra arguments) to <code class="docutils literal"><span class="pre">SRun</span></code> if
+<code class="docutils literal"><span class="pre">use_cluster</span></code> is True.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="bioscons.slurm.SlurmEnvironment.Local">
-<tt class="descname">Local</tt><big>(</big><em>target</em>, <em>source</em>, <em>action</em>, <em>**kw</em><big>)</big><a class="reference internal" href="_modules/bioscons/slurm.html#SlurmEnvironment.Local"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.slurm.SlurmEnvironment.Local" title="Permalink to this definition">¶</a></dt>
+<code class="descname">Local</code><span class="sig-paren">(</span><em>target</em>, <em>source</em>, <em>action</em>, <em>**kw</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioscons/slurm.html#SlurmEnvironment.Local"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.slurm.SlurmEnvironment.Local" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run a command locally, without SLURM</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="bioscons.slurm.SlurmEnvironment.SAlloc">
-<tt class="descname">SAlloc</tt><big>(</big><em>target</em>, <em>source</em>, <em>action</em>, <em>ncores</em>, <em>timelimit=None</em>, <em>**kw</em><big>)</big><a class="reference internal" href="_modules/bioscons/slurm.html#SlurmEnvironment.SAlloc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.slurm.SlurmEnvironment.SAlloc" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run <tt class="docutils literal"><span class="pre">action</span></tt> with salloc.</p>
+<code class="descname">SAlloc</code><span class="sig-paren">(</span><em>target</em>, <em>source</em>, <em>action</em>, <em>ncores</em>, <em>timelimit=None</em>, <em>**kw</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioscons/slurm.html#SlurmEnvironment.SAlloc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.slurm.SlurmEnvironment.SAlloc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run <code class="docutils literal"><span class="pre">action</span></code> with salloc.</p>
 <p>This method should be used for MPI jobs only. Combining an salloc call
-with <tt class="docutils literal"><span class="pre">mpirun</span></tt> (with no arguments) will use all nodes allocated
+with <code class="docutils literal"><span class="pre">mpirun</span></code> (with no arguments) will use all nodes allocated
 automatically.</p>
 <p>Optional arguments:
-<tt class="docutils literal"><span class="pre">slurm_args</span></tt>: Additional arguments to pass to salloc
-<tt class="docutils literal"><span class="pre">timelimit</span></tt>: value to use for environment variable SALLOC_TIMELIMIT</p>
+<code class="docutils literal"><span class="pre">slurm_args</span></code>: Additional arguments to pass to salloc
+<code class="docutils literal"><span class="pre">timelimit</span></code>: value to use for environment variable SALLOC_TIMELIMIT</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="bioscons.slurm.SlurmEnvironment.SRun">
-<tt class="descname">SRun</tt><big>(</big><em>target</em>, <em>source</em>, <em>action</em>, <em>ncores=1</em>, <em>timelimit=None</em>, <em>slurm_queue=None</em>, <em>**kw</em><big>)</big><a class="reference internal" href="_modules/bioscons/slurm.html#SlurmEnvironment.SRun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.slurm.SlurmEnvironment.SRun" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run <tt class="docutils literal"><span class="pre">action</span></tt> with srun.</p>
-<p>This method should be used for multithreaded jobs on a single machine
-only. By default, calls to SlurmEnvironment.Command use srun. Specify a
-number of processors with <tt class="docutils literal"><span class="pre">ncores</span></tt>.</p>
+<code class="descname">SRun</code><span class="sig-paren">(</span><em>target</em>, <em>source</em>, <em>action</em>, <em>ncores=1</em>, <em>timelimit=None</em>, <em>slurm_queue=None</em>, <em>**kw</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioscons/slurm.html#SlurmEnvironment.SRun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.slurm.SlurmEnvironment.SRun" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run <code class="docutils literal"><span class="pre">action</span></code> with srun.</p>
+<p>This method should be used for multithreaded jobs on a single
+machine only. By default, calls to SlurmEnvironment.Command
+use srun. Specify a number of processors with <code class="docutils literal"><span class="pre">ncores</span></code>,
+which provides a value for <code class="docutils literal"><span class="pre">srun</span> <span class="pre">-c/--cpus-per-task</span></code>.</p>
 <p>Optional arguments:
-<tt class="docutils literal"><span class="pre">slurm_args</span></tt>: Additional arguments to pass to salloc
-<tt class="docutils literal"><span class="pre">timelimit</span></tt>: Value to use for environment variable SLURM_TIMELIMIT</p>
+<code class="docutils literal"><span class="pre">slurm_args</span></code>: Additional arguments to pass to salloc
+<code class="docutils literal"><span class="pre">timelimit</span></code>: Value to use for environment variable SLURM_TIMELIMIT</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="bioscons.slurm.SlurmEnvironment.SetCpusPerTask">
-<tt class="descname">SetCpusPerTask</tt><big>(</big><em>cpus_per_task</em><big>)</big><a class="reference internal" href="_modules/bioscons/slurm.html#SlurmEnvironment.SetCpusPerTask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.slurm.SlurmEnvironment.SetCpusPerTask" title="Permalink to this definition">¶</a></dt>
+<code class="descname">SetCpusPerTask</code><span class="sig-paren">(</span><em>cpus_per_task</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioscons/slurm.html#SlurmEnvironment.SetCpusPerTask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.slurm.SlurmEnvironment.SetCpusPerTask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set number of CPUs used by tasks launched from this environment with
-srun. Equivalent to <tt class="docutils literal"><span class="pre">srun</span> <span class="pre">-c</span></tt></p>
+srun. Equivalent to <code class="docutils literal"><span class="pre">srun</span> <span class="pre">-c</span></code></p>
 </dd></dl>
 
 <dl class="method">
 <dt id="bioscons.slurm.SlurmEnvironment.SetPartition">
-<tt class="descname">SetPartition</tt><big>(</big><em>partition</em><big>)</big><a class="reference internal" href="_modules/bioscons/slurm.html#SlurmEnvironment.SetPartition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.slurm.SlurmEnvironment.SetPartition" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the partition to be used. Subsequent calls to SRun and SAlloc will use this partition.</p>
+<code class="descname">SetPartition</code><span class="sig-paren">(</span><em>partition</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioscons/slurm.html#SlurmEnvironment.SetPartition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.slurm.SlurmEnvironment.SetPartition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the partition to be used. Subsequent calls
+to SRun and SAlloc will use this partition.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="bioscons.slurm.SlurmEnvironment.SetTimeLimit">
-<tt class="descname">SetTimeLimit</tt><big>(</big><em>timelimit</em><big>)</big><a class="reference internal" href="_modules/bioscons/slurm.html#SlurmEnvironment.SetTimeLimit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.slurm.SlurmEnvironment.SetTimeLimit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set a limit on the total run time for jobs launched by this environment.</p>
+<code class="descname">SetTimeLimit</code><span class="sig-paren">(</span><em>timelimit</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioscons/slurm.html#SlurmEnvironment.SetTimeLimit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.slurm.SlurmEnvironment.SetTimeLimit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set a limit on the total run time
+for jobs launched by this environment.</p>
 <dl class="docutils">
 <dt>Formats:</dt>
 <dd>minutes
@@ -251,12 +239,117 @@ days-hours:minutes:seconds</dd>
 
 </dd></dl>
 
+<dl class="function">
+<dt id="bioscons.slurm.check_srun">
+<code class="descclassname">bioscons.slurm.</code><code class="descname">check_srun</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioscons/slurm.html#check_srun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.slurm.check_srun" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the absolute path to the <cite>srun</cite> executable.</p>
+</dd></dl>
+
+<div class="section" id="notes-on-parallelization">
+<h3>Notes on parallelization<a class="headerlink" href="#notes-on-parallelization" title="Permalink to this headline">¶</a></h3>
+<p>The combination of <code class="docutils literal"><span class="pre">scons</span></code> and <code class="docutils literal"><span class="pre">slurm</span></code> provides a powerful
+mechanism for rate-limiting parallel tasks to maximize resource
+utilization while preventing oversubscription. Here’s an
+example. Consider the following <code class="docutils literal"><span class="pre">SConstruct</span></code>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">bioscons.slurm</span> <span class="k">import</span> <span class="n">SlurmEnvironment</span>
+
+<span class="nb">vars</span> <span class="o">=</span> <span class="n">Variables</span><span class="p">()</span>
+<span class="nb">vars</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="s1">&#39;ncores&#39;</span><span class="p">,</span> <span class="s1">&#39;number of cores per task&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">env</span> <span class="o">=</span> <span class="n">SlurmEnvironment</span><span class="p">(</span>
+    <span class="n">ENV</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span>
+    <span class="n">variables</span><span class="o">=</span><span class="nb">vars</span><span class="p">,</span>
+    <span class="n">use_cluster</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">SHELL</span><span class="o">=</span><span class="s1">&#39;bash&#39;</span><span class="p">,</span>
+    <span class="n">out</span><span class="o">=</span><span class="s1">&#39;output&#39;</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">subst</span><span class="p">(</span><span class="s1">&#39;--&gt; ncores=$ncores&#39;</span><span class="p">))</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+    <span class="n">AlwaysBuild</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">Command</span><span class="p">(</span>
+        <span class="n">target</span><span class="o">=</span><span class="s1">&#39;$out/</span><span class="si">{}</span><span class="s1">.txt&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">),</span>
+        <span class="n">source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;date &gt; $TARGET; sleep 2&#39;</span><span class="p">),</span>
+        <span class="n">ncores</span><span class="o">=</span><span class="n">env</span><span class="p">[</span><span class="s1">&#39;ncores&#39;</span><span class="p">],</span>
+    <span class="p">))</span>
+</pre></div>
+</div>
+<p>Running this as 10 jobs in parallel with a single core allocated to
+each task results in the following:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">scons</span> <span class="o">-</span><span class="n">j10</span>
+<span class="n">scons</span><span class="p">:</span> <span class="n">Reading</span> <span class="n">SConscript</span> <span class="n">files</span> <span class="o">...</span>
+<span class="o">--&gt;</span> <span class="n">ncores</span><span class="o">=</span><span class="mi">1</span>
+<span class="n">scons</span><span class="p">:</span> <span class="n">done</span> <span class="n">reading</span> <span class="n">SConscript</span> <span class="n">files</span><span class="o">.</span>
+<span class="n">scons</span><span class="p">:</span> <span class="n">Building</span> <span class="n">targets</span> <span class="o">...</span>
+<span class="n">srun</span> <span class="o">-</span><span class="n">J</span> <span class="s2">&quot;date&quot;</span> <span class="n">bash</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;date &gt; output/0.txt; sleep 2&#39;</span>
+<span class="n">srun</span> <span class="o">-</span><span class="n">J</span> <span class="s2">&quot;date&quot;</span> <span class="n">bash</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;date &gt; output/1.txt; sleep 2&#39;</span>
+<span class="n">srun</span> <span class="o">-</span><span class="n">J</span> <span class="s2">&quot;date&quot;</span> <span class="n">bash</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;date &gt; output/2.txt; sleep 2&#39;</span>
+<span class="n">srun</span> <span class="o">-</span><span class="n">J</span> <span class="s2">&quot;date&quot;</span> <span class="n">bash</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;date &gt; output/3.txt; sleep 2&#39;</span>
+<span class="n">srun</span> <span class="o">-</span><span class="n">J</span> <span class="s2">&quot;date&quot;</span> <span class="n">bash</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;date &gt; output/4.txt; sleep 2&#39;</span>
+<span class="n">srun</span> <span class="o">-</span><span class="n">J</span> <span class="s2">&quot;date&quot;</span> <span class="n">bash</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;date &gt; output/5.txt; sleep 2&#39;</span>
+<span class="n">srun</span> <span class="o">-</span><span class="n">J</span> <span class="s2">&quot;date&quot;</span> <span class="n">bash</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;date &gt; output/6.txt; sleep 2&#39;</span>
+<span class="n">srun</span> <span class="o">-</span><span class="n">J</span> <span class="s2">&quot;date&quot;</span> <span class="n">bash</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;date &gt; output/7.txt; sleep 2&#39;</span>
+<span class="n">srun</span> <span class="o">-</span><span class="n">J</span> <span class="s2">&quot;date&quot;</span> <span class="n">bash</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;date &gt; output/8.txt; sleep 2&#39;</span>
+<span class="n">srun</span> <span class="o">-</span><span class="n">J</span> <span class="s2">&quot;date&quot;</span> <span class="n">bash</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;date &gt; output/9.txt; sleep 2&#39;</span>
+<span class="n">scons</span><span class="p">:</span> <span class="n">done</span> <span class="n">building</span> <span class="n">targets</span><span class="o">.</span>
+<span class="o">%</span> <span class="n">cat</span> <span class="n">output</span><span class="o">/*.</span><span class="n">txt</span> <span class="o">|</span> <span class="n">sort</span> <span class="o">|</span> <span class="n">uniq</span> <span class="o">-</span><span class="n">c</span>
+<span class="mi">10</span> <span class="n">Wed</span> <span class="n">Nov</span> <span class="mi">29</span> <span class="mi">22</span><span class="p">:</span><span class="mi">13</span><span class="p">:</span><span class="mi">50</span> <span class="n">PST</span> <span class="mi">2017</span>
+</pre></div>
+</div>
+<p>The final line demonstrates that all tasks are dispatched
+simultaneously. Now let’s imagine that the action is actually a
+multi-threaded process requiring 20 cores, and dispatching 10
+simultaneous jobs would exceed the number of cpus or amount of memory
+per cpu available. By increasing the number of cores per task, we can
+force slurm to rate-limit the jobs.:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">scons</span> <span class="n">ncores</span><span class="o">=</span><span class="mi">20</span> <span class="o">-</span><span class="n">j10</span>
+<span class="n">scons</span><span class="p">:</span> <span class="n">Reading</span> <span class="n">SConscript</span> <span class="n">files</span> <span class="o">...</span>
+<span class="o">--&gt;</span> <span class="n">ncores</span><span class="o">=</span><span class="mi">20</span>
+<span class="n">scons</span><span class="p">:</span> <span class="n">done</span> <span class="n">reading</span> <span class="n">SConscript</span> <span class="n">files</span><span class="o">.</span>
+<span class="n">scons</span><span class="p">:</span> <span class="n">Building</span> <span class="n">targets</span> <span class="o">...</span>
+<span class="n">srun</span> <span class="o">-</span><span class="n">J</span> <span class="s2">&quot;date&quot;</span> <span class="n">bash</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;date &gt; output/0.txt; sleep 2&#39;</span>
+<span class="n">srun</span> <span class="o">-</span><span class="n">J</span> <span class="s2">&quot;date&quot;</span> <span class="n">bash</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;date &gt; output/1.txt; sleep 2&#39;</span>
+<span class="n">srun</span> <span class="o">-</span><span class="n">J</span> <span class="s2">&quot;date&quot;</span> <span class="n">bash</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;date &gt; output/2.txt; sleep 2&#39;</span>
+<span class="n">srun</span> <span class="o">-</span><span class="n">J</span> <span class="s2">&quot;date&quot;</span> <span class="n">bash</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;date &gt; output/3.txt; sleep 2&#39;</span>
+<span class="n">srun</span> <span class="o">-</span><span class="n">J</span> <span class="s2">&quot;date&quot;</span> <span class="n">bash</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;date &gt; output/4.txt; sleep 2&#39;</span>
+<span class="n">srun</span> <span class="o">-</span><span class="n">J</span> <span class="s2">&quot;date&quot;</span> <span class="n">bash</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;date &gt; output/5.txt; sleep 2&#39;</span>
+<span class="n">srun</span> <span class="o">-</span><span class="n">J</span> <span class="s2">&quot;date&quot;</span> <span class="n">bash</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;date &gt; output/6.txt; sleep 2&#39;</span>
+<span class="n">srun</span><span class="p">:</span> <span class="n">job</span> <span class="mi">26896</span> <span class="n">queued</span> <span class="ow">and</span> <span class="n">waiting</span> <span class="k">for</span> <span class="n">resources</span>
+<span class="n">srun</span> <span class="o">-</span><span class="n">J</span> <span class="s2">&quot;date&quot;</span> <span class="n">bash</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;date &gt; output/7.txt; sleep 2&#39;</span>
+<span class="n">srun</span><span class="p">:</span> <span class="n">job</span> <span class="mi">26897</span> <span class="n">queued</span> <span class="ow">and</span> <span class="n">waiting</span> <span class="k">for</span> <span class="n">resources</span>
+<span class="n">srun</span><span class="p">:</span> <span class="n">job</span> <span class="mi">26898</span> <span class="n">queued</span> <span class="ow">and</span> <span class="n">waiting</span> <span class="k">for</span> <span class="n">resources</span>
+<span class="n">srun</span> <span class="o">-</span><span class="n">J</span> <span class="s2">&quot;date&quot;</span> <span class="n">bash</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;date &gt; output/8.txt; sleep 2&#39;</span>
+<span class="n">srun</span> <span class="o">-</span><span class="n">J</span> <span class="s2">&quot;date&quot;</span> <span class="n">bash</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;date &gt; output/9.txt; sleep 2&#39;</span>
+<span class="n">srun</span><span class="p">:</span> <span class="n">job</span> <span class="mi">26899</span> <span class="n">queued</span> <span class="ow">and</span> <span class="n">waiting</span> <span class="k">for</span> <span class="n">resources</span>
+<span class="n">srun</span><span class="p">:</span> <span class="n">job</span> <span class="mi">26900</span> <span class="n">queued</span> <span class="ow">and</span> <span class="n">waiting</span> <span class="k">for</span> <span class="n">resources</span>
+<span class="n">srun</span><span class="p">:</span> <span class="n">job</span> <span class="mi">26901</span> <span class="n">queued</span> <span class="ow">and</span> <span class="n">waiting</span> <span class="k">for</span> <span class="n">resources</span>
+<span class="n">srun</span><span class="p">:</span> <span class="n">job</span> <span class="mi">26896</span> <span class="n">has</span> <span class="n">been</span> <span class="n">allocated</span> <span class="n">resources</span>
+<span class="n">srun</span><span class="p">:</span> <span class="n">job</span> <span class="mi">26897</span> <span class="n">has</span> <span class="n">been</span> <span class="n">allocated</span> <span class="n">resources</span>
+<span class="n">srun</span><span class="p">:</span> <span class="n">job</span> <span class="mi">26898</span> <span class="n">has</span> <span class="n">been</span> <span class="n">allocated</span> <span class="n">resources</span>
+<span class="n">srun</span><span class="p">:</span> <span class="n">job</span> <span class="mi">26899</span> <span class="n">has</span> <span class="n">been</span> <span class="n">allocated</span> <span class="n">resources</span>
+<span class="n">srun</span><span class="p">:</span> <span class="n">job</span> <span class="mi">26900</span> <span class="n">has</span> <span class="n">been</span> <span class="n">allocated</span> <span class="n">resources</span>
+<span class="n">srun</span><span class="p">:</span> <span class="n">job</span> <span class="mi">26901</span> <span class="n">has</span> <span class="n">been</span> <span class="n">allocated</span> <span class="n">resources</span>
+<span class="n">scons</span><span class="p">:</span> <span class="n">done</span> <span class="n">building</span> <span class="n">targets</span><span class="o">.</span>
+<span class="o">%</span> <span class="n">cat</span> <span class="n">output</span><span class="o">/*.</span><span class="n">txt</span> <span class="o">|</span> <span class="n">sort</span> <span class="o">|</span> <span class="n">uniq</span> <span class="o">-</span><span class="n">c</span>
+      <span class="mi">4</span> <span class="n">Wed</span> <span class="n">Nov</span> <span class="mi">29</span> <span class="mi">22</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mi">44</span> <span class="n">PST</span> <span class="mi">2017</span>
+      <span class="mi">4</span> <span class="n">Wed</span> <span class="n">Nov</span> <span class="mi">29</span> <span class="mi">22</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mi">46</span> <span class="n">PST</span> <span class="mi">2017</span>
+      <span class="mi">2</span> <span class="n">Wed</span> <span class="n">Nov</span> <span class="mi">29</span> <span class="mi">22</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mi">48</span> <span class="n">PST</span> <span class="mi">2017</span>
+</pre></div>
+</div>
+<p>Rate-limiting job dispatch is of course the whole purpose of
+<code class="docutils literal"><span class="pre">slurm</span></code>; <code class="docutils literal"><span class="pre">scons</span></code> brings the additional benefit of
+paralellization. This pattern provides a mechanism for specifying an
+arbitrarily large value for <code class="docutils literal"><span class="pre">-j</span></code> to maximize the number of tasks run
+in parallel without exceeding system resources.</p>
+</div>
 </div>
 <div class="section" id="module-bioscons.utils">
-<span id="the-utils-module"></span><h2>The <tt class="xref py py-mod docutils literal"><span class="pre">utils</span></tt> Module<a class="headerlink" href="#module-bioscons.utils" title="Permalink to this headline">¶</a></h2>
+<span id="the-utils-module"></span><h2>The <code class="xref py py-mod docutils literal"><span class="pre">utils</span></code> Module<a class="headerlink" href="#module-bioscons.utils" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="bioscons.utils.getvars">
-<tt class="descclassname">bioscons.utils.</tt><tt class="descname">getvars</tt><big>(</big><em>config</em>, <em>secnames</em>, <em>indir=None</em>, <em>outdir=None</em>, <em>fmt_in='%(sec)s-infiles'</em>, <em>fmt_out='%(sec)s-outfiles'</em>, <em>fmt_params='%(sec)s-params'</em><big>)</big><a class="reference internal" href="_modules/bioscons/utils.html#getvars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.utils.getvars" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">bioscons.utils.</code><code class="descname">getvars</code><span class="sig-paren">(</span><em>config</em>, <em>secnames</em>, <em>indir=None</em>, <em>outdir=None</em>, <em>fmt_in='%(sec)s-infiles'</em>, <em>fmt_out='%(sec)s-outfiles'</em>, <em>fmt_params='%(sec)s-params'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioscons/utils.html#getvars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.utils.getvars" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a tuple of configuration variables that may be passed to
 vars.AddVariables().</p>
 <ul class="simple">
@@ -267,16 +360,19 @@ vars.AddVariables().</p>
 <li>fmt_* - formatting string defining sections corresponding to infiles,
 outfiles, and params for each section</li>
 </ul>
-<p>Example:
-vars = Variables()
-varlist = utils.getvars(config, [&#8216;ncbi&#8217;,&#8217;placefiles&#8217;], indir=output, outdir=output)
-vars.AddVariables(<a href="#id1"><span class="problematic" id="id2">*</span></a>varlist)</p>
+<p>Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">vars</span> <span class="o">=</span> <span class="n">Variables</span><span class="p">()</span>
+<span class="n">varlist</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">getvars</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;ncbi&#39;</span><span class="p">,</span><span class="s1">&#39;placefiles&#39;</span><span class="p">],</span>
+                        <span class="n">indir</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">outdir</span><span class="o">=</span><span class="n">output</span><span class="p">)</span>
+<span class="nb">vars</span><span class="o">.</span><span class="n">AddVariables</span><span class="p">(</span><span class="o">*</span><span class="n">varlist</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="class">
 <dt id="bioscons.utils.verbose">
-<em class="property">class </em><tt class="descclassname">bioscons.utils.</tt><tt class="descname">verbose</tt><big>(</big><em>f</em><big>)</big><a class="reference internal" href="_modules/bioscons/utils.html#verbose"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.utils.verbose" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<em class="property">class </em><code class="descclassname">bioscons.utils.</code><code class="descname">verbose</code><span class="sig-paren">(</span><em>f</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioscons/utils.html#verbose"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bioscons.utils.verbose" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p>Decorator class to provide more verbose progress messages.</p>
 </dd></dl>
 
@@ -287,16 +383,19 @@ vars.AddVariables(<a href="#id1"><span class="problematic" id="id2">*</span></a>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#"><tt class="docutils literal"><span class="pre">bioscons</span></tt> Documentation</a><ul>
+<li><a class="reference internal" href="#"><code class="docutils literal"><span class="pre">bioscons</span></code> Documentation</a><ul>
 <li><a class="reference internal" href="#subpackages">Subpackages</a></li>
-<li><a class="reference internal" href="#module-bioscons.fast">The <tt class="docutils literal"><span class="pre">fast</span></tt> Module</a></li>
-<li><a class="reference internal" href="#module-bioscons.fileutils">The <tt class="docutils literal"><span class="pre">fileutils</span></tt> Module</a></li>
-<li><a class="reference internal" href="#module-bioscons.slurm">The <tt class="docutils literal"><span class="pre">slurm</span></tt> Module</a></li>
-<li><a class="reference internal" href="#module-bioscons.utils">The <tt class="docutils literal"><span class="pre">utils</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-bioscons.fast">The <code class="docutils literal"><span class="pre">fast</span></code> Module</a></li>
+<li><a class="reference internal" href="#module-bioscons.fileutils">The <code class="docutils literal"><span class="pre">fileutils</span></code> Module</a></li>
+<li><a class="reference internal" href="#module-bioscons.slurm">The <code class="docutils literal"><span class="pre">slurm</span></code> Module</a><ul>
+<li><a class="reference internal" href="#notes-on-parallelization">Notes on parallelization</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-bioscons.utils">The <code class="docutils literal"><span class="pre">utils</span></code> Module</a></li>
 </ul>
 </li>
 </ul>
@@ -304,29 +403,28 @@ vars.AddVariables(<a href="#id1"><span class="problematic" id="id2">*</span></a>
   <h4>Previous topic</h4>
   <p class="topless"><a href="index.html"
                         title="previous chapter">bioscons</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/bioscons.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/bioscons.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -338,13 +436,13 @@ vars.AddVariables(<a href="#id1"><span class="problematic" id="id2">*</span></a>
         <li class="right" >
           <a href="index.html" title="bioscons"
              >previous</a> |</li>
-        <li><a href="index.html">bioscons 0.7.1-1-g2c24480 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">bioscons 0.8.1+19.gd951698 documentation</a> &#187;</li> 
       </ul>
     </div>
-    <div class="footer">
-        &copy; Copyright 2014, Noah Hoffman.
-      Last updated on Jul 10, 2014.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2014, Noah Hoffman.
+      Last updated on Nov 29, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>

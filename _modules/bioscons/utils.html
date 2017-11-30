@@ -1,33 +1,31 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>bioscons.utils &mdash; bioscons 0.7.1-1-g2c24480 documentation</title>
-    
-    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <title>bioscons.utils &#8212; bioscons 0.8.1+19.gd951698 documentation</title>
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.7.1-1-g2c24480',
+        VERSION:     '0.8.1+19.gd951698',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="bioscons 0.7.1-1-g2c24480 documentation" href="../../index.html" />
-    <link rel="up" title="Module code" href="../index.html" /> 
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
   </head>
   <body>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -36,30 +34,24 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">bioscons 0.7.1-1-g2c24480 documentation</a> &raquo;</li>
-          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">bioscons 0.8.1+19.gd951698 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <h1>Source code for bioscons.utils</h1><div class="highlight"><pre>
-<span class="kn">import</span> <span class="nn">itertools</span>
-<span class="kn">import</span> <span class="nn">subprocess</span>
-<span class="kn">import</span> <span class="nn">ConfigParser</span>
-<span class="kn">import</span> <span class="nn">tempfile</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">import</span> <span class="nn">random</span>
-<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">join</span><span class="p">,</span><span class="n">split</span><span class="p">,</span><span class="n">splitext</span>
+<span></span><span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">join</span>
 <span class="kn">import</span> <span class="nn">os.path</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">SCons.Script</span> <span class="kn">import</span> <span class="o">*</span>
+    <span class="kn">from</span> <span class="nn">SCons.Script</span> <span class="k">import</span> <span class="n">PathVariable</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="c"># we expect this to fail unless imported from within SConstruct</span>
+    <span class="c1"># we expect this to fail unless imported from within SConstruct</span>
     <span class="k">pass</span>
 
 <div class="viewcode-block" id="verbose"><a class="viewcode-back" href="../../bioscons.html#bioscons.utils.verbose">[docs]</a><span class="k">class</span> <span class="nc">verbose</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -70,14 +62,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="n">f</span>
 
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">print</span> <span class="s">&quot;entering&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="s">&#39;called with arguments&#39;</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;entering&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="s1">&#39;called with arguments&#39;</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">print</span> <span class="s">&quot;exiting&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="o">.</span><span class="n">__name__</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;exiting&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></div>
 
-</div>
-<div class="viewcode-block" id="getvars"><a class="viewcode-back" href="../../bioscons.html#bioscons.utils.getvars">[docs]</a><span class="k">def</span> <span class="nf">getvars</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">secnames</span><span class="p">,</span> <span class="n">indir</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">outdir</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-            <span class="n">fmt_in</span><span class="o">=</span><span class="s">&#39;</span><span class="si">%(sec)s</span><span class="s">-infiles&#39;</span><span class="p">,</span> <span class="n">fmt_out</span><span class="o">=</span><span class="s">&#39;</span><span class="si">%(sec)s</span><span class="s">-outfiles&#39;</span><span class="p">,</span>
-            <span class="n">fmt_params</span><span class="o">=</span><span class="s">&#39;</span><span class="si">%(sec)s</span><span class="s">-params&#39;</span><span class="p">):</span>
+
+<div class="viewcode-block" id="getvars"><a class="viewcode-back" href="../../bioscons.html#bioscons.utils.getvars">[docs]</a><span class="k">def</span> <span class="nf">getvars</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">secnames</span><span class="p">,</span> <span class="n">indir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">outdir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">fmt_in</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%(sec)s</span><span class="s1">-infiles&#39;</span><span class="p">,</span> <span class="n">fmt_out</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%(sec)s</span><span class="s1">-outfiles&#39;</span><span class="p">,</span>
+            <span class="n">fmt_params</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%(sec)s</span><span class="s1">-params&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return a tuple of configuration variables that may be passed to</span>
 <span class="sd">    vars.AddVariables().</span>
@@ -89,91 +81,94 @@
 <span class="sd">    * fmt_* - formatting string defining sections corresponding to infiles,</span>
 <span class="sd">      outfiles, and params for each section</span>
 
-<span class="sd">    Example:</span>
-<span class="sd">    vars = Variables()</span>
-<span class="sd">    varlist = utils.getvars(config, [&#39;ncbi&#39;,&#39;placefiles&#39;], indir=output, outdir=output)</span>
-<span class="sd">    vars.AddVariables(*varlist)</span>
+<span class="sd">    Example::</span>
+
+<span class="sd">      vars = Variables()</span>
+<span class="sd">      varlist = utils.getvars(config, [&#39;ncbi&#39;,&#39;placefiles&#39;],</span>
+<span class="sd">                              indir=output, outdir=output)</span>
+<span class="sd">      vars.AddVariables(*varlist)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nb">vars</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="c"># values from defaults section</span>
-    <span class="n">defaults</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">items</span><span class="p">(</span><span class="s">&#39;DEFAULT&#39;</span><span class="p">)]</span>
-    <span class="k">for</span> <span class="n">varname</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">items</span><span class="p">(</span><span class="s">&#39;DEFAULT&#39;</span><span class="p">):</span>
+    <span class="c1"># values from defaults section</span>
+    <span class="n">defaults</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">items</span><span class="p">(</span><span class="s1">&#39;DEFAULT&#39;</span><span class="p">)]</span>
+    <span class="k">for</span> <span class="n">varname</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">items</span><span class="p">(</span><span class="s1">&#39;DEFAULT&#39;</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
-            <span class="nb">vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PathVariable</span><span class="p">(</span><span class="n">varname</span><span class="p">,</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s"> (DEFAULT)&#39;</span><span class="o">%</span><span class="n">varname</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">PathVariable</span><span class="o">.</span><span class="n">PathIsDir</span><span class="p">))</span>
+            <span class="nb">vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PathVariable</span><span class="p">(</span>
+                <span class="n">varname</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> (DEFAULT)&#39;</span> <span class="o">%</span> <span class="n">varname</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">PathVariable</span><span class="o">.</span><span class="n">PathIsDir</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
-            <span class="nb">vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PathVariable</span><span class="p">(</span><span class="n">varname</span><span class="p">,</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s"> (DEFAULT)&#39;</span><span class="o">%</span><span class="n">varname</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">PathVariable</span><span class="o">.</span><span class="n">PathIsFile</span><span class="p">))</span>
+            <span class="nb">vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">PathVariable</span><span class="p">(</span><span class="n">varname</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> (DEFAULT)&#39;</span> <span class="o">%</span> <span class="n">varname</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span>
+                             <span class="n">PathVariable</span><span class="o">.</span><span class="n">PathIsFile</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="nb">vars</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">varname</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">val</span><span class="p">))</span>
 
     <span class="k">for</span> <span class="n">sec</span> <span class="ow">in</span> <span class="n">secnames</span><span class="p">:</span>
-        <span class="c"># input files and directories</span>
+        <span class="c1"># input files and directories</span>
         <span class="k">for</span> <span class="n">varname</span><span class="p">,</span><span class="n">pth</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">items</span><span class="p">(</span><span class="n">fmt_in</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()):</span>
             <span class="k">if</span> <span class="n">varname</span> <span class="ow">in</span> <span class="n">defaults</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">pth</span><span class="p">):</span>
                 <span class="n">pth</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">pth</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">indir</span><span class="p">:</span> 
+            <span class="k">elif</span> <span class="n">indir</span><span class="p">:</span>
                 <span class="n">pth</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">indir</span><span class="p">,</span> <span class="n">pth</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span>
-                    <span class="s">&#39;Error in [</span><span class="si">%(sec)s</span><span class="s">] </span><span class="si">%(varname)s</span><span class="s"> = </span><span class="si">%(pth)s</span><span class="s">: specify either an existing path or provide a default input directory using `indir`&#39;</span> <span class="o">%</span> \
+                    <span class="s1">&#39;Error in [</span><span class="si">%(sec)s</span><span class="s1">] </span><span class="si">%(varname)s</span><span class="s1"> = </span><span class="si">%(pth)s</span><span class="s1">: specify either an existing path or provide a default input directory using `indir`&#39;</span> <span class="o">%</span> \
                         <span class="nb">locals</span><span class="p">())</span>
 
-            <span class="nb">vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PathVariable</span><span class="p">(</span><span class="n">varname</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">pth</span><span class="p">))</span>
+            <span class="nb">vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PathVariable</span><span class="p">(</span><span class="n">varname</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">pth</span><span class="p">))</span>
 
-        <span class="c"># output files and directories</span>
+        <span class="c1"># output files and directories</span>
         <span class="k">for</span> <span class="n">varname</span><span class="p">,</span><span class="n">pth</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">items</span><span class="p">(</span><span class="n">fmt_out</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()):</span>
             <span class="k">if</span> <span class="n">varname</span> <span class="ow">in</span> <span class="n">defaults</span><span class="p">:</span>
                 <span class="k">continue</span>
-            <span class="k">elif</span> <span class="n">outdir</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">pth</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">outdir</span><span class="p">)</span> <span class="ow">or</span> <span class="n">pth</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)):</span>
+            <span class="k">elif</span> <span class="n">outdir</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">pth</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">outdir</span><span class="p">)</span> <span class="ow">or</span> <span class="n">pth</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)):</span>
                 <span class="n">pth</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="n">pth</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">pth</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">pth</span><span class="p">)</span>
 
-            <span class="c"># TODO: document this behavior (assume var is a directory if ends with &#39;dir&#39;)</span>
-            <span class="k">if</span> <span class="n">varname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&#39;dir&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">pth</span><span class="p">):</span>
+            <span class="c1"># TODO: document this behavior (assume var is a directory if ends with &#39;dir&#39;)</span>
+            <span class="k">if</span> <span class="n">varname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;dir&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">pth</span><span class="p">):</span>
                 <span class="n">pvar</span> <span class="o">=</span> <span class="n">PathVariable</span><span class="o">.</span><span class="n">PathIsDirCreate</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">pvar</span> <span class="o">=</span> <span class="n">PathVariable</span><span class="o">.</span><span class="n">PathAccept</span>
-            
-            <span class="nb">vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PathVariable</span><span class="p">(</span><span class="n">varname</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">pth</span><span class="p">,</span> <span class="n">pvar</span><span class="p">))</span>
 
-        <span class="c"># ordinary variables; no path checking or directory creation</span>
+            <span class="nb">vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PathVariable</span><span class="p">(</span><span class="n">varname</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">pth</span><span class="p">,</span> <span class="n">pvar</span><span class="p">))</span>
+
+        <span class="c1"># ordinary variables; no path checking or directory creation</span>
         <span class="n">params</span> <span class="o">=</span> <span class="n">fmt_params</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">varname</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">items</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">varname</span> <span class="ow">in</span> <span class="n">defaults</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="nb">vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="p">(</span><span class="n">varname</span><span class="p">,</span> <span class="s">&#39;</span><span class="si">%(varname)s</span><span class="s">: defined in [</span><span class="si">%(params)s</span><span class="s">]&#39;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">(),</span> <span class="n">val</span><span class="p">))</span>
+                <span class="p">(</span><span class="n">varname</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">%(varname)s</span><span class="s1">: defined in [</span><span class="si">%(params)s</span><span class="s1">]&#39;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">(),</span> <span class="n">val</span><span class="p">))</span>
 
-    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">vars</span><span class="p">)</span>
-</pre></div></div>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">vars</span><span class="p">)</span></div>
+
+</pre></div>
 
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<div id="searchbox" style="display: none">
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -182,14 +177,14 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">bioscons 0.7.1-1-g2c24480 documentation</a> &raquo;</li>
-          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">bioscons 0.8.1+19.gd951698 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
-    <div class="footer">
-        &copy; Copyright 2014, Noah Hoffman.
-      Last updated on Jul 10, 2014.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2014, Noah Hoffman.
+      Last updated on Nov 29, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>
