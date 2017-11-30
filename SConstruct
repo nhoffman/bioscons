@@ -10,7 +10,7 @@ if not venv:
 
 import SCons
 from SCons.Script import (SConscript, Environment, Variables,
-                          Depends, Help, Dir, Flatten, Alias, Default,
+                          Depends, Help, Flatten, Alias, Default,
                           GetOption)
 
 # Ensure that the bioscons version number is up to date with the git
@@ -27,8 +27,7 @@ vars = Variables()
 # SHELLOPTS sets shell options to fail (including piped commands) with
 # nonzero exit status; this requires bash.
 env = Environment(
-    ENV=dict(os.environ, PATH=PATH, SHELLOPTS='errexit:pipefail'
-         ),
+    ENV=dict(os.environ, PATH=PATH),
     variables=vars,
     SHELL='bash'
 )
@@ -79,7 +78,8 @@ docs_index = env.Command(
         bioscons_source,
     ]),
     action="cd docs && make html"
-    )
+)
+Depends(docs_index, "bioscons/data/ver")
 Alias('docs', docs_index)
 Default(docs_index)
 
@@ -92,7 +92,7 @@ if os.path.exists(pypirc):
         target='dist.log',
         source=build,
         action='twine upload $SOURCES > $TARGET'
-        )
+    )
     Alias('pypi', pypi_log)
     Depends(pypi_log, pypirc)
 
