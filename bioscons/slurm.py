@@ -141,9 +141,10 @@ class SlurmEnvironment(SConsEnvironment):
         """
         Run ``action`` with srun.
 
-        This method should be used for multithreaded jobs on a single machine
-        only. By default, calls to SlurmEnvironment.Command use srun. Specify a
-        number of processors with ``ncores``.
+        This method should be used for multithreaded jobs on a single
+        machine only. By default, calls to SlurmEnvironment.Command
+        use srun. Specify a number of processors with ``ncores``,
+        which provides a value for ``srun -c/--cpus-per-task``.
 
         Optional arguments:
         ``slurm_args``: Additional arguments to pass to salloc
@@ -161,6 +162,10 @@ class SlurmEnvironment(SConsEnvironment):
 
     def Command(self, target, source, action,
                 use_cluster=True, time=True, **kw):
+        """Dispatches ``action`` (and extra arguments) to ``SRun`` if
+        ``use_cluster`` is True.
+
+        """
         if isinstance(action, str) and use_cluster and self.use_cluster:
             return self.SRun(target, source, action, time=time, **kw)
         elif isinstance(action, str) and time and self.time:
