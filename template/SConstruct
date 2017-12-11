@@ -1,28 +1,156 @@
+"""
+SConstruct Template
+
+usage::
+
+  scons [scons-args] -- settings.conf [user-args]
+"""
+
 import os
+import sys
 import configparser
+import argparse
+from os import path, environ
 
-import sconstools.utils as utils
+from SCons.Script import (ARGUMENTS, Variables, Decider, SConscript, AlwaysBuild,
+                          PathVariable, Flatten, Depends, Alias, Help, BoolVariable)
 
-#### define variables
-config = configparser.SafeConfigParser()
-config.optionxform = str # preserve case of options
+# requirements installed in the virtualenv
+from bioscons.fileutils import Targets, rename
+from bioscons.slurm import SlurmEnvironment
 
-setupfile = 'setup.ini'
-print('reading configuration from %s' % setupfile)
-config.read(setupfile)
+########################################################################
+########################  input data  ##################################
+#######################################################################
 
-basedir = os.path.abspath(config.get('DEFAULT','basedir'))
-indir = config.get('DEFAULT','datadir')
-outdir= config.get('DEFAULT','outdir')
+# arguments after "--" are ignored by scons
+user_args = sys.argv[1 + sys.argv.index('--'):] if '--' in sys.argv else []
 
+# we'd like to use some default values from the config file as we set
+# up the command line options, but we also want to be able to specify
+# the config file from the command line. This makes things a bit
+# convoluted at first.
+settings_default = 'settings.conf'
+if user_args and path.exists(user_args[0]):
+    settings = user_args[0]
+elif path.exists(settings_default):
+    settings = settings_default
+else:
+    sys.exit('A configuration file must be provided, either as '
+             'the first argument after "--", or named "{}" '
+             'in this directory'.format(settings_default))
+
+conf = configparser.SafeConfigParser(allow_no_value=True)
+conf.read(settings)
+
+thisdir = path.basename(os.getcwd())
+
+# Ensure that we are using a virtualenv, and that we are using the one
+# specified in the config if provided.
+try:
+    venv = environ['VIRTUAL_ENV']
+except KeyError:
+    sys.exit('an active virtualenv is required')
+
+venv_conf = conf['DEFAULT'].get('virtualenv')
+if venv_conf and environ['VIRTUAL_ENV'] != path.abspath(venv_conf):
+    sys.exit('expected virtualenv {} but {} is active'.format(
+        path.abspath(venv_conf), environ['VIRTUAL_ENV']))
+
+# define parser and parse arguments following '--'
+parser = argparse.ArgumentParser(
+    description=__doc__,
+    formatter_class=argparse.RawDescriptionHelpFormatter)
+parser.add_argument(
+    'config', help="configuration file [%(default)s]",
+    nargs='*', default=settings_default)
+parser.add_argument(
+    '--outdir', help='output directory [%(default)s]',
+    default=conf['output'].get('outdir', 'output'))
+parser.add_argument(
+    '--nproc', type=int, default=20,
+    help='number of processes for parallel tasks')
+
+scons_args = parser.add_argument_group('scons options')
+scons_args.add_argument(
+    '--sconsign-in-outdir', action='store_true', default=False,
+    help="""store file signatures in a separate
+    .sconsign file in the output directory""")
+
+slurm_args = parser.add_argument_group('slurm options')
+slurm_args.add_argument(
+    '--use-slurm', action='store_true', default=False)
+slurm_args.add_argument(
+    '--slurm-account', help='provide a value for environment variable SLURM_ACCOUNT')
+
+args = parser.parse_args(user_args)
+
+singularity = conf['singularity'].get('singularity', 'singularity')
+deenurp_img = conf['singularity']['deenurp']
+dada2_img = conf['singularity']['dada2']
+
+outdir = args.outdir
+
+########################################################################
+#########################  end input data  #############################
+########################################################################
+
+# check timestamps before calculating md5 checksums
+Decider('MD5-timestamp')
+
+# declare variables for the environment
 vars = Variables()
-varlist = utils.getvars(config, ['example'], indir=indir, outdir=outdir)
-vars.AddVariables(*varlist)
+vars.Add('out', None, args.outdir)
+vars.Add('nproc', None, args.nproc)
+vars.Add('venv', None, venv)
 
-env = Environment(ENV=os.environ, variables=vars)
+# Explicitly define PATH, giving preference to local executables; it's
+# best to use absolute paths for non-local executables rather than add
+# paths here to avoid accidental introduction of external
+# dependencies.
+env = SlurmEnvironment(
+    ENV=dict(
+        os.environ,
+        PATH=':'.join(['bin', path.join(venv, 'bin'),
+                       '/usr/local/bin', '/usr/bin', '/bin']),
+        OMP_NUM_THREADS=args.nproc,  # for FastTree
+    ),
+    variables=vars,
+    use_cluster=args.use_slurm,
+    SHELL='bash',
+    cwd=os.getcwd(),
+    deenurp_img=('{} exec -B $cwd --pwd $cwd {}'.format(
+        singularity, deenurp_img)),
+    dada2_img=('{} exec -B $cwd --pwd $cwd {}'.format(
+        singularity, dada2_img))
+)
 
-### builders
-env['BUILDERS']['copyfile'] = builders.copyfile
+# see http://www.scons.org/doc/HTML/scons-user/a11726.html
+if args.sconsign_in_outdir:
+    env.SConsignFile(None)
 
-## the example below copies a file from one directory to another
-nothing_out = env.copyfile(target='$nothing_out', source='$nothing_in')
+# keep track of output files
+targets = Targets()
+
+# begin analysis ###############
+
+# end analysis #################
+
+version_info = env.Command(
+    target='$out/version_info.txt',
+    source=None,
+    action=('('
+            'date; echo; '
+            'pwd; echo; '
+            'git status; echo; '
+            'git --no-pager log -n 1 '
+            ')'
+            '> $TARGET')
+)
+AlwaysBuild(version_info)
+
+# end analysis
+targets.update(locals().values())
+
+# identify extraneous files
+targets.show_extras(env['out'])
