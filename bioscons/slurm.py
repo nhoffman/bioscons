@@ -99,6 +99,8 @@ class SlurmEnvironment(SConsEnvironment):
         precious = kw.pop('precious', self.all_precious)
 
         if time and self.time:
+            cmd = self.subst(action, SCons.Subst.SUBST_RAW, target, source)
+            self.Depends(target, self.WhereIs(cmd.split()[0]))
             action = _time + action
 
         if self.use_cluster:
@@ -169,6 +171,8 @@ class SlurmEnvironment(SConsEnvironment):
         if isinstance(action, str) and use_cluster and self.use_cluster:
             return self.SRun(target, source, action, time=time, **kw)
         elif isinstance(action, str) and time and self.time:
+            cmd = self.subst(action, SCons.Subst.SUBST_RAW, target, source)
+            self.Depends(target, self.WhereIs(cmd.split()[0]))
             action = _time + action
             return super(SlurmEnvironment, self).Command(
                 target, source, action, **kw)
