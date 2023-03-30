@@ -2,6 +2,12 @@
  Changes for bioscons
 ======================
 
+0.9.1-dev
+=========
+
+* Binaries and scripts that come first in the command are explicitly
+  added to SCons dependency before anything else is prepended to command string
+
 0.9.0
 =====
 
