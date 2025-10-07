@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=64", "setuptools-scm>=8"]
+build-backend = "setuptools.build_meta"
+
+[project]
+authors = [
+  {email = "noah.hoffman@gmail.com"},
+  {name = "Noah Hoffman"}
+]
+dependencies = ["scons>=2.4.0"]
+description="Extends the scons build tool for reproducible research in bioinformatics."
+dynamic = ["version"]
+maintainers = [
+  {email = "crosenth@uw.edu", name="Chris Rosenthal"},
+]
+name = "bioscons"
+readme = "README.rst"
+requires-python = ">=3.5"
+
+[project.urls]
+repository = "http://github.com/nhoffman/bioscons"
+
+[tool.setuptools_scm]
+# can be empty if no extra settings are needed, presence enables setuptools-scm
