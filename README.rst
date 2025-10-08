@@ -133,11 +133,7 @@ virtualenv rather than to your system due to idiosyncrasies in the
 ``scons`` is likely to be installed by package managers. This option
 is available using either python 2.7 or 3.5+
 
-Start by creating a virtualenv. For python2.7::
-
-  virtualenv bioscons-env
-
-and for python 3.5+::
+Start by creating a virtualenv::
 
   python3 -m venv bioscons-env
 
