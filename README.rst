@@ -111,7 +111,7 @@ Installation
 dependencies
 ------------
 
-* Python 2.7, 3.5+
+* Python 3.5+
 * scons 2.4+
 
 installation scenarios
