@@ -67,14 +67,14 @@ class SlurmEnvironment(SConsEnvironment):
             self.SetPartition(slurm_queue)
         self.shell = kwargs.get('SHELL', 'sh')
 
-    def _BioCommand(self, target, source, action, slurm_cmd, time, **kw):
-        if time:
+    def _SlurmCommand(self, target, source, action, slurm_cmd, time, **kw):
+        if time or slurm_cmd:
+            kw['IMPLICIT_COMMAND_DEPENDENCIES'] = False
             cmd = self.subst(action, SCons.Subst.SUBST_RAW, target, source)
             self.Depends(target, self.WhereIs(cmd.split(maxsplit=1)[0]))
-            self.Ignore(target, _time.split(maxsplit=1)[0])
 
-        action = _BioAction(action, self.shell, slurm_cmd, time,
-                            kw.pop('slurm_args', ''), self.verbose)
+        action = _SlurmAction(action, self.shell, slurm_cmd, time,
+                              kw.pop('slurm_args', ''), self.verbose)
 
         env = super(SlurmEnvironment, self)
         result = env.Command(target, source, action, **kw)
@@ -94,7 +94,7 @@ class SlurmEnvironment(SConsEnvironment):
         if isinstance(action, str):
             time = time and self.time
             slurm_cmd = 'srun' if use_cluster and self.use_cluster else None
-            return self._BioCommand(
+            return self._SlurmCommand(
                 target, source, action, slurm_cmd, time=time, **kw)
         else:
             super().Command(target, source, action, **kw)
@@ -188,15 +188,15 @@ class SlurmEnvironment(SConsEnvironment):
         self['ENV']['SALLOC_TIMELIMIT'] = timelimit
 
 
-class _BioAction(SCons.Action.CommandAction):
+class _SlurmAction(SCons.Action.CommandAction):
     def __init__(
             self, command, shell, slurm_cmd, time, slurm_args, verbose=False):
         if slurm_cmd:
+            name = self.job_name(command)
             if time:
                 action = _time + self._quote_action(shell, command)
             else:
                 action = self._quote_action(shell, command)
-            name = self.slurm_job_name(command)
             if slurm_args:
                 action = f'{slurm_cmd} {slurm_args} -J "{name}" {action}'
             else:
@@ -208,16 +208,6 @@ class _BioAction(SCons.Action.CommandAction):
         self.command = action if verbose else command
         SCons.Action.CommandAction.__init__(self, action)
 
-    def _quote_action(self, shell, action):
-        return shell + ' -c ' + self._quote(action)
-
-    def slurm_job_name(self, command):
-        command = command.split()
-        name = command.pop(0)
-        while name.startswith('$'):
-            name = command.pop(0)
-        return name
-
     def _quote(self, s):
         """Return a shell-escaped version of the string *s*."""
         if not s:
@@ -228,6 +218,16 @@ class _BioAction(SCons.Action.CommandAction):
         # use single quotes, and put single quotes into double quotes
         # the string $'b is then quoted as '$'"'"'b'
         return "'" + s.replace("'", "'\"'\"'") + "'"
+
+    def _quote_action(self, shell, action):
+        return shell + ' -c ' + self._quote(action)
+
+    def job_name(self, command):
+        command = command.split()
+        name = command.pop(0)
+        while name.startswith('$'):
+            name = command.pop(0)
+        return name
 
     def print_cmd_line(self, _, target, source, env):
         c = env.subst(self.command, SCons.Subst.SUBST_RAW, target, source)
