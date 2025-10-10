@@ -175,7 +175,7 @@ used within your pipeline.
 Monitoring Slurm tasks                                                                                                                                                                                                                                                                                                                                                                        
 ======================                                                                                                                                                                                                                                                                                                                                                                        
                                                                                                                                                                                                                                                                                                                                                                                               
-A useful way to monitor a slurm queue is to use watch::
+A useful way to monitor a slurm queue on a Linux system is to use watch::
 
  watch squeue
 
