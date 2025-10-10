@@ -68,16 +68,27 @@ class SlurmEnvironment(SConsEnvironment):
         self.shell = kwargs.get('SHELL', 'sh')
 
     def _SlurmCommand(self, target, source, action, slurm_cmd, time, **kw):
+        if not isinstance(action, list):
+            action = [action]
         if time or slurm_cmd:
             kw['IMPLICIT_COMMAND_DEPENDENCIES'] = False
-            cmd = self.subst(action, SCons.Subst.SUBST_RAW, target, source)
-            self.Depends(target, self.WhereIs(cmd.split(maxsplit=1)[0]))
+            for a in action:
+                cmd = self.subst(a, SCons.Subst.SUBST_RAW, target, source)
+                cmd = cmd.split(maxsplit=1)[0]
+                self.Depends(target, self.WhereIs(cmd))
 
-        action = _SlurmAction(action, self.shell, slurm_cmd, time,
-                              kw.pop('slurm_args', ''), self.verbose)
+        actions = []
+        for a in action:
+            if isinstance(a, str):
+                actions.append(
+                    _SlurmAction(a, self.shell, slurm_cmd, time,
+                                 kw.pop('slurm_args', ''), self.verbose)
+                    )
+            else:
+                actions.append(a)
 
         env = super(SlurmEnvironment, self)
-        result = env.Command(target, source, action, **kw)
+        result = env.Command(target, source, actions, **kw)
 
         if kw.pop('precious', self.all_precious):
             self.Precious(result)
@@ -90,14 +101,10 @@ class SlurmEnvironment(SConsEnvironment):
         ``use_cluster`` is True.
 
         """
-        # FIXME: action can be a list
-        if isinstance(action, str):
-            time = time and self.time
-            slurm_cmd = 'srun' if use_cluster and self.use_cluster else None
-            return self._SlurmCommand(
-                target, source, action, slurm_cmd, time=time, **kw)
-        else:
-            super().Command(target, source, action, **kw)
+        time = time and self.time
+        slurm_cmd = 'srun' if use_cluster and self.use_cluster else None
+        return self._SlurmCommand(
+            target, source, action, slurm_cmd, time=time, **kw)
 
     def SAlloc(self, target, source, action, ncores,
                timelimit=None, time=True, **kw):
@@ -113,7 +120,7 @@ class SlurmEnvironment(SConsEnvironment):
         ``timelimit``: value to use for environment variable SALLOC_TIMELIMIT
         """
         slurm_args = kw.pop('slurm_args', '')
-        slurm_args = ' '.join('-n {0}'.format(ncores), slurm_args)
+        slurm_args = ' '.join(['-n {0}'.format(ncores), slurm_args])
         e = self
 
         if timelimit is not None:
@@ -121,7 +128,9 @@ class SlurmEnvironment(SConsEnvironment):
             clone.SetTimeLimit(timelimit)
             e = clone
 
-        return e._SlurmCommand(target, source, action, 'salloc',
+        slurm_cmd = 'salloc' if self.use_cluster else None
+
+        return e._SlurmCommand(target, source, action, slurm_cmd,
                                time, slurm_args=slurm_args, **kw)
 
     def SRun(self, target, source, action, ncores=1,
@@ -147,7 +156,10 @@ class SlurmEnvironment(SConsEnvironment):
         if slurm_queue is not None:
             clone.SetPartition(slurm_queue)
 
-        return clone._SlurmCommand(target, source, action, 'srun', time, **kw)
+        slurm_cmd = 'srun' if self.use_cluster else None
+
+        return clone._SlurmCommand(
+            target, source, action, slurm_cmd, time, **kw)
 
     def Local(self, target, source, action, time=True, **kw):
         """
