@@ -4,15 +4,8 @@ from scons.
 """
 
 import re
-import shlex
+import SCons
 import subprocess
-
-from bioscons import add_scons_lib
-
-try:
-    import SCons
-except ImportError:
-    add_scons_lib()
 
 from SCons.Script.SConscript import SConsEnvironment
 
@@ -29,27 +22,12 @@ def check_srun():
     """
 
     try:
-        srun = subprocess.check_output(['which', 'srun']).strip().decode("utf-8")
+        srun = subprocess.check_output(['which', 'srun'])
+        srun = srun.strip().decode("utf-8")
     except subprocess.CalledProcessError:
         srun = None
 
     return srun
-
-
-def _quote(s):
-    """Return a shell-escaped version of the string *s*."""
-    if not s:
-        return "''"
-    if _find_unsafe(s) is None:
-        return s
-
-    # use single quotes, and put single quotes into double quotes
-    # the string $'b is then quoted as '$'"'"'b'
-    return "'" + s.replace("'", "'\"'\"'") + "'"
-
-
-def _action_name(action):
-    return shlex.split(action)[0] if action else None
 
 
 def _check_type(bool_vars):
@@ -73,7 +51,7 @@ class SlurmEnvironment(SConsEnvironment):
     """
 
     def __init__(self, use_cluster=True, slurm_queue=None,
-                 all_precious=False, time=False, **kwargs):
+                 all_precious=False, time=False, verbose=False, **kwargs):
         super(SlurmEnvironment, self).__init__(**kwargs)
 
         # check boolean types because so often these are accidentally strings
@@ -84,38 +62,52 @@ class SlurmEnvironment(SConsEnvironment):
         self.use_cluster = use_cluster
         self.all_precious = all_precious
         self.time = time
+        self.verbose = verbose
         if slurm_queue:
             self.SetPartition(slurm_queue)
         self.shell = kwargs.get('SHELL', 'sh')
 
-    def _quote_action(self, action):
-        return '{shell} -c {action}'.format(shell=self.shell,
-                                            action=_quote(action))
+    def _SlurmCommand(self, target, source, action, slurm_cmd, time, **kw):
+        if not isinstance(action, list):
+            action = [action]
+        if time or slurm_cmd:
+            kw['IMPLICIT_COMMAND_DEPENDENCIES'] = False
+            for a in action:
+                cmd = self.subst(a, SCons.Subst.SUBST_RAW, target, source)
+                cmd = cmd.split(maxsplit=1)[0]
+                self.Depends(target, self.WhereIs(cmd))
 
-    def _SlurmCommand(self, target, source, action, slurm_command='srun',
-                      name='', time=True, **kw):
+        actions = []
+        for a in action:
+            if isinstance(a, str):
+                actions.append(
+                    _SlurmAction(a, self.shell, slurm_cmd, time,
+                                 kw.pop('slurm_args', ''), self.verbose)
+                    )
+            else:
+                actions.append(a)
 
-        slurm_args = kw.pop('slurm_args', '')
-        precious = kw.pop('precious', self.all_precious)
+        env = super(SlurmEnvironment, self)
+        result = env.Command(target, source, actions, **kw)
 
-        if time and self.time:
-            cmd = self.subst(action, SCons.Subst.SUBST_RAW, target, source)
-            self.Depends(target, self.WhereIs(cmd.split()[0]))
-            action = _time + action
-
-        if self.use_cluster:
-            action = '{cmd} {slurm_args} -J "{name}" {action}'.format(
-                cmd=slurm_command,
-                slurm_args=slurm_args,
-                name=_action_name(action),
-                action=self._quote_action(action))
-        result = super(SlurmEnvironment, self).Command(
-            target, source, action, **kw)
-        if precious:
+        if kw.pop('precious', self.all_precious):
             self.Precious(result)
+
         return result
 
-    def SAlloc(self, target, source, action, ncores, timelimit=None, **kw):
+    def Command(
+            self, target, source, action, use_cluster=True, time=True, **kw):
+        """Dispatches ``action`` (and extra arguments) to ``SRun`` if
+        ``use_cluster`` is True.
+
+        """
+        time = time and self.time
+        slurm_cmd = 'srun' if use_cluster and self.use_cluster else None
+        return self._SlurmCommand(
+            target, source, action, slurm_cmd, time=time, **kw)
+
+    def SAlloc(self, target, source, action, ncores,
+               timelimit=None, time=True, **kw):
         """
         Run ``action`` with salloc.
 
@@ -127,7 +119,8 @@ class SlurmEnvironment(SConsEnvironment):
         ``slurm_args``: Additional arguments to pass to salloc
         ``timelimit``: value to use for environment variable SALLOC_TIMELIMIT
         """
-        args = ' '.join(('-n {0}'.format(ncores), kw.pop('slurm_args', '')))
+        slurm_args = kw.pop('slurm_args', '')
+        slurm_args = ' '.join(['-n {0}'.format(ncores), slurm_args])
         e = self
 
         if timelimit is not None:
@@ -135,11 +128,13 @@ class SlurmEnvironment(SConsEnvironment):
             clone.SetTimeLimit(timelimit)
             e = clone
 
-        return e._SlurmCommand(target, source, action, 'salloc',
-                               slurm_args=args, **kw)
+        slurm_cmd = 'salloc' if self.use_cluster else None
+
+        return e._SlurmCommand(target, source, action, slurm_cmd,
+                               time, slurm_args=slurm_args, **kw)
 
     def SRun(self, target, source, action, ncores=1,
-             timelimit=None, slurm_queue=None, **kw):
+             timelimit=None, slurm_queue=None, time=True, **kw):
         """
         Run ``action`` with srun.
 
@@ -152,6 +147,7 @@ class SlurmEnvironment(SConsEnvironment):
         ``slurm_args``: Additional arguments to pass to salloc
         ``timelimit``: Value to use for environment variable SLURM_TIMELIMIT
         """
+
         clone = self.Clone()
         if ncores > 1:
             clone.SetCpusPerTask(ncores)
@@ -160,31 +156,17 @@ class SlurmEnvironment(SConsEnvironment):
         if slurm_queue is not None:
             clone.SetPartition(slurm_queue)
 
-        return clone._SlurmCommand(target, source, action, **kw)
+        slurm_cmd = 'srun' if self.use_cluster else None
 
-    def Command(self, target, source, action,
-                use_cluster=True, time=True, **kw):
-        """Dispatches ``action`` (and extra arguments) to ``SRun`` if
-        ``use_cluster`` is True.
+        return clone._SlurmCommand(
+            target, source, action, slurm_cmd, time, **kw)
 
-        """
-        if isinstance(action, str) and use_cluster and self.use_cluster:
-            return self.SRun(target, source, action, time=time, **kw)
-        elif isinstance(action, str) and time and self.time:
-            cmd = self.subst(action, SCons.Subst.SUBST_RAW, target, source)
-            self.Depends(target, self.WhereIs(cmd.split()[0]))
-            action = _time + action
-            return super(SlurmEnvironment, self).Command(
-                target, source, action, **kw)
-        else:
-            return super(SlurmEnvironment, self).Command(
-                target, source, action, **kw)
-
-    def Local(self, target, source, action, **kw):
+    def Local(self, target, source, action, time=True, **kw):
         """
         Run a command locally, without SLURM
         """
-        return self.Command(target, source, action, use_cluster=False, **kw)
+        return self.Command(
+            target, source, action, use_cluster=False, time=time, **kw)
 
     def SetPartition(self, partition):
         """
@@ -216,3 +198,49 @@ class SlurmEnvironment(SConsEnvironment):
         """
         self['ENV']['SLURM_TIMELIMIT'] = timelimit
         self['ENV']['SALLOC_TIMELIMIT'] = timelimit
+
+
+class _SlurmAction(SCons.Action.CommandAction):
+    def __init__(
+            self, command, shell, slurm_cmd, time, slurm_args, verbose=False):
+        if slurm_cmd:
+            name = self.job_name(command)
+            if time:
+                action = _time + self._quote_action(shell, command)
+            else:
+                action = self._quote_action(shell, command)
+            if slurm_args:
+                action = f'{slurm_cmd} {slurm_args} -J "{name}" {action}'
+            else:
+                action = f'{slurm_cmd} -J "{name}" {action}'
+        elif time:
+            action = _time + command
+        else:
+            action = command
+        self.command = action if verbose else command
+        SCons.Action.CommandAction.__init__(self, action)
+
+    def _quote(self, s):
+        """Return a shell-escaped version of the string *s*."""
+        if not s:
+            return "''"
+        if _find_unsafe(s) is None:
+            return s
+
+        # use single quotes, and put single quotes into double quotes
+        # the string $'b is then quoted as '$'"'"'b'
+        return "'" + s.replace("'", "'\"'\"'") + "'"
+
+    def _quote_action(self, shell, action):
+        return shell + ' -c ' + self._quote(action)
+
+    def job_name(self, command):
+        command = command.split()
+        name = command.pop(0)
+        while name.startswith('$'):
+            name = command.pop(0)
+        return name
+
+    def print_cmd_line(self, _, target, source, env):
+        c = env.subst(self.command, SCons.Subst.SUBST_RAW, target, source)
+        SCons.Action.CommandAction.print_cmd_line(self, c, target, source, env)

@@ -5,9 +5,6 @@
 This package extends the scons build tool for the construction of
 reproducible workflows in bioinformatics.
 
-.. image:: https://travis-ci.org/nhoffman/bioscons.svg?branch=master
-    :target: https://travis-ci.org/nhoffman/bioscons
-
 Documentation is available on github: http://nhoffman.github.io/bioscons/
 
 Background
@@ -111,7 +108,7 @@ Installation
 dependencies
 ------------
 
-* Python 2.7, 3.5+
+* Python 3.5+
 * scons 2.4+
 
 installation scenarios
@@ -131,13 +128,9 @@ We strongly recommend installing both this package and ``scons`` to a
 virtualenv rather than to your system due to idiosyncrasies in the
 ``scons`` installation script, and the fact that an older version of
 ``scons`` is likely to be installed by package managers. This option
-is available using either python 2.7 or 3.5+
+is available using Python 3.5+
 
-Start by creating a virtualenv. For python2.7::
-
-  virtualenv bioscons-env
-
-and for python 3.5+::
+Start by creating a virtualenv::
 
   python3 -m venv bioscons-env
 
@@ -150,7 +143,7 @@ installed::
   pip install bioscons
 
 Take care that pip corresponds to the intended version of the python
-interpreter; a safer option may be to use ``pip2`` or ``pip3``.
+interpreter; a safer option may be to use ``pip3``.
 
 installation from source (for development)
 ------------------------------------------
@@ -160,7 +153,6 @@ installation from source (for development)
   https://github.com/nhoffman/bioscons.git
   cd bioscons
   python3 -m venv bioscons-env
-  # or, for python2: virtualenv bioscons-env
   source bioscons-env/bin/activate
   pip install -U pip wheel
   pip install -e .
@@ -179,3 +171,13 @@ your ``SConstruct``::
 
 It is best to define the ``$PATH`` used to locate executables that are
 used within your pipeline.
+
+Monitoring Slurm tasks                                                                                                                                                                                                                                                                                                                                                                        
+======================                                                                                                                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                                                                                                                              
+A useful way to monitor a slurm queue on a Linux system is to use watch::
+
+ watch squeue
+
+For more information on managing Slurm tasks and installing Slurm
+on your system go to https://slurm.schedmd.com/documentation.html
