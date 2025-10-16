@@ -2,11 +2,17 @@
  Changes for bioscons
 ======================
 
-0.9.1-dev
+1.0.0
 =========
 
 * Binaries and scripts that come first in the command are explicitly
   added to SCons dependency before anything else is prepended to command string
+* Multi-step Commands are now handled properly [GH: 25]
+* Migrated setup.py to pyproject.toml with dynamic Git versioning
+* Python 3.5 only support
+* Time and slurm functions ignored in Command state
+* /usr/bin/time and slurm prepending is not shown be defualt in decision
+  tree but can be shown with env.SlurmCommand(verbose=True)
 
 0.9.0
 =====
