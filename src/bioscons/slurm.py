@@ -203,21 +203,25 @@ class SlurmEnvironment(SConsEnvironment):
 class _SlurmAction(SCons.Action.CommandAction):
     def __init__(
             self, command, shell, slurm_cmd, time, slurm_args, verbose=False):
+        '''
+        Modify command with slurm and/or /usr/bin/time
+        Slurm is ignored as part of the scons decision tree
+        '''
+        action = command
+        self.presig_cmd = action
+        if slurm_cmd:
+            action = self._quote_action(shell, command)
+        if time:
+            action = _time + command
+            # prepending _time will trigger re-execution
+            self.presig_cmd = action
         if slurm_cmd:
             name = self.job_name(command)
-            if time:
-                action = _time + self._quote_action(shell, command)
-            else:
-                action = self._quote_action(shell, command)
             if slurm_args:
                 action = f'{slurm_cmd} {slurm_args} -J "{name}" {action}'
             else:
                 action = f'{slurm_cmd} -J "{name}" {action}'
-        elif time:
-            action = _time + command
-        else:
-            action = command
-        self.command = action if verbose else command
+        self.print_cmd = action if verbose else command
         SCons.Action.CommandAction.__init__(self, action)
 
     def _quote(self, s):
@@ -241,6 +245,10 @@ class _SlurmAction(SCons.Action.CommandAction):
             name = command.pop(0)
         return name
 
+    def get_presig(self, target, source, env, executor=None):
+        return env.subst_target_source(
+            self.presig_cmd, SCons.Subst.SUBST_SIG, target, source)
+
     def print_cmd_line(self, _, target, source, env):
-        c = env.subst(self.command, SCons.Subst.SUBST_RAW, target, source)
+        c = env.subst(self.print_cmd, SCons.Subst.SUBST_RAW, target, source)
         SCons.Action.CommandAction.print_cmd_line(self, c, target, source, env)
