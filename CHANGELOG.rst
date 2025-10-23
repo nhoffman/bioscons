@@ -2,14 +2,19 @@
  Changes for bioscons
 ======================
 
+1.1.0
+=====
+
+* Slurm binaries are ignored as part of the Scons pipeline decision tree database
+
 1.0.0
 =========
 
 * Binaries and scripts that come first in the command are explicitly
-  added to SCons dependency before anything else is prepended to command string
+  added as an SCons dependency before anything else is prepended to command string
 * Multi-step Commands are now handled properly [GH: 25]
 * Migrated setup.py to pyproject.toml with dynamic Git versioning
-* Python 3.5 only support
+* Python 3.10+ only support (scons 3+ only)
 * Time and slurm functions ignored in Command state
 * /usr/bin/time and slurm prepending is not shown be defualt in decision
   tree but can be shown with env.SlurmCommand(verbose=True)
