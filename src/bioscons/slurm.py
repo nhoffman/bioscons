@@ -12,9 +12,6 @@ from SCons.Script.SConscript import SConsEnvironment
 # From py3.3 argparse
 _find_unsafe = re.compile(r'[^\w@%+=:,./-]').search
 
-# system path to the time function
-_time = '/usr/bin/time --verbose --output ${TARGETS[0]}.time '
-
 
 def check_srun():
     """
@@ -51,26 +48,25 @@ class SlurmEnvironment(SConsEnvironment):
     """
 
     def __init__(self, use_cluster=True, slurm_queue=None,
-                 all_precious=False, time=False, verbose=False, **kwargs):
+                 all_precious=False, verbose=False, **kwargs):
         super(SlurmEnvironment, self).__init__(**kwargs)
 
         # check boolean types because so often these are accidentally strings
         _check_type([(use_cluster, 'use_cluster', bool),
                      (all_precious, 'all_precious', bool),
-                     (time, 'time', bool)])
+                     ])
 
         self.use_cluster = use_cluster
         self.all_precious = all_precious
-        self.time = time
         self.verbose = verbose
         if slurm_queue:
             self.SetPartition(slurm_queue)
         self.shell = kwargs.get('SHELL', 'sh')
 
-    def _SlurmCommand(self, target, source, action, slurm_cmd, time, **kw):
+    def _SlurmCommand(self, target, source, action, slurm_cmd, **kw):
         if not isinstance(action, list):
             action = [action]
-        if time or slurm_cmd:
+        if slurm_cmd:
             kw['IMPLICIT_COMMAND_DEPENDENCIES'] = False
             for a in action:
                 cmd = self.subst(a, SCons.Subst.SUBST_RAW, target, source)
@@ -81,7 +77,7 @@ class SlurmEnvironment(SConsEnvironment):
         for a in action:
             if isinstance(a, str):
                 actions.append(
-                    _SlurmAction(a, self.shell, slurm_cmd, time,
+                    _SlurmAction(a, self.shell, slurm_cmd,
                                  kw.pop('slurm_args', ''), self.verbose)
                     )
             else:
@@ -96,18 +92,16 @@ class SlurmEnvironment(SConsEnvironment):
         return result
 
     def Command(
-            self, target, source, action, use_cluster=True, time=True, **kw):
+            self, target, source, action, use_cluster=True, **kw):
         """Dispatches ``action`` (and extra arguments) to ``SRun`` if
         ``use_cluster`` is True.
 
         """
-        time = time and self.time
         slurm_cmd = 'srun' if use_cluster and self.use_cluster else None
         return self._SlurmCommand(
-            target, source, action, slurm_cmd, time=time, **kw)
+            target, source, action, slurm_cmd, **kw)
 
-    def SAlloc(self, target, source, action, ncores,
-               timelimit=None, time=True, **kw):
+    def SAlloc(self, target, source, action, ncores, timelimit=None, **kw):
         """
         Run ``action`` with salloc.
 
@@ -131,10 +125,10 @@ class SlurmEnvironment(SConsEnvironment):
         slurm_cmd = 'salloc' if self.use_cluster else None
 
         return e._SlurmCommand(target, source, action, slurm_cmd,
-                               time, slurm_args=slurm_args, **kw)
+                               slurm_args=slurm_args, **kw)
 
     def SRun(self, target, source, action, ncores=1,
-             timelimit=None, slurm_queue=None, time=True, **kw):
+             timelimit=None, slurm_queue=None, **kw):
         """
         Run ``action`` with srun.
 
@@ -158,15 +152,14 @@ class SlurmEnvironment(SConsEnvironment):
 
         slurm_cmd = 'srun' if self.use_cluster else None
 
-        return clone._SlurmCommand(
-            target, source, action, slurm_cmd, time, **kw)
+        return clone._SlurmCommand(target, source, action, slurm_cmd, **kw)
 
-    def Local(self, target, source, action, time=True, **kw):
+    def Local(self, target, source, action, **kw):
         """
         Run a command locally, without SLURM
         """
         return self.Command(
-            target, source, action, use_cluster=False, time=time, **kw)
+            target, source, action, use_cluster=False, **kw)
 
     def SetPartition(self, partition):
         """
@@ -202,20 +195,15 @@ class SlurmEnvironment(SConsEnvironment):
 
 class _SlurmAction(SCons.Action.CommandAction):
     def __init__(
-            self, command, shell, slurm_cmd, time, slurm_args, verbose=False):
+            self, command, shell, slurm_cmd, slurm_args, verbose=False):
         '''
-        Modify command with slurm and/or /usr/bin/time
+        Prepend command with slurm binary
         Slurm is ignored as part of the scons decision tree
         '''
         action = command
         self.presig_cmd = action
         if slurm_cmd:
             action = self._quote_action(shell, command)
-        if time:
-            action = _time + command
-            # prepending _time will trigger re-execution
-            self.presig_cmd = action
-        if slurm_cmd:
             name = self.job_name(command)
             if slurm_args:
                 action = f'{slurm_cmd} {slurm_args} -J "{name}" {action}'
