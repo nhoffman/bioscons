@@ -4,10 +4,10 @@
 
 import glob
 import sys
-import imp
+import importlib.util
 import subprocess
 from os import path
-from distutils.version import LooseVersion
+from packaging.version import Version
 
 MIN_SCONS_VERSION = '2.4.0'
 _data = path.join(path.dirname(__file__), 'data')
@@ -28,9 +28,11 @@ def add_scons_lib(min_scons_version=MIN_SCONS_VERSION):
     except subprocess.CalledProcessError:
         raise ImportError('"{}" could not be found or executed'.format('scons'))
 
-    scons_mod = imp.load_source('scons', scons_path)
+    spec = importlib.util.spec_from_file_location('scons', scons_path)
+    scons_mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(scons_mod)
 
-    if not LooseVersion(scons_mod.__version__) >= LooseVersion(min_scons_version):
+    if not Version(scons_mod.__version__) >= Version(min_scons_version):
         raise ImportError(
             'scons version >= {} is required'.format(min_scons_version))
 

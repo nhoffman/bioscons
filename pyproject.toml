@@ -7,7 +7,7 @@ authors = [
   {email = "noah.hoffman@gmail.com"},
   {name = "Noah Hoffman"}
 ]
-dependencies = ["scons>=2.4.0"]
+dependencies = ["scons>=2.4.0", "packaging"]
 description="Extends the scons build tool for reproducible research in bioinformatics."
 dynamic = ["version"]
 maintainers = [

@@ -2,6 +2,12 @@
  Changes for bioscons
 ======================
 
+1.2.0
+=====
+
+* Replace deprecated ``imp`` module with ``importlib.util`` for Python 3.12+ compatibility
+* Replace deprecated ``distutils.version.LooseVersion`` with ``packaging.version.Version``
+
 1.1.0
 =====
 
