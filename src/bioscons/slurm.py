@@ -37,6 +37,15 @@ def _check_type(bool_vars):
                 name, tp, type(var)))
 
 
+def _quote(s):
+    """Return a shell-escaped version of the string *s*."""
+    if not s:
+        return "''"
+    if _find_unsafe(s) is None:
+        return s
+    return "'" + s.replace("'", "'\"'\"'") + "'"
+
+
 class SlurmEnvironment(SConsEnvironment):
 
     """
@@ -212,19 +221,8 @@ class _SlurmAction(SCons.Action.CommandAction):
         self.print_cmd = action if verbose else command
         SCons.Action.CommandAction.__init__(self, action)
 
-    def _quote(self, s):
-        """Return a shell-escaped version of the string *s*."""
-        if not s:
-            return "''"
-        if _find_unsafe(s) is None:
-            return s
-
-        # use single quotes, and put single quotes into double quotes
-        # the string $'b is then quoted as '$'"'"'b'
-        return "'" + s.replace("'", "'\"'\"'") + "'"
-
     def _quote_action(self, shell, action):
-        return shell + ' -c ' + self._quote(action)
+        return shell + ' -c ' + _quote(action)
 
     def job_name(self, command):
         command = command.split()
