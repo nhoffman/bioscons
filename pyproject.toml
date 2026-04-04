@@ -15,7 +15,7 @@ maintainers = [
 ]
 name = "bioscons"
 readme = "README.rst"
-requires-python = ">=3.5"
+requires-python = ">=3.10"
 
 [project.urls]
 repository = "http://github.com/nhoffman/bioscons"

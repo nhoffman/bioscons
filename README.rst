@@ -108,8 +108,8 @@ Installation
 dependencies
 ------------
 
-* Python 3.5+
-* scons 2.4+
+* Python 3.10+
+* scons 3.0+
 
 installation scenarios
 ----------------------
@@ -117,9 +117,7 @@ installation scenarios
 Various installation scenarios are possible involving different
 combinations of system package installers, pip, and virtualenv vs
 system installs. We will describe only the recommended configuration
-here, although others are possible. Note that although ``bioscons``
-*should* work with scons 2.4+, ``scons`` itself is only compatible
-with python 3 in versions > 3.0.0
+here, although others are possible. Note that ``bioscons`` requires scons 3.0+
 
 Install both scons and bioscons to a virtualenv
 -----------------------------------------------
@@ -128,7 +126,7 @@ We strongly recommend installing both this package and ``scons`` to a
 virtualenv rather than to your system due to idiosyncrasies in the
 ``scons`` installation script, and the fact that an older version of
 ``scons`` is likely to be installed by package managers. This option
-is available using Python 3.5+
+is available using Python 3.10+
 
 Start by creating a virtualenv::
 
