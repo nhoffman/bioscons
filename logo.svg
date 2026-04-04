@@ -31,7 +31,7 @@
 
   <!-- bioscons text -->
   <text x="180" y="62" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"
-        font-size="42" font-weight="700" fill="#2e86ab" letter-spacing="-1">bio</text>
-  <text x="258" y="62" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"
-        font-size="42" font-weight="700" fill="#a23b72" letter-spacing="-1">scons</text>
+        font-size="42" font-weight="700" letter-spacing="-1">
+    <tspan fill="#2e86ab">bio</tspan><tspan fill="#a23b72">scons</tspan>
+  </text>
 </svg>
