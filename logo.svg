@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100" width="400" height="100">
+  <!-- Background -->
+  <rect width="400" height="100" fill="none"/>
+
+  <!-- DNA double helix -->
+  <!-- Left strand (sine wave) -->
+  <path d="M10,50 C18,20 32,20 40,50 C48,80 62,80 70,50 C78,20 92,20 100,50 C108,80 122,80 130,50 C138,20 152,20 160,50"
+        fill="none" stroke="#2e86ab" stroke-width="3" stroke-linecap="round"/>
+  <!-- Right strand (inverted sine wave) -->
+  <path d="M10,50 C18,80 32,80 40,50 C48,20 62,20 70,50 C78,80 92,80 100,50 C108,20 122,20 130,50 C138,80 152,80 160,50"
+        fill="none" stroke="#a23b72" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Rungs of the helix -->
+  <line x1="25" y1="32" x2="25" y2="68" stroke="#57cc99" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+  <line x1="55" y1="68" x2="55" y2="32" stroke="#57cc99" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+  <line x1="85" y1="32" x2="85" y2="68" stroke="#57cc99" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+  <line x1="115" y1="68" x2="115" y2="32" stroke="#57cc99" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+  <line x1="145" y1="32" x2="145" y2="68" stroke="#57cc99" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+
+  <!-- Rung dots -->
+  <circle cx="25" cy="32" r="3" fill="#2e86ab"/>
+  <circle cx="25" cy="68" r="3" fill="#a23b72"/>
+  <circle cx="55" cy="68" r="3" fill="#2e86ab"/>
+  <circle cx="55" cy="32" r="3" fill="#a23b72"/>
+  <circle cx="85" cy="32" r="3" fill="#2e86ab"/>
+  <circle cx="85" cy="68" r="3" fill="#a23b72"/>
+  <circle cx="115" cy="68" r="3" fill="#2e86ab"/>
+  <circle cx="115" cy="32" r="3" fill="#a23b72"/>
+  <circle cx="145" cy="32" r="3" fill="#2e86ab"/>
+  <circle cx="145" cy="68" r="3" fill="#a23b72"/>
+
+  <!-- bioscons text -->
+  <text x="180" y="62" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"
+        font-size="42" font-weight="700" fill="#2e86ab" letter-spacing="-1">bio</text>
+  <text x="258" y="62" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"
+        font-size="42" font-weight="700" fill="#a23b72" letter-spacing="-1">cons</text>
+</svg>

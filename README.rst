@@ -1,6 +1,6 @@
-=========
-bioscons
-=========
+.. image:: logo.svg
+   :alt: bioscons
+   :width: 400px
 
 ``bioscons`` extends `SCons <https://scons.org>`_ for building reproducible bioinformatics pipelines, with built-in support for the Slurm job scheduler.
 
