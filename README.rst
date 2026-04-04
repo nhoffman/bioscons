@@ -31,17 +31,7 @@ Installation
 
 ::
 
-  python3 -m venv .venv
-  source .venv/bin/activate
-  pip install bioscons
-
-Development install::
-
-  git clone https://github.com/nhoffman/bioscons.git
-  cd bioscons
-  python3 -m venv .venv
-  source .venv/bin/activate
-  pip install -e .
+  python3 -m pip install bioscons
 
 Usage
 =====
