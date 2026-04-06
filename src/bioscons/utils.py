@@ -15,7 +15,8 @@ class verbose(object):
         self.f = f
 
     def __call__(self, *args, **kwargs):
-        print("entering", self.f.__name__, 'called with arguments', args, kwargs)
+        print("entering", self.f.__name__,
+              'called with arguments', args, kwargs)
         self.f(*args, **kwargs)
         print("exiting", self.f.__name__)
 
@@ -68,8 +69,9 @@ def getvars(config, secnames, indir=None, outdir=None,
                 pth = join(indir, pth)
             else:
                 raise OSError(
-                    'Error in [%(sec)s] %(varname)s = %(pth)s: specify either an existing path or provide a default input directory using `indir`' % \
-                        locals())
+                    'Error in [%(sec)s] %(varname)s = %(pth)s: '
+                    'specify either an existing path or provide a '
+                    'default input directory using `indir`' % locals())
 
             vars.append(PathVariable(varname, '', pth))
 
@@ -82,7 +84,8 @@ def getvars(config, secnames, indir=None, outdir=None,
             else:
                 pth = os.path.abspath(pth)
 
-            # TODO: document this behavior (assume var is a directory if ends with 'dir')
+            # TODO: document this behavior
+            # (assume var is a directory if ends with 'dir')
             if varname.endswith('dir') or os.path.isdir(pth):
                 pvar = PathVariable.PathIsDirCreate
             else:
@@ -96,7 +99,9 @@ def getvars(config, secnames, indir=None, outdir=None,
             if varname in defaults:
                 continue
             vars.append(
-                (varname, '%(varname)s: defined in [%(params)s]' % locals(), val))
+                (varname,
+                 '%(varname)s: defined in [%(params)s]' % locals(),
+                 val))
 
     return tuple(vars)
 
