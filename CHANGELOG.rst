@@ -20,7 +20,7 @@
   added as an SCons dependency before anything else is prepended to command string
 * Multi-step Commands are now handled properly [GH: 25]
 * Migrated setup.py to pyproject.toml with dynamic Git versioning
-* Python 3.10+ only support (scons 3.0+ only)
+* Python 3.10+ only support (scons 3+ only)
 * Time and slurm functions ignored in Command state
 * /usr/bin/time and slurm prepending is not shown be defualt in decision
   tree but can be shown with env.SlurmCommand(verbose=True)
@@ -28,11 +28,11 @@
 0.9.0
 =====
 
-* Python 3.10+ compatibility (scons 3.0+ only)
+* Python 3.10+ compatibility (scons 3+ only)
 * version numbers are set using git tag (#2)
 * Top-level SConstruct can run tests, perform other development tasks (#19)
 * Set up automated tests using Travis-CI (#20)
-* min scons version is 2.4.0
+* min scons version is 3
 
 0.8.1
 =====

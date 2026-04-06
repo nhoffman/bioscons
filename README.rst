@@ -24,7 +24,7 @@ Requirements
 ============
 
 * Python 3.10+
-* scons 3.0+
+* scons 3+
 
 Installation
 ============
@@ -38,12 +38,14 @@ Usage
 
 Basic SCons pipeline::
 
-  env = Environment(variables=vars)
+  from SCons.Script import Environment
+
+  env = Environment(MP_NUM_THREADS=3)
 
   alignment = env.Command(
       target='$out/seqs.aln.fasta',
       source='$data/seqs.fasta',
-      action='muscle -in $SOURCE -out $TARGET'
+      action='muscle -in $SOURCE -out $TARGET -threads 4'
   )
 
   tree = env.Command(
@@ -52,17 +54,35 @@ Basic SCons pipeline::
       action='FastTreeMP -nt -gtr $SOURCE > $TARGET'
   )
 
-Dispatch to Slurm by swapping in ``bioscons.slurm.SlurmEnvironment``::
+Basic Bioscons pipeline using Slurm::
 
   from bioscons.slurm import SlurmEnvironment
 
-  env = SlurmEnvironment(variables=vars, use_cluster=True)
+  env = SlurmEnvironment(OMP_NUM_THREADS=3, use_cluster=True)
 
   alignment = env.Command(
       target='$out/seqs.aln.fasta',
       source='$data/seqs.fasta',
-      action='muscle -in $SOURCE -out $TARGET',
+      action='muscle -in $SOURCE -out $TARGET -threads 4',
       ncores=4
   )
 
+  tree = env.Command(
+      target='$out/seqs.tre',
+      source=alignment,
+      action='FastTreeMP -nt -gtr $SOURCE > $TARGET',
+      ncores=3  # OMP_NUM_THREADS=3
+  )
+
 See the `full documentation <http://nhoffman.github.io/bioscons/>`_ for additional utilities.
+
+
+Contributors
+============
+
+* Noah Hoffman
+* Erick Matsen
+* Chris Rosenthal
+* Christopher Small
+* Connor McCoy
+* Tim Holland
