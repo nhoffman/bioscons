@@ -1,5 +1,5 @@
-from os.path import join
 import os.path
+from os.path import join
 
 try:
     from SCons.Script import PathVariable

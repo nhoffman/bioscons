@@ -4,9 +4,9 @@ from scons.
 """
 
 import re
-import SCons
 import subprocess
 
+import SCons
 from SCons.Script.SConscript import SConsEnvironment
 
 # From py3.3 argparse
