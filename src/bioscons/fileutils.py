@@ -73,7 +73,8 @@ else:
             """
 
             self.targets.update(
-                set(str(obj) for obj in Flatten(objs) if hasattr(obj, 'NodeInfo')))
+                set(str(obj) for obj in Flatten(objs)
+                    if hasattr(obj, 'NodeInfo')))
 
         def show_extras(self, directory, one_line = True):
             """
@@ -134,7 +135,8 @@ def split_path(fname, split_ext=False):
     otherwise.
     """
 
-    if isinstance(fname, list) or isinstance(fname, tuple) or hasattr(fname, 'pop'):
+    if (isinstance(fname, list) or isinstance(fname, tuple)
+            or hasattr(fname, 'pop')):
         fname = fname[0]
 
     fname = str(fname)

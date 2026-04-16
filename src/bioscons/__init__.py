@@ -3,9 +3,9 @@
 """
 
 import glob
-import sys
 import importlib.util
 import subprocess
+import sys
 from os import path
 from packaging.version import Version
 

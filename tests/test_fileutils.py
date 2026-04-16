@@ -22,7 +22,8 @@ class TestRename(unittest.TestCase):
 
     def test04(self):
         fname = 'someplace/test.txt'
-        self.assertTrue(rename(fname, ext='.buh', pth='elsewhere') == 'elsewhere/test.buh')
+        self.assertTrue(
+            rename(fname, ext='.buh', pth='elsewhere') == 'elsewhere/test.buh')
 
 
 class TestSplitPath(unittest.TestCase):

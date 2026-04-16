@@ -5,13 +5,16 @@
 1.2.0
 =====
 
-* Replace deprecated ``imp`` module with ``importlib.util`` for Python 3.12+ compatibility
-* Replace deprecated ``distutils.version.LooseVersion`` with ``packaging.version.Version``
+* Replace deprecated ``imp`` module with ``importlib.util`` for
+  Python 3.12+ compatibility
+* Replace deprecated ``distutils.version.LooseVersion`` with
+  ``packaging.version.Version``
 
 1.1.0
 =====
 
-* Slurm binaries are ignored as part of the Scons pipeline decision tree database
+* Slurm binaries are ignored as part of the Scons pipeline decision
+  tree database
 
 1.0.0
 =========
@@ -20,7 +23,7 @@
   added as an SCons dependency before anything else is prepended to command string
 * Multi-step Commands are now handled properly [GH: 25]
 * Migrated setup.py to pyproject.toml with dynamic Git versioning
-* Python 3.10+ only support (scons 3.0+ only)
+* Python 3.10+ only support (scons 3+ only)
 * Time and slurm functions ignored in Command state
 * /usr/bin/time and slurm prepending is not shown be defualt in decision
   tree but can be shown with env.SlurmCommand(verbose=True)
@@ -28,11 +31,11 @@
 0.9.0
 =====
 
-* Python 3.10+ compatibility (scons 3.0+ only)
+* Python 3.10+ compatibility (scons 3+ only)
 * version numbers are set using git tag (#2)
 * Top-level SConstruct can run tests, perform other development tasks (#19)
 * Set up automated tests using Travis-CI (#20)
-* min scons version is 2.4.0
+* min scons version is 3
 
 0.8.1
 =====
@@ -58,8 +61,10 @@
 ===
 
 * added option to identify targets as Precious in SlurmEnvironment
-* added a SlurmEnvironment time option to output linux system time stats per Command
-* added option to output linux system time information per Command with .time appended to the Target name
+* added a SlurmEnvironment time option to output linux system time
+  stats per Command
+* added option to output linux system time information per Command
+  with .time appended to the Target name
 * moved to setuptools and added a distribute_setup.py bootstrap script
 * can override default slurm_queue in each Command
 
@@ -89,6 +94,8 @@
 ===
 
 * added ``pplacer.pplacer`` and ``pplacer.align_and_place``
-* added ``infernal.cmalign_method`` and ``infernal.cmmerge_method`` (these will replace other builders in this module)
+* added ``infernal.cmalign_method`` and ``infernal.cmmerge_method``
+  (these will replace other builders in this module)
 * renamed ``refpkg.get_vars`` to ``refpkg.get_varlist``
-* environment variables defined by ``refpkg.get_varlist`` are prepended by 'refpkg_'
+* environment variables defined by ``refpkg.get_varlist`` are
+  prepended by 'refpkg_'

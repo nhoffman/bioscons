@@ -1,56 +1,62 @@
+.. image:: logo.svg
+   :alt: bioscons
+   :width: 400px
+
+``bioscons`` extends `SCons <https://scons.org>`_ for building
+reproducible bioinformatics pipelines, with built-in support for the
+Slurm job scheduler.
+
+- Dependency tracking: only re-run steps whose inputs have changed
+- Slurm integration: dispatch jobs to a cluster with a single
+  drop-in replacement
+- Parallelization: dependency graph enables concurrent execution
+  of independent steps
+
+Why SCons?
 ==========
- bioscons
-==========
 
-This package extends the scons build tool for the construction of
-reproducible workflows in bioinformatics.
+`SCons <https://scons.org>`_ is well-suited for bioinformatics pipelines:
 
-Documentation is available on github: http://nhoffman.github.io/bioscons/
+* **Incremental builds**: re-running SCons only re-executes steps
+  whose inputs have changed
+* **Parallelization**: the dependency graph enables concurrent
+  execution of independent steps
+* **Shell-like syntax**: external programs are easy to invoke with
+  variable substitution
+* **Python integration**: leverage the standard library, Biopython,
+  NumPy, etc. directly in your build script
+* **File objects**: pipeline steps are expressed in terms of file
+  objects rather than filenames, keeping scripts readable
+* **Incremental validation**: SCons validates files and can fail
+  gracefully at any step
 
-Background
-==========
+Requirements
+============
 
-Why does SCons make sense for reproducible bioinformatics pipelines?
+* Python 3.10+
+* scons 3+
 
-* SCons has a sophisticated mechanism for determining dependencies,
-  meaning that re-running SCons will only re-execute steps needing
-  updating.
-* The definition of sources and targets (see example below) defines a
-  dependency graph that supports parallelization of tasks.
-* Most of the work of pipelines is done by external programs that are
-  easy to execute with a shell-like syntax for commands.
-* On the other hand, SCons also allows the execution of arbitrary
-  python code in creating your script, and thus one can leverage the
-  power of the python standard library, Biopython, NumPy, etc in your
-  script.
-* Rather than dealing with a mess of filenames, subsequent steps in an
-  SCons build are expressed in terms of *file objects*
-* Steps in the pipeline are implemented as *Commands* which implement
-  a shell command or a python function in a way that consistently
-  channels inputs into outputs
-* Provides multiple mechanisms for cleanly executing isolated steps of
-  the workflow (for example, by previewing commands to be executed
-  using ``scons -n``, and pasting a single command directly into the
-  shell)
-* SCons validates files and can fail incrementally
+Installation
+============
 
-scons example
--------------
+::
 
-Here's a simple but complete example of a build script demonstrating
-the execution of two commands::
+  python3 -m pip install bioscons
 
-  vars = Variables()
-  vars.Add('data', help='source data', default='./data')
-  vars.Add('out', help='output directory', default='./output')
+Usage
+=====
 
-  env = Environment(variables=vars)
+Basic SCons pipeline::
+
+  from SCons.Script import Environment
+
+  env = Environment(MP_NUM_THREADS=3)
 
   alignment = env.Command(
       target='$out/seqs.aln.fasta',
       source='$data/seqs.fasta',
-      action='muscle -in $SOURCE -out $TARGET'
-      )
+      action='muscle -in $SOURCE -out $TARGET -threads 4'
+  )
 
   tree = env.Command(
       target='$out/seqs.tre',
@@ -58,124 +64,36 @@ the execution of two commands::
       action='FastTreeMP -nt -gtr $SOURCE > $TARGET'
   )
 
-Here we have defined some variables for the build environment (ie, the
-input and output directories), and constructed an object (``env``)
-defining the execution environment. The output of the first command is
-used as the input to another (thereby explicitly defining a dependency
-between the two commands), and for the most part the names and paths
-of the inputs and outputs are abstracted away with shell-like variable
-substitution rules. It's easy to build pipelines involving complex
-dependencies that nonetheless remain extremely easy to read.
-
-So, what does ``bioscons`` provide?
------------------------------------
-
-Mainly, integration with the Slurm job scheduler via a subclass of the
-SCons ``Environment`` object. For example, here's how to modify the
-above example so that each job will be dispatched to a slurm queue
-with a specified number of cores requested for each job::
+Basic Bioscons pipeline using Slurm::
 
   from bioscons.slurm import SlurmEnvironment
 
-  vars = Variables()
-  vars.Add('data', help='source data', default='./data')
-  vars.Add('out', help='output directory', default='./output')
-
-  env = SlurmEnvironment(variables=vars, use_cluster=True)
+  env = SlurmEnvironment(OMP_NUM_THREADS=3, use_cluster=True)
 
   alignment = env.Command(
       target='$out/seqs.aln.fasta',
       source='$data/seqs.fasta',
-      action='muscle -in $SOURCE -out $TARGET',
+      action='muscle -in $SOURCE -out $TARGET -threads 4',
       ncores=4
-      )
+  )
 
   tree = env.Command(
       target='$out/seqs.tre',
       source=alignment,
       action='FastTreeMP -nt -gtr $SOURCE > $TARGET',
-      ncores=10
+      ncores=3  # OMP_NUM_THREADS=3
   )
 
-But ``bioscons`` also provides some additional utilities for creating
-an inventory of targets, timing actions, modifying file paths. See
-http://nhoffman.github.io/bioscons/ for complete package
-documentation.
+See the `full documentation <http://nhoffman.github.io/bioscons/>`_
+for additional utilities.
 
-Installation
+
+Contributors
 ============
 
-dependencies
-------------
-
-* Python 3.10+
-* scons 3.0+
-
-installation scenarios
-----------------------
-
-Various installation scenarios are possible involving different
-combinations of system package installers, pip, and virtualenv vs
-system installs. We will describe only the recommended configuration
-here, although others are possible. Note that ``bioscons`` requires scons 3.0+
-
-Install both scons and bioscons to a virtualenv
------------------------------------------------
-
-We strongly recommend installing both this package and ``scons`` to a
-virtualenv rather than to your system due to idiosyncrasies in the
-``scons`` installation script, and the fact that an older version of
-``scons`` is likely to be installed by package managers. This option
-is available using Python 3.10+
-
-Start by creating a virtualenv::
-
-  python3 -m venv bioscons-env
-
-Due to some quirks in the ``scons`` installation process, you must
-ensure that ``pip`` is the most recent version, and ``wheel`` is
-installed::
-
-  source bioscons-env/bin/activate
-  pip install -U pip wheel
-  pip install bioscons
-
-Take care that pip corresponds to the intended version of the python
-interpreter; a safer option may be to use ``pip3``.
-
-installation from source (for development)
-------------------------------------------
-
-::
-
-  https://github.com/nhoffman/bioscons.git
-  cd bioscons
-  python3 -m venv bioscons-env
-  source bioscons-env/bin/activate
-  pip install -U pip wheel
-  pip install -e .
-  pip install -r requirements.txt  # to run tests, build docs
-
-Defining the execution environment for reproducible pipelines
-=============================================================
-
-When intending to run the version of ``scons`` installed to the
-virtualenv, it is a good idea to include the following directive in
-your ``SConstruct``::
-
-  venv = os.environ.get('VIRTUAL_ENV')
-  if not venv:
-      sys.exit('--> an active virtualenv is required')
-
-It is best to define the ``$PATH`` used to locate executables that are
-used within your pipeline.
-
-Monitoring Slurm tasks                                                                                                                                                                                                                                                                                                                                                                        
-======================                                                                                                                                                                                                                                                                                                                                                                        
-                                                                                                                                                                                                                                                                                                                                                                                              
-A useful way to monitor a slurm queue on a Linux system is to use watch::
-
- watch squeue
-
-For more information on managing Slurm tasks and installing Slurm
-on your system go to https://slurm.schedmd.com/documentation.html
+* Noah Hoffman
+* Erick Matsen
+* Chris Rosenthal
+* Christopher Small
+* Connor McCoy
+* Tim Holland
